@@ -71,14 +71,14 @@ export function middleware(request: NextRequest) {
     "camera=(), microphone=(), geolocation=(), payment=()"
   );
 
-  // Content-Security-Policy
+  // Content-Security-Policy - Updated for Railway deployment
   const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://*.googleusercontent.com https://picsum.photos",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://*.googleusercontent.com https://picsum.photos https://*.railway.app",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://accounts.google.com",
+    "connect-src 'self' https://accounts.google.com https://wttr.in https://*.railway.app",
     "frame-src https://accounts.google.com",
     "base-uri 'self'",
     "form-action 'self'",
