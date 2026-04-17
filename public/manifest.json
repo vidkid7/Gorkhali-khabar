@@ -1,0 +1,11 @@
+{
+  "name": "समाचार पोर्टल - News Portal",
+  "short_name": "News Portal",
+  "description": "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c62828",
+  "orientation": "portrait-primary",
+  "icons": []
+}

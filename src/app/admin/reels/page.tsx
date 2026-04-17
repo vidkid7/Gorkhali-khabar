@@ -1,0 +1,208 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+interface Reel {
+  id: string;
+  title: string;
+  slug: string;
+  video_url: string;
+  thumbnail?: string | null;
+  view_count: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export default function AdminReelsPage() {
+  const [reels, setReels] = useState<Reel[]>([]);
+  const [message, setMessage] = useState("");
+
+  // Create form
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [description, setDescription] = useState("");
+
+  // Edit
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editVideoUrl, setEditVideoUrl] = useState("");
+  const [editActive, setEditActive] = useState(true);
+
+  useEffect(() => {
+    loadReels();
+  }, []);
+
+  async function loadReels() {
+    const res = await fetch("/api/v1/reels?pageSize=50");
+    const json = await res.json();
+    if (json.success) setReels(json.data.data || []);
+  }
+
+  async function createReel(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage("");
+    const res = await fetch("/api/v1/reels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, slug, video_url: videoUrl, thumbnail: thumbnail || undefined, description: description || undefined }),
+    });
+    const json = await res.json();
+    if (json.success) {
+      setMessage("Reel created!");
+      setTitle(""); setSlug(""); setVideoUrl(""); setThumbnail(""); setDescription("");
+      loadReels();
+    } else {
+      setMessage(json.error || "Error");
+    }
+  }
+
+  async function updateReel(id: string) {
+    setMessage("");
+    const res = await fetch(`/api/v1/reels/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: editTitle, video_url: editVideoUrl, is_active: editActive }),
+    });
+    const json = await res.json();
+    if (json.success) {
+      setMessage("Reel updated!");
+      setEditingId(null);
+      loadReels();
+    } else {
+      setMessage(json.error || "Error");
+    }
+  }
+
+  async function deleteReel(id: string) {
+    if (!confirm("Delete this reel?")) return;
+    const res = await fetch(`/api/v1/reels/${id}`, { method: "DELETE" });
+    const json = await res.json();
+    if (json.success) {
+      setMessage("Reel deleted!");
+      loadReels();
+    } else {
+      setMessage(json.error || "Error");
+    }
+  }
+
+  const inputStyle = {
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
+    color: "var(--foreground)",
+  };
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">🎬 Reels Management</h1>
+
+      {message && (
+        <div className="p-3 rounded-md text-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
+          {message}
+        </div>
+      )}
+
+      {/* Create Form */}
+      <div className="p-4 space-y-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        <h2 className="text-lg font-semibold">Create Reel</h2>
+        <form onSubmit={createReel} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}
+            className="px-3 py-2 rounded-md text-sm" style={inputStyle} required />
+          <input type="text" placeholder="Slug" value={slug} onChange={(e) => setSlug(e.target.value)}
+            className="px-3 py-2 rounded-md text-sm" style={inputStyle} required />
+          <input type="url" placeholder="Video URL" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)}
+            className="px-3 py-2 rounded-md text-sm" style={inputStyle} required />
+          <input type="url" placeholder="Thumbnail URL (optional)" value={thumbnail} onChange={(e) => setThumbnail(e.target.value)}
+            className="px-3 py-2 rounded-md text-sm" style={inputStyle} />
+          <input type="text" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)}
+            className="px-3 py-2 rounded-md text-sm col-span-full" style={inputStyle} />
+          <button type="submit" className="px-4 py-2 rounded-md text-sm font-medium"
+            style={{ background: "var(--accent)", color: "#fff" }}>
+            Create Reel
+          </button>
+        </form>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        <table className="w-full text-sm">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Title</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Views</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Status</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Date</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reels.map((reel) => (
+              <tr key={reel.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                <td className="p-3 font-medium">
+                  {editingId === reel.id ? (
+                    <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)}
+                      className="px-2 py-1 rounded text-sm w-full" style={inputStyle} />
+                  ) : (
+                    reel.title
+                  )}
+                </td>
+                <td className="p-3" style={{ color: "var(--muted)" }}>{reel.view_count.toLocaleString()}</td>
+                <td className="p-3">
+                  {editingId === reel.id ? (
+                    <select value={editActive ? "true" : "false"} onChange={(e) => setEditActive(e.target.value === "true")}
+                      className="px-2 py-1 rounded text-xs" style={inputStyle}>
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
+                    </select>
+                  ) : (
+                    <span className="inline-block px-2 py-0.5 text-xs font-semibold rounded-full"
+                      style={{ background: reel.is_active ? "#16a34a" : "#6b7280", color: "#fff" }}>
+                      {reel.is_active ? "Active" : "Inactive"}
+                    </span>
+                  )}
+                </td>
+                <td className="p-3" style={{ color: "var(--muted)" }}>
+                  {new Date(reel.created_at).toLocaleDateString()}
+                </td>
+                <td className="p-3">
+                  {editingId === reel.id ? (
+                    <div className="flex gap-1">
+                      <button onClick={() => updateReel(reel.id)}
+                        className="px-2 py-1 rounded text-xs font-medium" style={{ background: "#16a34a", color: "#fff" }}>
+                        Save
+                      </button>
+                      <button onClick={() => setEditingId(null)}
+                        className="px-2 py-1 rounded text-xs font-medium" style={{ background: "#6b7280", color: "#fff" }}>
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1">
+                      <button onClick={() => {
+                        setEditingId(reel.id);
+                        setEditTitle(reel.title);
+                        setEditVideoUrl(reel.video_url);
+                        setEditActive(reel.is_active);
+                      }}
+                        className="px-2 py-1 rounded text-xs font-medium" style={{ background: "var(--accent)", color: "#fff" }}>
+                        Edit
+                      </button>
+                      <button onClick={() => deleteReel(reel.id)}
+                        className="px-2 py-1 rounded text-xs font-medium" style={{ background: "#dc2626", color: "#fff" }}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {reels.length === 0 && (
+              <tr><td colSpan={5} className="p-8 text-center" style={{ color: "var(--muted)" }}>No reels yet</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
