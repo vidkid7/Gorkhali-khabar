@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 async function getAnalyticsData() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

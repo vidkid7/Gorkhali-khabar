@@ -6,6 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;

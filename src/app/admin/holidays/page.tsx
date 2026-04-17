@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminHolidayActions } from "./AdminHolidayActions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminHolidaysPage() {
   const holidays = await prisma.holiday.findMany({
     orderBy: [{ bs_year: "desc" }, { bs_month: "asc" }, { bs_day: "asc" }],

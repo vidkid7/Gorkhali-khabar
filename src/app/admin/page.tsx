@@ -2,6 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { STATUS_COLORS } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 async function getStats() {
   const today = new Date(new Date().setHours(0, 0, 0, 0));
   const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);

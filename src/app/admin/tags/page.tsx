@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminTagForm } from "@/components/admin/AdminTagForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminTagsPage() {
   const tags = await prisma.tag.findMany({
     orderBy: { name: "asc" },

@@ -16,10 +16,13 @@ import { EditorsPickClient } from "@/components/home/EditorsPickClient";
 import { LatestUpdatesPanel } from "@/components/ui/LatestUpdatesPanel";
 import { QuickNewsBanner } from "@/components/ui/QuickNewsBanner";
 import {
+
   HeroSkeleton,
   ArticleCardSkeleton,
   SidebarSkeleton,
 } from "@/components/ui/SkeletonLoader";
+
+export const dynamic = "force-dynamic";
 
 const articleSelect = {
   id: true, slug: true, title: true, title_en: true,

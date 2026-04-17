@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminBreakingNewsForm } from "@/components/admin/AdminBreakingNewsForm";
 import { AdminBreakingNewsToggle } from "@/components/admin/AdminBreakingNewsToggle";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminBreakingNewsPage() {
   const breakingNews = await prisma.breakingNews.findMany({
     orderBy: { created_at: "desc" },

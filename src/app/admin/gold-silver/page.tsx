@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminGoldSilverActions } from "./AdminGoldSilverActions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminGoldSilverPage() {
   const prices = await prisma.goldSilverPrice.findMany({
     orderBy: { date: "desc" },

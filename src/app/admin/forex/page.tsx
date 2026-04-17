@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminForexActions } from "./AdminForexActions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminForexPage() {
   const rates = await prisma.forexRate.findMany({
     orderBy: [{ date: "desc" }, { currency: "asc" }],

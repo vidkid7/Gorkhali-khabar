@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 
+export const dynamic = "force-dynamic";
+
 interface Reel {
   id: string;
   title: string;

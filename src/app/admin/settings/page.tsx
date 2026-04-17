@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+export const dynamic = "force-dynamic";
+
 interface SiteSettings {
   site_name?: { ne: string; en: string };
   site_tagline?: { ne: string; en: string };

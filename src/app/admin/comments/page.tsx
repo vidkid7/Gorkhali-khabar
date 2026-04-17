@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminCommentActions } from "@/components/admin/AdminCommentActions";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

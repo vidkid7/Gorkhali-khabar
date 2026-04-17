@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 
+export const dynamic = "force-dynamic";
+
 interface Ad {
   id: string;
   title: string;

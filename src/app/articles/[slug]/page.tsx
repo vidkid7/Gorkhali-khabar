@@ -8,6 +8,8 @@ import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleContent } from "@/components/articles/ArticleContent";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

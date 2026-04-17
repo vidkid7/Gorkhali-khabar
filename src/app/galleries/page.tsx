@@ -4,6 +4,8 @@ import { GalleryCard } from "@/components/gallery/GalleryCard";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "फोटो ग्यालेरी",
 };

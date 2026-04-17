@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminRashifalActions } from "./AdminRashifalActions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminRashifalPage() {
   const entries = await prisma.rashifal.findMany({
     orderBy: [{ ad_date: "desc" }, { sign: "asc" }],

@@ -4,6 +4,8 @@ import { ReelCard } from "@/components/reels/ReelCard";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "OK Reels - भिडियो",
 };
