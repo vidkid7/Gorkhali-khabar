@@ -572,8 +572,7 @@ export function Header() {
               </button>
             </div>
           </nav>
-        </div>
-      ),
+        </div>,
       document.body
     )}
     </>
