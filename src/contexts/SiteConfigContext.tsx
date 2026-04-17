@@ -6,7 +6,7 @@ import type { SiteConfig } from "@/types";
 const defaultConfig: SiteConfig = {
   site_name: { ne: "गोर्खाली खबर", en: "Gorkhali Khabar" },
   site_tagline: { ne: "विश्वसनीय समाचार सेवा", en: "Trusted News Service" },
-  site_logo: "/icons/Logo.png",
+  site_logo: "/icons/logo.png",
   site_favicon: "/favicon.ico",
   primary_color: "#c62828",
   contact_phone: "+977-1-4XXXXXX",
