@@ -116,11 +116,34 @@ const ZODIAC_SIGNS = [
   },
 ];
 
+type ApiPrediction = {
+  sign: string;
+  prediction: string;
+  prediction_en?: string;
+  rating?: number;
+};
+
 export default function RashifalPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState<string | null>(null);
   const [today, setToday] = useState("");
   const [tab, setTab] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [apiPredictions, setApiPredictions] = useState<Record<string, ApiPrediction>>({});
+
+  useEffect(() => {
+    fetch("/api/v1/rashifal")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          const map: Record<string, ApiPrediction> = {};
+          for (const item of json.data as ApiPrediction[]) {
+            map[item.sign] = item;
+          }
+          setApiPredictions(map);
+        }
+      })
+      .catch(() => {/* keep static fallback */});
+  }, []);
 
   useEffect(() => {
     const d = new Date();
@@ -138,17 +161,21 @@ export default function RashifalPage() {
   ] as const;
 
   const getReading = (sign: typeof ZODIAC_SIGNS[0]) => {
+    const apiItem = apiPredictions[sign.id];
+    const dailyNe = apiItem?.prediction ?? sign.daily_ne;
+    const dailyEn = (apiItem?.prediction_en ?? sign.daily_en) || sign.daily_en;
+
     if (tab === "weekly") {
       return language === "ne"
-        ? `यस सप्ताह ${sign.ne} राशिका जातकहरूका लागि व्यावसायिक क्षेत्रमा उन्नति र आर्थिक सुधारको संकेत छ। परिवारसँग मिलेर काम गर्नुहोस्। मध्य सप्ताहमा केही अप्रत्याशित समाचार आउन सक्छ। सकारात्मक सोच राख्नुस्। ${sign.daily_ne}`
-        : `This week shows professional advancement and financial improvement for ${sign.en}. Work collaboratively with family. Mid-week may bring unexpected news. Stay positive. ${sign.daily_en}`;
+        ? `यस सप्ताह ${sign.ne} राशिका जातकहरूका लागि व्यावसायिक क्षेत्रमा उन्नति र आर्थिक सुधारको संकेत छ। परिवारसँग मिलेर काम गर्नुहोस्। मध्य सप्ताहमा केही अप्रत्याशित समाचार आउन सक्छ। सकारात्मक सोच राख्नुस्। ${dailyNe}`
+        : `This week shows professional advancement and financial improvement for ${sign.en}. Work collaboratively with family. Mid-week may bring unexpected news. Stay positive. ${dailyEn}`;
     }
     if (tab === "monthly") {
       return language === "ne"
-        ? `यस महिना ${sign.ne} राशिका जातकहरूका लागि नयाँ अवसरको द्वार खुल्नेछ। स्वास्थ्य राम्रो रहनेछ। आर्थिक योजनाहरू क्रियान्वयन गर्नका लागि यो उपयुक्त महिना हो। विशेषगरी महिनाको अन्त्यमा शुभ समाचार आउनेछ। ${sign.daily_ne}`
-        : `This month opens new doors of opportunity for ${sign.en}. Health will be good. An ideal month for executing financial plans. Especially good news expected toward month-end. ${sign.daily_en}`;
+        ? `यस महिना ${sign.ne} राशिका जातकहरूका लागि नयाँ अवसरको द्वार खुल्नेछ। स्वास्थ्य राम्रो रहनेछ। आर्थिक योजनाहरू क्रियान्वयन गर्नका लागि यो उपयुक्त महिना हो। विशेषगरी महिनाको अन्त्यमा शुभ समाचार आउनेछ। ${dailyNe}`
+        : `This month opens new doors of opportunity for ${sign.en}. Health will be good. An ideal month for executing financial plans. Especially good news expected toward month-end. ${dailyEn}`;
     }
-    return language === "ne" ? sign.daily_ne : sign.daily_en;
+    return language === "ne" ? dailyNe : dailyEn;
   };
 
   return (

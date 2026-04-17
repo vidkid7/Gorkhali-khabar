@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNepaliDate } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -137,9 +138,11 @@ export function Header() {
   const [trendingTopics, setTrendingTopics] = useState<TrendingTopic[]>([]);
   const [today, setToday] = useState<Date | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setToday(new Date()); }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   // Hide logo bar on scroll
   useEffect(() => {
@@ -187,6 +190,7 @@ export function Header() {
   }
 
   return (
+    <>
     <header className="sticky top-0 z-50 shadow-md" style={{ background: "var(--header-bg)", backdropFilter: "blur(28px) saturate(220%)", WebkitBackdropFilter: "blur(28px) saturate(220%)", borderBottom: "1px solid var(--glass-border)" }}>
 
       {/* ══════════ TIER 1: Logo Bar — hidden on scroll ══════════ */}
@@ -467,9 +471,12 @@ export function Header() {
       </div>
 
       {/* ══════════ SIDEBAR DRAWER ══════════ */}
-      {sidebarOpen && (
+    </header>
+
+    {/* Sidebar rendered at document.body level to escape backdrop-filter stacking context */}
+    {mounted && sidebarOpen && createPortal(
         <div
-          className="fixed inset-0 z-[100]"
+          className="fixed inset-0 z-[200]"
           onClick={() => setSidebarOpen(false)}
           onKeyDown={(e) => { if (e.key === "Escape") setSidebarOpen(false); }}
           role="dialog"
@@ -566,7 +573,9 @@ export function Header() {
             </div>
           </nav>
         </div>
-      )}
-    </header>
+      ),
+      document.body
+    )}
+    </>
   );
 }

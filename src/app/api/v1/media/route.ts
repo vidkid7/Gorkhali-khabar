@@ -66,6 +66,65 @@ export async function POST(request: NextRequest) {
     if (error === "unauthorized") return unauthorizedResponse();
     if (error === "forbidden") return forbiddenResponse();
 
+    const contentType = request.headers.get("content-type") ?? "";
+
+    // ── URL-based registration ──────────────────────────────────
+    if (contentType.includes("application/json")) {
+      const body = await request.json() as { url?: string; alt_text?: string };
+      const rawUrl: string = (body.url ?? "").trim();
+      if (!rawUrl) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "URL आवश्यक छ" },
+          { status: 400 }
+        );
+      }
+      // Validate it is an absolute URL
+      try { new URL(rawUrl); } catch {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "अमान्य URL" },
+          { status: 400 }
+        );
+      }
+      // Only allow http/https schemes
+      if (!/^https?:\/\//i.test(rawUrl)) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "केवल http/https URL अनुमति छ" },
+          { status: 400 }
+        );
+      }
+
+      const urlObj = new URL(rawUrl);
+      const ext = path.extname(urlObj.pathname) || "";
+      const filename = `url-${Date.now()}${ext}`;
+      const original_name = decodeURIComponent(path.basename(urlObj.pathname)) || filename;
+
+      const mediaFile = await prisma.mediaFile.create({
+        data: {
+          filename,
+          original_name,
+          mime_type: "image/jpeg", // placeholder; browser shows actual content
+          size: 0,
+          url: rawUrl,
+          alt_text: (body.alt_text ?? "").trim() || null,
+          uploaded_by: session!.user.id,
+        },
+      });
+
+      await auditLog({
+        adminId: session!.user.id,
+        action: "CREATE",
+        entity: "MediaFile",
+        entityId: mediaFile.id,
+        newValue: { url: rawUrl, original_name },
+      });
+
+      return NextResponse.json<ApiResponse>(
+        { success: true, data: mediaFile },
+        { status: 201 }
+      );
+    }
+
+    // ── File upload ─────────────────────────────────────────────
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const altText = formData.get("alt_text") as string | null;

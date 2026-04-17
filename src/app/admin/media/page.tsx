@@ -23,6 +23,8 @@ export default function AdminMediaPage() {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [addingUrl, setAddingUrl] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editAltText, setEditAltText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +69,35 @@ export default function AdminMediaPage() {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleUrlAdd(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = urlInput.trim();
+    if (!trimmed) return;
+    try { new URL(trimmed); } catch { setMessage("Invalid URL"); return; }
+
+    setAddingUrl(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/v1/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: trimmed }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setMessage("URL added to library!");
+        setUrlInput("");
+        loadFiles();
+      } else {
+        setMessage(json.error || "Failed to add URL");
+      }
+    } catch {
+      setMessage("Error adding URL");
+    } finally {
+      setAddingUrl(false);
     }
   }
 
@@ -140,6 +171,26 @@ export default function AdminMediaPage() {
           {message}
         </div>
       )}
+
+      {/* Add by URL */}
+      <div className="p-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        <p className="text-sm font-semibold mb-2" style={{ color: "var(--muted)" }}>Or add by URL</p>
+        <form onSubmit={handleUrlAdd} className="flex gap-3">
+          <input
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-md text-sm"
+            style={inputStyle}
+          />
+          <button type="submit" disabled={addingUrl || !urlInput.trim()}
+            className="px-4 py-2 rounded-md text-sm font-medium"
+            style={{ background: "var(--accent)", color: "#fff", opacity: addingUrl || !urlInput.trim() ? 0.5 : 1 }}>
+            {addingUrl ? "Adding..." : "Add URL"}
+          </button>
+        </form>
+      </div>
 
       {/* Search */}
       <div className="p-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>

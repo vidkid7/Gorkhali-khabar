@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 function LoginForm() {
@@ -28,7 +28,15 @@ function LoginForm() {
       if (result?.error) {
         setError(result.error);
       } else {
-        window.location.href = callbackUrl;
+        // Redirect admins/editors/authors to admin panel; others to callbackUrl
+        const session = await getSession();
+        const role = session?.user?.role;
+        const adminRoles = ["ADMIN", "EDITOR", "AUTHOR"];
+        if (adminRoles.includes(role ?? "") && callbackUrl === "/") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = callbackUrl;
+        }
       }
     } catch {
       setError(t("common.error"));

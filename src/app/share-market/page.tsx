@@ -86,9 +86,23 @@ export default function ShareMarketPage() {
   const [sector, setSector] = useState("सबै");
   const [countdown, setCountdown] = useState(60);
   const [marketOpen] = useState(isMarketOpen);
+  const [isLive, setIsLive] = useState(false);
 
-  const refresh = useCallback(() => {
-    setData(generateData());
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/nepse");
+      if (res.ok) {
+        const json = await res.json();
+        setData({ stocks: json.stocks, indices: json.indices });
+        setIsLive(json.live === true);
+      } else {
+        setData(generateData());
+        setIsLive(false);
+      }
+    } catch {
+      setData(generateData());
+      setIsLive(false);
+    }
     setLastUpdate(new Date());
     setCountdown(60);
   }, []);
@@ -262,13 +276,15 @@ export default function ShareMarketPage() {
           </div>
 
           <div className="mt-4 rounded-xl p-4 flex items-start gap-3 text-sm"
-            style={{ background: "var(--surface-alt)", color: "var(--muted)", border: "1px solid var(--border)" }}>
-            <span className="text-lg shrink-0">💡</span>
+            style={{ background: isLive ? "rgba(22,163,74,0.08)" : "var(--surface-alt)", color: "var(--muted)", border: `1px solid ${isLive ? "rgba(22,163,74,0.3)" : "var(--border)"}` }}>
+            <span className="text-lg shrink-0">{isLive ? "🟢" : "💡"}</span>
             <span>
-              {ne(
-                "यो सिमुलेटेड बजार डाटा हो। वास्तविक NEPSE API उपलब्ध भएपछि स्वचालित रूपमा लाइभ डाटा देखाउनेछ।",
-                "This is simulated market data for demonstration. Will auto-connect to live NEPSE data when the API becomes available."
-              )}
+              {isLive
+                ? ne("वास्तविक NEPSE डाटा — nepalstock.com.np बाट।", "Live NEPSE data sourced from nepalstock.com.np.")
+                : ne(
+                    "यो सिमुलेटेड बजार डाटा हो। NEPSE API उपलब्ध हुँदा स्वचालित रूपमा लाइभ डाटा देखाउनेछ।",
+                    "Simulated market data. Will auto-show live NEPSE data when the API is reachable."
+                  )}
             </span>
           </div>
         </div>

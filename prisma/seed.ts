@@ -399,13 +399,13 @@ async function main() {
 
   // ─── Site Settings ─────────────────────────────────
   const settings: Record<string,unknown> = {
-    site_name: { ne: "समाचार पोर्टल", en: "News Portal" },
+    site_name: { ne: "गोर्खाली खबर", en: "Gorkhali Khabar" },
     site_tagline: { ne: "नेपालको विश्वसनीय अनलाइन समाचार सेवा", en: "Nepal's Trusted Online News Service" },
     site_logo: "/icons/logo.png",
     site_favicon: "/favicon.ico",
     primary_color: "#c62828",
     contact_phone: "+977-1-4234567",
-    contact_email: "info@newsportal.com",
+    contact_email: "info@gorkhali.com",
     contact_address: { ne: "काठमाडौं, बागमती प्रदेश, नेपाल", en: "Kathmandu, Bagmati Province, Nepal" },
     registration_number: "१२३-४५६-७८९०",
     social_facebook:  "https://facebook.com/newsportal",
@@ -418,7 +418,7 @@ async function main() {
     features_bookmarks: true,
     features_reels: true,
     features_galleries: true,
-    copyright_text: { ne: "© {year} समाचार पोर्टल। सर्वाधिकार सुरक्षित।", en: "© {year} News Portal. All rights reserved." },
+    copyright_text: { ne: "© {year} गोर्खाली खबर। सर्वाधिकार सुरक्षित।", en: "© {year} Gorkhali Khabar. All rights reserved." },
   };
   for (const [k, v] of Object.entries(settings)) {
     await prisma.siteSettings.upsert({ where: { key: k }, update: { value: v as object }, create: { key: k, value: v as object } });
