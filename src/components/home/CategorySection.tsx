@@ -91,7 +91,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
   return (
     <section>
       <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
         {/* Main featured */}
         <Link href={`/articles/${main.slug}`} className="lg:col-span-3 card group block">
           <div className="relative w-full h-64 lg:h-80 rounded-t-lg overflow-hidden bg-surface">

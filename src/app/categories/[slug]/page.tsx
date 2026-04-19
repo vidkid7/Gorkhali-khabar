@@ -90,7 +90,7 @@ export default async function CategoryArchivePage({
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-4 py-6">
+      <main className="mx-auto max-w-7xl px-4 py-6 pb-safe">
         {/* Breadcrumb */}
         <nav className="text-sm text-muted mb-4" aria-label="Breadcrumb">
           <ol className="flex items-center gap-1">

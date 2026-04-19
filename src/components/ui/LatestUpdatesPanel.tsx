@@ -58,8 +58,11 @@ export function LatestUpdatesPanel() {
       <button
         onClick={handleOpen}
         aria-label={t("sections.latestUpdates")}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-1 px-2 py-3 rounded-l-lg shadow-lg text-white text-[11px] font-bold writing-mode-vertical transition-transform hover:-translate-x-0.5 hover:-translate-y-1/2"
-        style={{ background: "var(--primary)", writingMode: "vertical-rl" }}
+        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-1 px-2 py-3 rounded-l-lg shadow-lg text-white text-[11px] font-bold transition-transform hover:-translate-x-0.5"
+        style={{
+          background: "var(--primary)",
+          writingMode: "vertical-rl",
+        }}
       >
         <svg className="h-4 w-4 mb-1" style={{ writingMode: "horizontal-tb" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path d="M13 10V3L4 14h7v7l9-11h-7z" />

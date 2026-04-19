@@ -196,10 +196,18 @@
 
 /* ─── Font Size Scaling ─── */
 :root {
-  --base-font-size: 18px;
+  --base-font-size: 16px;
 }
 html {
   font-size: var(--base-font-size);
+}
+
+/* Scale up slightly on larger screens */
+@media (min-width: 1024px) {
+  :root { --base-font-size: 17px; }
+}
+@media (min-width: 1280px) {
+  :root { --base-font-size: 18px; }
 }
 
 /* ─── Base Styles ─── */
@@ -787,8 +795,11 @@ footer {
 /* ─── Smooth scroll & scrollbar ─── */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 160px; /* account for sticky header height */
+  scroll-padding-top: 100px; /* account for sticky header height on mobile */
   scrollbar-gutter: stable; /* reserve scrollbar lane so sticky header never clips */
+}
+@media (min-width: 1024px) {
+  html { scroll-padding-top: 160px; }
 }
 * {
   scrollbar-width: thin;
@@ -802,6 +813,10 @@ html {
 /* Hide scrollbar for overflow-x scroll strips (e.g. trending bar) */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; ms-overflow-style: none; }
+
+/* Alias used in some carousel components */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* ─── Stock ticker strip ─── */
 .stock-ticker-wrap {
@@ -1219,3 +1234,148 @@ header[class*="sticky"] {
 }
 .liquid-list-item:hover::before { opacity: 1; }
 .liquid-list-item:hover { transform: translateX(3px); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVE FIXES
+   Comprehensive mobile-first improvements
+═══════════════════════════════════════════════ */
+
+/* Prevent horizontal overflow on all screens */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure images never overflow their containers */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch-friendly tap targets — only explicit interactive controls, not all anchors */
+@media (max-width: 768px) {
+  button {
+    min-height: 40px;
+  }
+
+  /* Reduce card hover transforms on mobile (can cause layout shift) */
+  .card:hover,
+  .card-news:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Disable liquid morph animation on mobile for perf */
+  .card-news:hover,
+  .card:hover {
+    animation: none;
+  }
+
+  /* Prose adjustments */
+  .prose-news {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+  .prose-news h2 { font-size: 1.25rem; }
+  .prose-news h3 { font-size: 1.1rem; }
+
+  /* Section divider spacing */
+  .section-divider {
+    margin: 1.5rem 0;
+  }
+
+  /* Badge sizes on mobile */
+  .badge, .badge-blue, .badge-success, .badge-warning, .badge-error, .badge-outline {
+    font-size: 0.65rem;
+  }
+
+  /* Section heading on mobile */
+  .section-heading {
+    font-size: 1rem;
+  }
+
+  /* Ad slot min-height reduction on mobile */
+  .ad-slot {
+    min-height: 60px;
+  }
+
+  /* Liquid blobs — reduce size on mobile for performance */
+  .liquid-blob-1 { width: 300px; height: 300px; }
+  .liquid-blob-2 { width: 250px; height: 250px; }
+  .liquid-blob-3 { width: 200px; height: 200px; }
+  .liquid-blob-4 { width: 160px; height: 160px; }
+
+  /* Breaking bar font size */
+  .breaking-bar {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Table overflow on mobile */
+  .table-auto,
+  .prose-news table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Extra small screens (< 375px) */
+@media (max-width: 374px) {
+  html { font-size: 14px; }
+  .section-heading { font-size: 0.9rem; }
+}
+
+/* ─── Safe area padding utility ─── */
+.pb-safe {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  /* Reset on tablet+ where MobileBottomNav is hidden */
+  .pb-safe {
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* ─── xs breakpoint helper (< 480px) ─── */
+@media (min-width: 480px) {
+  .xs\:inline { display: inline; }
+  .xs\:flex { display: flex; }
+  .xs\:hidden { display: none; }
+  .xs\:block { display: block; }
+}
+
+/* ─── Footer newsletter responsive fix ─── */
+@media (max-width: 639px) {
+  /* Stack subscribe form better on small screens */
+  footer form.flex {
+    flex-direction: column;
+  }
+  footer form.flex input[type="email"] {
+    width: 100%;
+  }
+  footer form.flex button {
+    width: 100%;
+  }
+}
+
+/* ─── Prevent long words from breaking layout on mobile ─── */
+@media (max-width: 768px) {
+  h1, h2, h3, h4, h5, h6, p, a, span {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* ─── Article page mobile padding ─── */
+@media (max-width: 768px) {
+  main {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+

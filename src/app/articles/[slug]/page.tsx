@@ -109,7 +109,7 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-6">
+      <main className="mx-auto max-w-4xl px-3 sm:px-4 py-4 sm:py-6 pb-safe">
         <ArticleContent
           title={article.title}
           title_en={article.title_en}
@@ -130,7 +130,7 @@ export default async function ArticlePage({ params }: Props) {
         />
 
         {/* Related articles */}
-        <section className="mt-12">
+        <section className="mt-8 sm:mt-12">
           <Suspense
             fallback={
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

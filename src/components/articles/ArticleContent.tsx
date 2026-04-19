@@ -164,14 +164,14 @@ export function ArticleContent({
         </div>
       )}
 
-      {/* Social share - sticky on desktop */}
-      <div className="flex items-center gap-3 border-t border-b border-border py-4 mb-8 lg:sticky lg:bottom-0 lg:bg-[var(--bg)] lg:z-10">
-        <span className="text-sm font-medium">{t("common.share")}:</span>
+      {/* Social share - mobile friendly */}
+      <div className="flex flex-wrap items-center gap-2 border-t border-b border-border py-3 mb-6 sm:mb-8">
+        <span className="text-sm font-medium w-full sm:w-auto">{t("common.share")}:</span>
         <a
           href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-secondary !py-1 !px-3 text-xs"
+          className="btn-secondary !py-2 !px-4 text-xs flex-1 sm:flex-none text-center"
         >
           Facebook
         </a>
@@ -179,7 +179,7 @@ export function ArticleContent({
           href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(displayTitle)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-secondary !py-1 !px-3 text-xs"
+          className="btn-secondary !py-2 !px-4 text-xs flex-1 sm:flex-none text-center"
         >
           X/Twitter
         </a>
@@ -187,7 +187,7 @@ export function ArticleContent({
           onClick={() => {
             navigator.clipboard.writeText(shareUrl);
           }}
-          className="btn-secondary !py-1 !px-3 text-xs"
+          className="btn-secondary !py-2 !px-4 text-xs flex-1 sm:flex-none"
         >
           {t("common.copyLink")}
         </button>

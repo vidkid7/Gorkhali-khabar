@@ -59,17 +59,17 @@ export function CookieConsent() {
 
   return (
     <>
-      {/* Main banner */}
+      {/* Main banner — compact on mobile */}
       <div
         role="dialog"
         aria-label="Cookie consent"
         aria-modal={showPreferences}
-        className="fixed bottom-0 inset-x-0 z-50 p-4"
+        className="fixed bottom-0 inset-x-0 z-50 p-2 sm:p-4"
+        style={{ paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
       >
-        <div className="mx-auto max-w-4xl card p-6 shadow-lg">
-          <p className="text-sm text-muted mb-4">
-            हामी तपाईंको अनुभव सुधार गर्न कुकीहरू प्रयोग गर्छौं।
-            <br />
+        <div className="mx-auto max-w-4xl card p-3 sm:p-6 shadow-lg">
+          <p className="text-xs sm:text-sm text-muted mb-3">
+            हामी तपाईंको अनुभव सुधार गर्न कुकीहरू प्रयोग गर्छौं।{" "}
             We use cookies to improve your experience.{" "}
             <a
               href="/cookie-policy"
@@ -79,23 +79,24 @@ export function CookieConsent() {
             </a>
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          {/* Mobile: 2-col grid for primary actions, full-width for manage */}
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
             <button
               onClick={acceptAll}
-              className="btn-primary text-sm"
+              className="btn-primary text-xs sm:text-sm"
               autoFocus
             >
               Accept All
             </button>
             <button
               onClick={rejectNonEssential}
-              className="btn-secondary text-sm"
+              className="btn-secondary text-xs sm:text-sm"
             >
               Reject Non-Essential
             </button>
             <button
               onClick={() => setShowPreferences(true)}
-              className="btn-secondary text-sm"
+              className="btn-secondary text-xs sm:text-sm col-span-2 sm:col-span-1"
             >
               Manage Preferences
             </button>

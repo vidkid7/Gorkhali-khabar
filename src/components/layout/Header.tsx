@@ -193,24 +193,24 @@ export function Header() {
     <>
     <header className="sticky top-0 z-50 shadow-md" style={{ background: "var(--header-bg)", backdropFilter: "blur(28px) saturate(220%)", WebkitBackdropFilter: "blur(28px) saturate(220%)", borderBottom: "1px solid var(--glass-border)" }}>
 
-      {/* ══════════ TIER 1: Logo Bar — hidden on scroll ══════════ */}
+      {/* ══════════ TIER 1: Logo Bar — hidden on scroll, hidden on mobile ══════════ */}
       <div
-        className="border-b border-border overflow-hidden transition-all duration-300"
+        className="border-b border-border overflow-hidden transition-all duration-300 hidden md:block"
         style={{ maxHeight: scrolled ? 0 : 120, opacity: scrolled ? 0 : 1 }}
       >
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo + Site Name + Date */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
             {/* Logo image */}
             {config.site_logo && (
               <div className="shrink-0">
                 <Image
                   src={config.site_logo}
                   alt={siteName}
-                  width={80}
-                  height={80}
+                  width={60}
+                  height={60}
                   className="object-contain rounded-lg"
-                  style={{ maxHeight: 72, width: "auto" }}
+                  style={{ maxHeight: 52, width: "auto" }}
                   priority
                   unoptimized
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -218,11 +218,11 @@ export function Header() {
               </div>
             )}
             {/* Site name + date — always visible */}
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center min-w-0">
               <span
                 className="font-extrabold tracking-tight block"
                 style={{
-                  fontSize: "clamp(1.6rem, 3vw, 2.6rem)",
+                  fontSize: "clamp(1.3rem, 5vw, 2.6rem)",
                   lineHeight: 1.25,
                   paddingTop: "0.15em",
                   paddingBottom: "0.05em",
@@ -274,13 +274,13 @@ export function Header() {
           boxShadow: "0 2px 16px rgba(29, 78, 216, 0.35)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-4 flex items-center justify-between min-h-[44px] py-1.5">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center justify-between min-h-[44px] py-1">
 
-          {/* Compact logo — visible only when tier 1 is scrolled away */}
+          {/* Compact logo — always visible on mobile, scroll-based on md+ */}
           <Link
             href="/"
             className={`items-center gap-2 shrink-0 mr-3 transition-all duration-300 ${
-              scrolled ? "flex opacity-100" : "hidden opacity-0"
+              scrolled ? "flex opacity-100" : "flex md:hidden opacity-100 md:opacity-0"
             }`}
           >
             {config.site_logo && (
@@ -412,11 +412,11 @@ export function Header() {
 
       {/* ══════════ TIER 3: Trending Topics + Search ══════════ */}
       <div className="border-b border-border" style={{ background: "var(--glass-bg)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-        <div className="mx-auto max-w-7xl px-4 flex items-center gap-3 min-h-[40px] py-1">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-2 sm:gap-3 min-h-[36px] sm:min-h-[40px] py-1">
           {/* Trending label */}
-          <span className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-red-500 shrink-0">
-            <svg className="h-3.5 w-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-            {t("common.trending")}
+          <span className="flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-red-500 shrink-0">
+            <svg className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            <span className="hidden xs:inline">{t("common.trending")}</span>
           </span>
 
           {/* Trending topics marquee auto-scroll */}
@@ -485,7 +485,7 @@ export function Header() {
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" />
           <nav
-            className="absolute top-0 right-0 w-80 h-full shadow-2xl flex flex-col bg-surface"
+            className="absolute top-0 right-0 w-80 max-w-[90vw] h-full shadow-2xl flex flex-col bg-surface"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Sidebar header */}

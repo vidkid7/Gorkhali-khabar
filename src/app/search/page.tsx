@@ -48,8 +48,7 @@ export default function SearchPage() {
       fallback={
         <>
           <Header />
-          <main className="mx-auto max-w-7xl px-4 py-6">
-            <div className="skeleton h-12 w-full max-w-2xl mb-8" />
+          <main className="mx-auto max-w-7xl px-4 py-6 pb-safe">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <ArticleCardSkeleton key={i} />
@@ -128,7 +127,7 @@ function SearchContent() {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-4 py-6">
+      <main className="mx-auto max-w-7xl px-4 py-6 pb-safe">
         {/* Breadcrumb */}
         <nav className="text-sm text-muted mb-4" aria-label="Breadcrumb">
           <ol className="flex items-center gap-1">

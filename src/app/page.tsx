@@ -138,7 +138,7 @@ async function HeroSection() {
   const [main, ...rest] = featured;
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <ArticleCard
         key={main.id} slug={main.slug} title={main.title} title_en={main.title_en}
         excerpt={main.excerpt} excerpt_en={main.excerpt_en} featured_image={main.featured_image}
@@ -347,7 +347,7 @@ export default async function HomePage() {
         <AdSlot position="HEADER" />
       </div>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 space-y-10">
+      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-4 sm:py-6 space-y-8 sm:space-y-10 pb-safe">
         {/* Hero */}
         <Suspense fallback={<HeroSkeleton />}>
           <HeroSection />
@@ -357,8 +357,8 @@ export default async function HomePage() {
         <QuickLinks />
 
         {/* News + Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2">
             <Suspense fallback={<SectionSkeleton />}>
               <NewsSectionServer />
             </Suspense>

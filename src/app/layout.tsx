@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Devanagari, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
@@ -22,6 +22,14 @@ export const metadata: Metadata = {
   },
   description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
   keywords: ["news", "nepal", "nepali news", "समाचार", "नेपाल"],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  colorScheme: "light dark",
 };
 
 // FOUC prevention script - runs before React hydration
@@ -52,6 +60,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#c62828" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
       </head>
       <body className="min-h-full flex flex-col">
