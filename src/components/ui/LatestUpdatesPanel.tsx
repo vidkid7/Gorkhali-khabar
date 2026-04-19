@@ -58,7 +58,7 @@ export function LatestUpdatesPanel() {
       <button
         onClick={handleOpen}
         aria-label={t("sections.latestUpdates")}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-1 px-2 py-3 rounded-l-lg shadow-lg text-white text-[11px] font-bold transition-transform hover:-translate-x-0.5"
+        className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 px-2 py-3 rounded-l-lg shadow-lg text-white text-[11px] font-bold transition-transform hover:-translate-x-0.5"
         style={{
           background: "var(--primary)",
           writingMode: "vertical-rl",

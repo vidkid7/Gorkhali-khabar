@@ -10,7 +10,7 @@ interface BreakingNewsItem {
   article?: { slug: string } | null;
 }
 
-export function BreakingNewsTicker({ items }: { items: BreakingNewsItem[] }) {
+export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: { items: BreakingNewsItem[]; label?: string }) {
   const { language, t } = useLanguage();
 
   if (!items.length) return null;
@@ -23,7 +23,7 @@ export function BreakingNewsTicker({ items }: { items: BreakingNewsItem[] }) {
       aria-label={t("article.breakingNews")}
     >
       <span className="shrink-0 z-10 px-3 py-2 font-bold text-sm bg-accent-hover whitespace-nowrap">
-        ब्रेकिङ
+        {label}
       </span>
       <div className="overflow-hidden flex-1">
         <div className="flex animate-marquee whitespace-nowrap py-2 hover:[animation-play-state:paused]">

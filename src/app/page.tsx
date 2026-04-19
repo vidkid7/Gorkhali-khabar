@@ -128,8 +128,23 @@ async function getCategories() {
 
 async function BreakingNewsSection() {
   const items = await getBreakingNews();
-  if (!items.length) return null;
-  return <BreakingNewsTicker items={items} />;
+  if (items.length) return <BreakingNewsTicker items={items} />;
+
+  // Fallback: show recent articles as a scrolling ticker when no breaking news is set
+  const recentArticles = await prisma.article.findMany({
+    where: { status: "PUBLISHED" },
+    select: { id: true, slug: true, title: true, title_en: true },
+    orderBy: { published_at: "desc" },
+    take: 10,
+  });
+  if (!recentArticles.length) return null;
+  const fallbackItems = recentArticles.map((a) => ({
+    id: a.id,
+    title: a.title,
+    title_en: a.title_en,
+    article: { slug: a.slug },
+  }));
+  return <BreakingNewsTicker items={fallbackItems} label="ताजा समाचार" />;
 }
 
 async function HeroSection() {
