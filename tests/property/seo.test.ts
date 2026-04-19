@@ -11,7 +11,7 @@ function generateSeoMeta(article: {
   published_at?: string;
   category_name?: string;
 }) {
-  const siteUrl = "https://newsportal.com";
+  const siteUrl = "https://gorkhali.com";
   return {
     title: `${article.title} | समाचार पोर्टल`,
     description: article.excerpt || article.title,
@@ -34,7 +34,7 @@ function generateStructuredData(article: {
   published_at: string;
   category_name: string;
 }) {
-  const siteUrl = "https://newsportal.com";
+  const siteUrl = "https://gorkhali.com";
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",

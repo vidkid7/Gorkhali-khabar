@@ -17,20 +17,20 @@ async function main() {
   const editorPw = await pw("Editor@12345");
   const authorPw = await pw("Author@12345");
 
-  const admin = await prisma.user.upsert({ where: { email: "admin@newsportal.com" }, update: {}, create: { name: "राजेश शर्मा", email: "admin@newsportal.com", password_hash: adminPw, role: UserRole.ADMIN, email_verified: new Date() } });
-  const editor = await prisma.user.upsert({ where: { email: "editor@newsportal.com" }, update: {}, create: { name: "सुनिता पौडेल", email: "editor@newsportal.com", password_hash: editorPw, role: UserRole.EDITOR, email_verified: new Date() } });
-  const a1 = await prisma.user.upsert({ where: { email: "author@newsportal.com" }, update: {}, create: { name: "कमल अधिकारी", email: "author@newsportal.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a2 = await prisma.user.upsert({ where: { email: "author2@newsportal.com" }, update: {}, create: { name: "प्रतिभा गुरुङ", email: "author2@newsportal.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a3 = await prisma.user.upsert({ where: { email: "author3@newsportal.com" }, update: {}, create: { name: "विनोद थापा", email: "author3@newsportal.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a4 = await prisma.user.upsert({ where: { email: "author4@newsportal.com" }, update: {}, create: { name: "आस्था श्रेष्ठ", email: "author4@newsportal.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a5 = await prisma.user.upsert({ where: { email: "author5@newsportal.com" }, update: {}, create: { name: "रबिन्द्र बुढाथोकी", email: "author5@newsportal.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const admin = await prisma.user.upsert({ where: { email: "admin@gorkhali.com" }, update: {}, create: { name: "राजेश शर्मा", email: "admin@gorkhali.com", password_hash: adminPw, role: UserRole.ADMIN, email_verified: new Date() } });
+  const editor = await prisma.user.upsert({ where: { email: "editor@gorkhali.com" }, update: {}, create: { name: "सुनिता पौडेल", email: "editor@gorkhali.com", password_hash: editorPw, role: UserRole.EDITOR, email_verified: new Date() } });
+  const a1 = await prisma.user.upsert({ where: { email: "author@gorkhali.com" }, update: {}, create: { name: "कमल अधिकारी", email: "author@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const a2 = await prisma.user.upsert({ where: { email: "author2@gorkhali.com" }, update: {}, create: { name: "प्रतिभा गुरुङ", email: "author2@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const a3 = await prisma.user.upsert({ where: { email: "author3@gorkhali.com" }, update: {}, create: { name: "विनोद थापा", email: "author3@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const a4 = await prisma.user.upsert({ where: { email: "author4@gorkhali.com" }, update: {}, create: { name: "आस्था श्रेष्ठ", email: "author4@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const a5 = await prisma.user.upsert({ where: { email: "author5@gorkhali.com" }, update: {}, create: { name: "रबिन्द्र बुढाथोकी", email: "author5@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
   const authors = [admin, editor, a1, a2, a3, a4, a5];
 
   // Reader accounts for comments
-  const r1 = await prisma.user.upsert({ where: { email: "reader1@newsportal.com" }, update: {}, create: { name: "सुरेश केसी", email: "reader1@newsportal.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r2 = await prisma.user.upsert({ where: { email: "reader2@newsportal.com" }, update: {}, create: { name: "मीना राई", email: "reader2@newsportal.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r3 = await prisma.user.upsert({ where: { email: "reader3@newsportal.com" }, update: {}, create: { name: "दिपेन्द्र खड्का", email: "reader3@newsportal.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r4 = await prisma.user.upsert({ where: { email: "reader4@newsportal.com" }, update: {}, create: { name: "अनिता लामा", email: "reader4@newsportal.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
+  const r1 = await prisma.user.upsert({ where: { email: "reader1@gorkhali.com" }, update: {}, create: { name: "सुरेश केसी", email: "reader1@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
+  const r2 = await prisma.user.upsert({ where: { email: "reader2@gorkhali.com" }, update: {}, create: { name: "मीना राई", email: "reader2@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
+  const r3 = await prisma.user.upsert({ where: { email: "reader3@gorkhali.com" }, update: {}, create: { name: "दिपेन्द्र खड्का", email: "reader3@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
+  const r4 = await prisma.user.upsert({ where: { email: "reader4@gorkhali.com" }, update: {}, create: { name: "अनिता लामा", email: "reader4@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
   const readers = [r1, r2, r3, r4];
   console.log("   ✅ Users seeded");
 
@@ -408,11 +408,11 @@ async function main() {
     contact_email: "info@gorkhali.com",
     contact_address: { ne: "काठमाडौं, बागमती प्रदेश, नेपाल", en: "Kathmandu, Bagmati Province, Nepal" },
     registration_number: "१२३-४५६-७८९०",
-    social_facebook:  "https://facebook.com/newsportal",
-    social_twitter:   "https://twitter.com/newsportal",
-    social_youtube:   "https://youtube.com/@newsportal",
-    social_instagram: "https://instagram.com/newsportal",
-    social_tiktok:    "https://tiktok.com/@newsportal",
+    social_facebook:  "https://facebook.com/gorkhalikhabar",
+    social_twitter:   "https://twitter.com/gorkhalikhabar",
+    social_youtube:   "https://youtube.com/@gorkhalikhabar",
+    social_instagram: "https://instagram.com/gorkhalikhabar",
+    social_tiktok:    "https://tiktok.com/@gorkhalikhabar",
     homepage_section_order: ["breaking","hero","samachar","reels","feature","cover-story","saptaahanta","prabidhi","antarvaarta","khelkud","sahitya","antarrashtriya","video","bichitra","photo-gallery"],
     features_comments: true,
     features_bookmarks: true,
@@ -553,9 +553,9 @@ async function main() {
   console.log("   ✅ Rashifal seeded");
 
   console.log("\n✅ All done!");
-  console.log("   Admin:  admin@newsportal.com  / Admin@12345");
-  console.log("   Editor: editor@newsportal.com / Editor@12345");
-  console.log("   Author: author@newsportal.com / Author@12345");
+  console.log("   Admin:  admin@gorkhali.com  / Admin@12345");
+  console.log("   Editor: editor@gorkhali.com / Editor@12345");
+  console.log("   Author: author@gorkhali.com / Author@12345");
 }
 
 main()
