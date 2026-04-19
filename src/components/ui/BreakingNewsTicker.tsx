@@ -25,7 +25,7 @@ export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: {
       <span className="shrink-0 z-10 px-3 py-2 font-bold text-sm bg-accent-hover whitespace-nowrap">
         {label}
       </span>
-      <div className="overflow-hidden flex-1">
+      <div className="overflow-hidden flex-1 min-w-0">
         <div className="flex animate-marquee whitespace-nowrap py-2 hover:[animation-play-state:paused]">
           {items.concat(items).map((item, idx) => {
             const title =
