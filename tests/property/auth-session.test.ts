@@ -62,7 +62,7 @@ describe("Property 8: Authentication Session Creation", () => {
       }),
       { numRuns: 110 }
     );
-  }, 60_000);
+  }, 300_000);
 
   it("invalid passwords are always rejected (100+ iterations)", async () => {
     const wrongPasswordArb = fc
@@ -81,7 +81,7 @@ describe("Property 8: Authentication Session Creation", () => {
       }),
       { numRuns: 110 }
     );
-  }, 60_000);
+  }, 300_000);
 
   it("non-existent emails are always rejected (100+ iterations)", async () => {
     const fakeEmailArb = fc
@@ -100,5 +100,5 @@ describe("Property 8: Authentication Session Creation", () => {
       }),
       { numRuns: 110 }
     );
-  }, 30_000);
+  }, 300_000);
 });

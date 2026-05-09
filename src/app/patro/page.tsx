@@ -270,7 +270,7 @@ export default function PatroPage() {
                     {hasEvent && (
                       <span className="absolute top-0.5 right-0.5 flex items-center justify-center w-3.5 h-3.5 rounded-full text-[7px] font-bold"
                         style={{ background: hasPublicHoliday ? "#e53935" : "#f59e0b", color: "#fff" }}>
-                        {events.length > 1 ? `+${events.length}` : events[0].emoji.slice(0, 1)}
+                        {events.length > 1 ? `+${events.length}` : "•"}
                       </span>
                     )}
                   </button>

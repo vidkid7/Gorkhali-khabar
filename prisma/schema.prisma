@@ -511,6 +511,20 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+model NewsletterSubscription {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  language   String   @default("ne")
+  source     String?
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @updatedAt @db.Timestamptz
+
+  @@index([is_active])
+  @@index([created_at])
+  @@map("newsletter_subscriptions")
+}
+
 // ─── Audit Log ──────────────────────────────────────────
 
 model AuditLog {

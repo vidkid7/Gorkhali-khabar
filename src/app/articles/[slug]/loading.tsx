@@ -1,4 +1,6 @@
 export default function ArticleLoading() {
+  const lineWidths = ["92%", "88%", "96%", "82%", "94%", "90%", "86%", "98%", "84%", "91%", "87%", "76%"];
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 animate-pulse">
       {/* Breadcrumb */}
@@ -18,8 +20,8 @@ export default function ArticleLoading() {
       <div className="w-full h-64 md:h-96 bg-[var(--surface)] rounded-lg mb-6" />
       {/* Content lines */}
       <div className="space-y-3">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="h-4 bg-[var(--surface)] rounded" style={{ width: `${75 + Math.random() * 25}%` }} />
+        {lineWidths.map((width, i) => (
+          <div key={i} className="h-4 bg-[var(--surface)] rounded" style={{ width }} />
         ))}
       </div>
     </div>

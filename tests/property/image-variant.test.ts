@@ -7,6 +7,9 @@ const TEST_PREFIX = "test-img-var";
 let testUploaderId: string;
 
 beforeAll(async () => {
+  await prisma.mediaFile.deleteMany({ where: { filename: { startsWith: TEST_PREFIX } } });
+  await prisma.user.deleteMany({ where: { email: { startsWith: TEST_PREFIX } } });
+
   const user = await prisma.user.create({
     data: {
       name: "Image Test User",

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getSiteConfig } from "@/lib/site-config";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "गोपनीयता नीति | Privacy Policy",
@@ -9,7 +12,11 @@ export const metadata: Metadata = {
     "समाचार पोर्टलको गोपनीयता नीति - News Portal Privacy Policy",
 };
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const config = await getSiteConfig();
+  const siteNameNe = config.site_name.ne;
+  const siteNameEn = config.site_name.en;
+
   return (
     <>
       <Header />
@@ -37,7 +44,7 @@ export default function PrivacyPolicyPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3">१. परिचय</h2>
             <p className="text-muted leading-relaxed">
-              समाचार पोर्टलमा स्वागत छ। हामी तपाईंको गोपनीयताको सम्मान गर्छौं र
+              {siteNameNe}मा स्वागत छ। हामी तपाईंको गोपनीयताको सम्मान गर्छौं र
               तपाईंको व्यक्तिगत जानकारीको सुरक्षा प्रति प्रतिबद्ध छौं। यो
               गोपनीयता नीतिले हामीले कसरी तपाईंको जानकारी सङ्कलन, प्रयोग र
               संरक्षण गर्छौं भनेर वर्णन गर्छ।
@@ -74,9 +81,9 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl font-semibold mt-6 mb-3">
               ५. सम्पर्क
             </h2>
-            <p className="text-muted">
-              गोपनीयता सम्बन्धी प्रश्नका लागि: privacy@newsportal.com
-            </p>
+            {config.contact_email && (
+              <p className="text-muted">गोपनीयता सम्बन्धी प्रश्नका लागि: {config.contact_email}</p>
+            )}
           </section>
 
           {/* English */}
@@ -90,7 +97,7 @@ export default function PrivacyPolicyPage() {
               1. Introduction
             </h2>
             <p className="text-muted leading-relaxed">
-              Welcome to News Portal. We respect your privacy and are committed
+              Welcome to {siteNameEn}. We respect your privacy and are committed
               to protecting your personal information. This privacy policy
               describes how we collect, use, and safeguard your information.
             </p>
@@ -123,9 +130,9 @@ export default function PrivacyPolicyPage() {
             </p>
 
             <h2 className="text-xl font-semibold mt-6 mb-3">5. Contact</h2>
-            <p className="text-muted">
-              For privacy inquiries: privacy@newsportal.com
-            </p>
+            {config.contact_email && (
+              <p className="text-muted">For privacy inquiries: {config.contact_email}</p>
+            )}
           </section>
         </article>
       </main>

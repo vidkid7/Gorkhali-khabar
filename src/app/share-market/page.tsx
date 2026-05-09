@@ -38,52 +38,12 @@ function isMarketOpen(): boolean {
   return (day >= 0 && day <= 4) && timeOk;
 }
 
-function generateData(): { stocks: StockData[]; indices: IndexData[] } {
-  const base = [
-    { symbol: "NABIL",  name: "नबिल बैंक",            basePrice: 1245, vol: 12450 },
-    { symbol: "NLIC",   name: "नेपाल लाइफ इन्स्योरेन्स", basePrice: 1024, vol: 8920  },
-    { symbol: "SCB",    name: "स्ट्यान्डर्ड चार्टर्ड बैंक", basePrice: 876,  vol: 3450  },
-    { symbol: "SBI",    name: "नेपाल एसबीआई बैंक",     basePrice: 456,  vol: 15680 },
-    { symbol: "HBL",    name: "हिमालयन बैंक",          basePrice: 1478, vol: 9870  },
-    { symbol: "GBIME",  name: "ग्लोबल आइएमई बैंक",     basePrice: 342,  vol: 21340 },
-    { symbol: "NTC",    name: "नेपाल टेलिकम",          basePrice: 789,  vol: 4560  },
-    { symbol: "NIFRA",  name: "नेपाल इन्फ्रास्ट्रक्चर", basePrice: 567,  vol: 7890  },
-    { symbol: "SHIVM",  name: "शिवम् सिमेन्ट्स",       basePrice: 445,  vol: 6780  },
-    { symbol: "CHDC",   name: "चिल्ड्रेन डेभलपमेन्ट",  basePrice: 456,  vol: 5670  },
-  ];
-
-  const stocks = base.map((s) => {
-    const v = (Math.random() - 0.5) * 0.06;
-    const change = +(s.basePrice * v).toFixed(2);
-    const price = +(s.basePrice + change).toFixed(2);
-    return {
-      symbol: s.symbol, name: s.name, price, change,
-      pct: +((change / s.basePrice) * 100).toFixed(2),
-      volume: Math.floor(s.vol * (0.8 + Math.random() * 0.4)),
-      high: +(price * (1 + Math.random() * 0.02)).toFixed(2),
-      low:  +(price * (1 - Math.random() * 0.02)).toFixed(2),
-    };
-  });
-
-  const nepseBase = 2456.78;
-  const nc = +(nepseBase * (Math.random() - 0.5) * 0.03).toFixed(2);
-  const indices: IndexData[] = [
-    { name: "NEPSE",           nameNe: "नेप्से",        value: +(nepseBase + nc).toFixed(2), change: nc, pct: +((nc/nepseBase)*100).toFixed(2) },
-    { name: "Sensitive",       nameNe: "सेन्सेटिभ",     value: +(467.89 + (Math.random()-0.5)*12).toFixed(2), change: +((Math.random()-0.5)*12).toFixed(2), pct: +((Math.random()-0.5)*3).toFixed(2) },
-    { name: "Float",           nameNe: "फ्लोट",         value: +(198.34 + (Math.random()-0.5)*6).toFixed(2),  change: +((Math.random()-0.5)*6).toFixed(2),  pct: +((Math.random()-0.5)*3).toFixed(2) },
-    { name: "Sensitive Float", nameNe: "सेन्सेटिभ फ्लोट", value: +(134.56 + (Math.random()-0.5)*4).toFixed(2), change: +((Math.random()-0.5)*4).toFixed(2), pct: +((Math.random()-0.5)*3).toFixed(2) },
-  ];
-
-  return { stocks, indices };
-}
-
-const SECTORS = ["सबै", "बैंकिङ", "बीमा", "हाइड्रो", "सिमेन्ट", "टेलिकम"] as const;
+type MarketData = { stocks: StockData[]; indices: IndexData[] };
 
 export default function ShareMarketPage() {
   const { language } = useLanguage();
-  const [data, setData] = useState<ReturnType<typeof generateData> | null>(null);
+  const [data, setData] = useState<MarketData | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [sector, setSector] = useState("सबै");
   const [countdown, setCountdown] = useState(60);
   const [marketOpen] = useState(isMarketOpen);
   const [isLive, setIsLive] = useState(false);
@@ -93,14 +53,17 @@ export default function ShareMarketPage() {
       const res = await fetch("/api/v1/nepse");
       if (res.ok) {
         const json = await res.json();
-        setData({ stocks: json.stocks, indices: json.indices });
+        setData({
+          stocks: Array.isArray(json.stocks) ? json.stocks : [],
+          indices: Array.isArray(json.indices) ? json.indices : [],
+        });
         setIsLive(json.live === true);
       } else {
-        setData(generateData());
+        setData({ stocks: [], indices: [] });
         setIsLive(false);
       }
     } catch {
-      setData(generateData());
+      setData({ stocks: [], indices: [] });
       setIsLive(false);
     }
     setLastUpdate(new Date());
@@ -131,6 +94,8 @@ export default function ShareMarketPage() {
       </div>
     );
   }
+
+  const hasMarketData = data.indices.length > 0 || data.stocks.length > 0;
 
   return (
     <>
@@ -171,38 +136,30 @@ export default function ShareMarketPage() {
           </div>
 
           {/* Index Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            {data.indices.map((idx) => (
-              <div key={idx.name} className="rounded-xl p-4 transition-shadow hover:shadow-md"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                <p className="text-xs font-semibold mb-1" style={{ color: "var(--muted)" }}>
-                  {language === "ne" ? idx.nameNe : idx.name}
-                </p>
-                <p className="text-xl font-bold tabular-nums" style={{ color: "var(--foreground)" }}>
-                  {idx.value.toLocaleString()}
-                </p>
-                <p className={`text-sm font-semibold mt-1 flex items-center gap-1 ${idx.change >= 0 ? "text-green-600" : "text-red-500"}`}>
-                  {idx.change >= 0 ? "▲" : "▼"} {Math.abs(idx.change).toFixed(2)}
-                  <span className="text-xs opacity-80">({Math.abs(idx.pct).toFixed(2)}%)</span>
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Sector Filter */}
-          <div className="flex gap-2 flex-wrap mb-4">
-            {SECTORS.map((s) => (
-              <button key={s} onClick={() => setSector(s)}
-                className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
-                style={{
-                  background: sector === s ? "var(--primary)" : "var(--surface)",
-                  color: sector === s ? "#fff" : "var(--foreground)",
-                  border: "1px solid var(--border)",
-                }}>
-                {s}
-              </button>
-            ))}
-          </div>
+          {data.indices.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+              {data.indices.map((idx) => (
+                <div key={idx.name} className="rounded-xl p-4 transition-shadow hover:shadow-md"
+                  style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                  <p className="text-xs font-semibold mb-1" style={{ color: "var(--muted)" }}>
+                    {language === "ne" ? idx.nameNe : idx.name}
+                  </p>
+                  <p className="text-xl font-bold tabular-nums" style={{ color: "var(--foreground)" }}>
+                    {idx.value.toLocaleString()}
+                  </p>
+                  <p className={`text-sm font-semibold mt-1 flex items-center gap-1 ${idx.change >= 0 ? "text-green-600" : "text-red-500"}`}>
+                    {idx.change >= 0 ? "▲" : "▼"} {Math.abs(idx.change).toFixed(2)}
+                    <span className="text-xs opacity-80">({Math.abs(idx.pct).toFixed(2)}%)</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mb-8 rounded-xl p-5 text-sm font-semibold"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}>
+              {ne("NEPSE बाट हाल बजार डाटा प्राप्त हुन सकेन। केही बेरपछि फेरि प्रयास गर्नुहोस्।", "NEPSE market data is not available right now. Please try again shortly.")}
+            </div>
+          )}
 
           {/* Stock Table */}
           <div className="rounded-xl overflow-hidden shadow-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
@@ -235,41 +192,49 @@ export default function ShareMarketPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.stocks.map((stock) => (
-                    <tr key={stock.symbol}
-                      className="transition-colors cursor-pointer"
-                      style={{ borderBottom: "1px solid var(--border)" }}
-                      onMouseOver={(e) => (e.currentTarget.style.background = "var(--primary-light)")}
-                      onMouseOut={(e)  => (e.currentTarget.style.background = "transparent")}>
-                      <td className="px-4 py-3 font-bold tracking-wide" style={{ color: "var(--primary)" }}>
-                        {stock.symbol}
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell text-sm" style={{ color: "var(--muted)" }}>
-                        {stock.name}
-                      </td>
-                      <td className="px-4 py-3 text-right font-semibold tabular-nums" style={{ color: "var(--foreground)" }}>
-                        {fmt(stock.price)}
-                      </td>
-                      <td className={`px-4 py-3 text-right font-semibold tabular-nums ${stock.change >= 0 ? "text-green-600" : "text-red-500"}`}>
-                        {stock.change >= 0 ? "+" : ""}{stock.change.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${stock.pct >= 0 ? "text-green-700" : "text-red-600"}`}
-                          style={{ background: stock.pct >= 0 ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)" }}>
-                          {stock.pct >= 0 ? "+" : ""}{stock.pct.toFixed(2)}%
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right hidden lg:table-cell text-green-600 tabular-nums text-sm">
-                        {fmt(stock.high)}
-                      </td>
-                      <td className="px-4 py-3 text-right hidden lg:table-cell text-red-500 tabular-nums text-sm">
-                        {fmt(stock.low)}
-                      </td>
-                      <td className="px-4 py-3 text-right hidden sm:table-cell tabular-nums text-sm" style={{ color: "var(--muted)" }}>
-                        {stock.volume.toLocaleString()}
+                  {data.stocks.length > 0 ? (
+                    data.stocks.map((stock) => (
+                      <tr key={stock.symbol}
+                        className="transition-colors cursor-pointer"
+                        style={{ borderBottom: "1px solid var(--border)" }}
+                        onMouseOver={(e) => (e.currentTarget.style.background = "var(--primary-light)")}
+                        onMouseOut={(e)  => (e.currentTarget.style.background = "transparent")}>
+                        <td className="px-4 py-3 font-bold tracking-wide" style={{ color: "var(--primary)" }}>
+                          {stock.symbol}
+                        </td>
+                        <td className="px-4 py-3 hidden md:table-cell text-sm" style={{ color: "var(--muted)" }}>
+                          {stock.name}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold tabular-nums" style={{ color: "var(--foreground)" }}>
+                          {fmt(stock.price)}
+                        </td>
+                        <td className={`px-4 py-3 text-right font-semibold tabular-nums ${stock.change >= 0 ? "text-green-600" : "text-red-500"}`}>
+                          {stock.change >= 0 ? "+" : ""}{stock.change.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${stock.pct >= 0 ? "text-green-700" : "text-red-600"}`}
+                            style={{ background: stock.pct >= 0 ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)" }}>
+                            {stock.pct >= 0 ? "+" : ""}{stock.pct.toFixed(2)}%
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right hidden lg:table-cell text-green-600 tabular-nums text-sm">
+                          {fmt(stock.high)}
+                        </td>
+                        <td className="px-4 py-3 text-right hidden lg:table-cell text-red-500 tabular-nums text-sm">
+                          {fmt(stock.low)}
+                        </td>
+                        <td className="px-4 py-3 text-right hidden sm:table-cell tabular-nums text-sm" style={{ color: "var(--muted)" }}>
+                          {stock.volume.toLocaleString()}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="px-4 py-8 text-center text-sm font-semibold" colSpan={8} style={{ color: "var(--muted)" }}>
+                        {ne("शीर्ष कारोबार डाटा उपलब्ध छैन।", "Top traded stock data is not available.")}
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
@@ -279,12 +244,9 @@ export default function ShareMarketPage() {
             style={{ background: isLive ? "rgba(22,163,74,0.08)" : "var(--surface-alt)", color: "var(--muted)", border: `1px solid ${isLive ? "rgba(22,163,74,0.3)" : "var(--border)"}` }}>
             <span className="text-lg shrink-0">{isLive ? "🟢" : "💡"}</span>
             <span>
-              {isLive
+              {isLive && hasMarketData
                 ? ne("वास्तविक NEPSE डाटा — nepalstock.com.np बाट।", "Live NEPSE data sourced from nepalstock.com.np.")
-                : ne(
-                    "यो सिमुलेटेड बजार डाटा हो। NEPSE API उपलब्ध हुँदा स्वचालित रूपमा लाइभ डाटा देखाउनेछ।",
-                    "Simulated market data. Will auto-show live NEPSE data when the API is reachable."
-                  )}
+                : ne("NEPSE स्रोत उपलब्ध नभएकाले कुनै नक्कली बजार डाटा देखाइएको छैन।", "The NEPSE source is unavailable, so no simulated market data is shown.")}
             </span>
           </div>
         </div>

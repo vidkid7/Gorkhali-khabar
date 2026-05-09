@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getSiteConfig } from "@/lib/site-config";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "हाम्रो बारेमा | About Us",
@@ -9,7 +12,13 @@ export const metadata: Metadata = {
     "समाचार पोर्टलको बारेमा - About News Portal",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const config = await getSiteConfig();
+  const siteNameNe = config.site_name.ne;
+  const siteNameEn = config.site_name.en;
+  const addressNe = config.contact_address.ne;
+  const addressEn = config.contact_address.en;
+
   return (
     <>
       <Header />
@@ -34,7 +43,7 @@ export default function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3">हाम्रो उद्देश्य</h2>
             <p className="text-muted leading-relaxed">
-              समाचार पोर्टल नेपालको एक विश्वसनीय अनलाइन समाचार सेवा हो। हामी
+              {siteNameNe} नेपालको एक विश्वसनीय अनलाइन समाचार सेवा हो। हामी
               निष्पक्ष, सत्य र समयमा समाचार प्रदान गर्न प्रतिबद्ध छौं।
             </p>
 
@@ -53,9 +62,9 @@ export default function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3">सम्पर्क</h2>
             <ul className="list-none pl-0 text-muted space-y-1">
-              <li>📍 काठमाडौं, नेपाल</li>
-              <li>📞 +977-1-4XXXXXX</li>
-              <li>✉️ info@newsportal.com</li>
+              {addressNe && <li>📍 {addressNe}</li>}
+              {config.contact_phone && <li>📞 {config.contact_phone}</li>}
+              {config.contact_email && <li>✉️ {config.contact_email}</li>}
             </ul>
           </section>
 
@@ -65,7 +74,7 @@ export default function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3">Our Mission</h2>
             <p className="text-muted leading-relaxed">
-              News Portal is a trusted online news service in Nepal. We are
+              {siteNameEn} is a trusted online news service in Nepal. We are
               committed to delivering unbiased, truthful, and timely news.
             </p>
 
@@ -84,9 +93,9 @@ export default function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3">Contact</h2>
             <ul className="list-none pl-0 text-muted space-y-1">
-              <li>📍 Kathmandu, Nepal</li>
-              <li>📞 +977-1-4XXXXXX</li>
-              <li>✉️ info@newsportal.com</li>
+              {addressEn && <li>📍 {addressEn}</li>}
+              {config.contact_phone && <li>📞 {config.contact_phone}</li>}
+              {config.contact_email && <li>✉️ {config.contact_email}</li>}
             </ul>
           </section>
         </article>

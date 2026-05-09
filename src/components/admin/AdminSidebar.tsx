@@ -22,6 +22,7 @@ const navItems = [
   { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: "🪙" },
   { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: "💱" },
   { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: "♈" },
+  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: "✉️" },
   { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: "👥" },
   { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: "⚙️" },
   { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: "📋" },

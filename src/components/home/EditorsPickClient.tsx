@@ -23,12 +23,12 @@ export function EditorsPickClient({ articles }: { articles: Article[] }) {
   const { t } = useLanguage();
 
   return (
-    <section className="bg-surface rounded-xl p-8 border border-border">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-1 h-8 bg-accent rounded-full" />
-        <h2 className="text-2xl font-bold text-foreground">{t("sections.editorsPick")}</h2>
+    <section className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-1 rounded-full bg-accent" />
+        <h2 className="text-xl font-black text-foreground sm:text-2xl">{t("sections.editorsPick")}</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard
             key={article.id}

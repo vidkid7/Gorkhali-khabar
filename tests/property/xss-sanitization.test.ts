@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import fc from "fast-check";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
+
+const sanitize = (html: string) => sanitizeHtml(html);
 
 const scriptTagArb = fc.oneof(
   fc.constant("<script>alert('xss')</script>"),
@@ -42,7 +44,7 @@ describe("Property 16: XSS Sanitization", () => {
   it("script tags are always removed (100+ iterations)", () => {
     fc.assert(
       fc.property(scriptTagArb, (html) => {
-        const sanitized = DOMPurify.sanitize(html);
+        const sanitized = sanitize(html);
         expect(sanitized).not.toContain("<script");
         expect(sanitized).not.toContain("</script>");
         expect(sanitized.toLowerCase()).not.toContain("<script");
@@ -54,7 +56,7 @@ describe("Property 16: XSS Sanitization", () => {
   it("event handlers are always removed (100+ iterations)", () => {
     fc.assert(
       fc.property(eventHandlerArb, (html) => {
-        const sanitized = DOMPurify.sanitize(html);
+        const sanitized = sanitize(html);
         expect(sanitized.toLowerCase()).not.toMatch(/on\w+\s*=/);
       }),
       { numRuns: 120 }
@@ -64,7 +66,7 @@ describe("Property 16: XSS Sanitization", () => {
   it("iframes are removed (100+ iterations)", () => {
     fc.assert(
       fc.property(iframeArb, (html) => {
-        const sanitized = DOMPurify.sanitize(html);
+        const sanitized = sanitize(html);
         expect(sanitized.toLowerCase()).not.toContain("<iframe");
       }),
       { numRuns: 120 }
@@ -74,7 +76,7 @@ describe("Property 16: XSS Sanitization", () => {
   it("safe HTML is preserved while malicious parts are stripped (100+ iterations)", () => {
     fc.assert(
       fc.property(mixedXssArb, (html) => {
-        const sanitized = DOMPurify.sanitize(html);
+        const sanitized = sanitize(html);
         // No script tags
         expect(sanitized.toLowerCase()).not.toContain("<script");
         // No event handlers
@@ -91,8 +93,8 @@ describe("Property 16: XSS Sanitization", () => {
       fc.property(
         fc.string({ minLength: 0, maxLength: 200 }),
         (input) => {
-          const once = DOMPurify.sanitize(input);
-          const twice = DOMPurify.sanitize(once);
+          const once = sanitize(input);
+          const twice = sanitize(once);
           expect(once).toBe(twice);
         }
       ),

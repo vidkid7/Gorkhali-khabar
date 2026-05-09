@@ -61,7 +61,7 @@ export function ArticleContent({
   const shareUrl =
     typeof window !== "undefined"
       ? window.location.href
-      : `https://example.com/articles/${slug}`;
+      : `${process.env.NEXT_PUBLIC_SITE_URL || ""}/articles/${slug}`;
 
   return (
     <article>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Error({
@@ -42,9 +43,9 @@ export default function Error({
           <button onClick={() => reset()} className="btn-primary">
             {t("errors.tryAgain")}
           </button>
-          <a href="/" className="btn-secondary">
+          <Link href="/" className="btn-secondary">
             {t("errors.goHome")}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

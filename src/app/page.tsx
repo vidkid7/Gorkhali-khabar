@@ -13,7 +13,6 @@ import { QuickLinks } from "@/components/home/QuickLinks";
 import { EditorsPickClient } from "@/components/home/EditorsPickClient";
 import { LatestUpdatesPanel } from "@/components/ui/LatestUpdatesPanel";
 import { QuickNewsBanner } from "@/components/ui/QuickNewsBanner";
-import { TodayStrip } from "@/components/home/TodayStrip";
 import { HeroDeck } from "@/components/home/HeroDeck";
 import { DailyBrief } from "@/components/home/DailyBrief";
 import {
@@ -349,14 +348,12 @@ export default async function HomePage() {
       {/* Latest Updates floating panel */}
       <LatestUpdatesPanel />
 
-      <TodayStrip />
-
       {/* Header Banner Ad */}
       <div className="mx-auto hidden max-w-7xl px-4 pt-4 md:block">
         <AdSlot position="HEADER" />
       </div>
 
-      <main className="mx-auto w-full max-w-7xl min-w-0 px-3 sm:px-4 py-4 sm:py-6 space-y-8 sm:space-y-10 pb-safe">
+      <main className="mx-auto w-full max-w-7xl min-w-0 px-3 sm:px-4 py-4 sm:py-6 space-y-7 sm:space-y-10 pb-4 sm:pb-6">
         {/* Hero */}
         <Suspense fallback={<HeroSkeleton />}>
           <HeroSection />

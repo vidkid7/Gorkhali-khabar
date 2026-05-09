@@ -8,6 +8,16 @@ let testUserId: string;
 let testArticleId: string;
 
 beforeAll(async () => {
+  await prisma.commentVote.deleteMany({
+    where: { comment: { article: { slug: { startsWith: TEST_PREFIX } } } },
+  });
+  await prisma.comment.deleteMany({
+    where: { article: { slug: { startsWith: TEST_PREFIX } } },
+  });
+  await prisma.article.deleteMany({ where: { slug: { startsWith: TEST_PREFIX } } });
+  await prisma.category.deleteMany({ where: { slug: { startsWith: TEST_PREFIX } } });
+  await prisma.user.deleteMany({ where: { email: { startsWith: TEST_PREFIX } } });
+
   const user = await prisma.user.create({
     data: {
       name: "Comment Test User",

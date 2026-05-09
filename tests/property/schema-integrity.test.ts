@@ -8,6 +8,10 @@ let testAuthorId: string;
 let testCategoryId: string;
 
 beforeAll(async () => {
+  await prisma.article.deleteMany({ where: { slug: { startsWith: TEST_PREFIX } } });
+  await prisma.category.deleteMany({ where: { slug: { startsWith: TEST_PREFIX } } });
+  await prisma.user.deleteMany({ where: { email: { startsWith: TEST_PREFIX } } });
+
   // Create a test author and category for article creation
   const author = await prisma.user.create({
     data: {

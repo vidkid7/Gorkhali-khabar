@@ -65,16 +65,6 @@ const SIDEBAR_ITEMS = [
   { key: "finance", href: "/finance", color: "#1b5e20", d: "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z", isNew: false },
 ];
 
-// Mock NEPSE stock data
-const MOCK_STOCKS = [
-  { name: "NABIL", price: 1589, change: 62 },
-  { name: "NLIC", price: 1024, change: -15 },
-  { name: "CHDC", price: 890, change: 28 },
-  { name: "SCB", price: 1320, change: -28.9 },
-  { name: "SBI", price: 456, change: 12 },
-  { name: "HBL", price: 1678, change: 45 },
-];
-
 /* ─── Social Icons ────────────────────────────────────────────────────── */
 
 function FacebookIcon() {
@@ -162,7 +152,7 @@ export function Header() {
           articles.slice(0, 8).map((a: Record<string, string>) => ({
             title: language === "en" ? (a.title_en || a.title) : a.title,
             slug: a.slug,
-            image: a.featured_image || `https://picsum.photos/seed/${a.slug}/40/40`,
+            image: a.featured_image || "",
           }))
         );
       })
@@ -432,7 +422,15 @@ export function Header() {
                 {[...trendingTopics, ...trendingTopics].map((topic, i) => (
                   <Link key={i} href={`/articles/${topic.slug}`} className="flex items-center gap-1.5 shrink-0 group">
                     <div className="relative w-7 h-7 rounded-full overflow-hidden bg-muted shrink-0 ring-2 ring-white dark:ring-gray-700">
-                      <Image src={topic.image || `https://picsum.photos/seed/${i}/40/40`} alt="" fill sizes="28px" className="object-cover" />
+                      {topic.image ? (
+                        <Image src={topic.image} alt="" fill sizes="28px" className="object-cover" />
+                      ) : (
+                        <span className="grid h-full w-full place-items-center bg-primary-light text-primary">
+                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M4 4h14a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-1.5 1.5H5a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2Zm1 13a1 1 0 0 0 1 1h12V6H4v11a1 1 0 0 0 1 1Zm2-9h8v2H7V8Zm0 4h8v2H7v-2Z" />
+                          </svg>
+                        </span>
+                      )}
                     </div>
                     <span className="text-xs text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[100px] truncate">
                       {topic.title}
@@ -543,22 +541,29 @@ export function Header() {
               ))}
             </div>
 
-            {/* Stock ticker */}
+            {/* Finance shortcuts */}
             <div className="border-t border-border px-4 py-3 shrink-0">
               <div className="flex items-center gap-2 mb-2">
                 <svg className="h-4 w-4 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-                <span className="text-xs font-bold text-accent">NEPSE {t("common.trending")}</span>
+                <span className="text-xs font-bold text-accent">
+                  {language === "ne" ? "बजार र वित्त" : "Markets and finance"}
+                </span>
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-                {MOCK_STOCKS.slice(0, 4).map((s) => (
-                  <div key={s.name} className="shrink-0 px-2 py-1 rounded bg-surface-alt text-[10px]">
-                    <span className="font-bold text-foreground">{s.name}</span>{" "}
-                    <span className="text-muted">{s.price.toLocaleString()}</span>{" "}
-                    <span className={`font-medium ${s.change >= 0 ? "text-green-600" : "text-red-500"}`}>
-                      {s.change >= 0 ? "+" : ""}{s.change}
-                    </span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/share-market"
+                  className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  NEPSE
+                </Link>
+                <Link
+                  href="/finance"
+                  className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {language === "ne" ? "विनिमय दर" : "Finance"}
+                </Link>
               </div>
             </div>
 
