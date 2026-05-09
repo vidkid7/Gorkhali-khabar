@@ -64,11 +64,10 @@ export function CookieConsent() {
         role="dialog"
         aria-label="Cookie consent"
         aria-modal={showPreferences}
-        className="fixed bottom-0 inset-x-0 z-50 p-2 sm:p-4"
-        style={{ paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+        className="cookie-consent-shell fixed inset-x-0 z-50 p-2 sm:p-4"
       >
-        <div className="mx-auto max-w-4xl card p-3 sm:p-6 shadow-lg">
-          <p className="text-xs sm:text-sm text-muted mb-3">
+        <div className="mx-auto max-w-4xl card p-3 sm:p-5 shadow-lg max-h-[min(58vh,22rem)] overflow-y-auto">
+          <p className="text-xs sm:text-sm text-muted mb-3 leading-relaxed">
             हामी तपाईंको अनुभव सुधार गर्न कुकीहरू प्रयोग गर्छौं।{" "}
             We use cookies to improve your experience.{" "}
             <a
@@ -79,26 +78,29 @@ export function CookieConsent() {
             </a>
           </p>
 
-          {/* Mobile: 2-col grid for primary actions, full-width for manage */}
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+          {/* Compact actions so the banner does not cover the mobile nav. */}
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
             <button
               onClick={acceptAll}
-              className="btn-primary text-xs sm:text-sm"
+              className="inline-flex min-h-10 items-center justify-center rounded-lg bg-accent px-2 py-2 text-[11px] font-semibold leading-tight text-white transition-colors hover:bg-accent-hover sm:px-4 sm:text-sm"
               autoFocus
             >
-              Accept All
+              <span className="sm:hidden">Accept</span>
+              <span className="hidden sm:inline">Accept All</span>
             </button>
             <button
               onClick={rejectNonEssential}
-              className="btn-secondary text-xs sm:text-sm"
+              className="inline-flex min-h-10 items-center justify-center rounded-lg border border-border bg-surface px-2 py-2 text-[11px] font-semibold leading-tight text-foreground transition-colors hover:bg-surface-alt sm:px-4 sm:text-sm"
             >
-              Reject Non-Essential
+              <span className="sm:hidden">Reject</span>
+              <span className="hidden sm:inline">Reject Non-Essential</span>
             </button>
             <button
               onClick={() => setShowPreferences(true)}
-              className="btn-secondary text-xs sm:text-sm col-span-2 sm:col-span-1"
+              className="inline-flex min-h-10 items-center justify-center rounded-lg border border-border bg-surface px-2 py-2 text-[11px] font-semibold leading-tight text-foreground transition-colors hover:bg-surface-alt sm:px-4 sm:text-sm"
             >
-              Manage Preferences
+              <span className="sm:hidden">Manage</span>
+              <span className="hidden sm:inline">Manage Preferences</span>
             </button>
           </div>
         </div>
@@ -107,7 +109,7 @@ export function CookieConsent() {
       {/* Preferences modal */}
       {showPreferences && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-[220] flex items-center justify-center bg-black/50 p-4"
           role="dialog"
           aria-label="Cookie preferences"
           aria-modal="true"
@@ -118,7 +120,7 @@ export function CookieConsent() {
             if (e.key === "Escape") setShowPreferences(false);
           }}
         >
-          <div className="card p-6 max-w-md w-full space-y-4">
+          <div className="card p-4 sm:p-6 max-w-md w-full max-h-[85vh] overflow-y-auto space-y-4">
             <h2 className="text-lg font-bold">
               Cookie Preferences / कुकी प्राथमिकताहरू
             </h2>
@@ -186,7 +188,7 @@ export function CookieConsent() {
               />
             </label>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={savePreferences}
                 className="btn-primary text-sm flex-1"

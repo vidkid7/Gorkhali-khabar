@@ -174,16 +174,16 @@ export default function AdminAdsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>📢 Ad Management</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold leading-tight" style={{ color: "var(--foreground)" }}>📢 Ad Management</h1>
+        <div className="grid grid-cols-2 gap-2 sm:flex">
           <button onClick={() => setActiveTab("ads")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "ads" ? "text-white" : ""}`}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "ads" ? "text-white" : ""}`}
             style={{ background: activeTab === "ads" ? "var(--primary)" : "var(--surface)", color: activeTab === "ads" ? "#fff" : "var(--muted)", border: "1px solid var(--border)" }}>
             Advertisements
           </button>
           <button onClick={() => setActiveTab("positions")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "positions" ? "text-white" : ""}`}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "positions" ? "text-white" : ""}`}
             style={{ background: activeTab === "positions" ? "var(--primary)" : "var(--surface)", color: activeTab === "positions" ? "#fff" : "var(--muted)", border: "1px solid var(--border)" }}>
             Positions
           </button>
@@ -207,7 +207,7 @@ export default function AdminAdsPage() {
           { label: "CTR", value: `${overallCTR}%`, color: "#0891b2" },
         ].map((stat) => (
           <div key={stat.label} className="p-4 rounded-xl text-center" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-            <p className="text-2xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+            <p className="text-xl sm:text-2xl font-bold break-words" style={{ color: stat.color }}>{stat.value}</p>
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>{stat.label}</p>
           </div>
         ))}
@@ -238,11 +238,11 @@ export default function AdminAdsPage() {
               </div>
               <div className="sm:col-span-2 lg:col-span-3">
                 <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Image</label>
-                <div className="flex gap-3 items-center">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Image URL or upload..." className={`${inputCls} flex-1`} style={inputStyle} />
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
-                    className="px-4 py-2.5 rounded-lg text-sm font-medium shrink-0" style={{ background: "var(--primary)", color: "#fff", opacity: uploading ? 0.6 : 1 }}>
+                    className="px-4 py-2.5 rounded-lg text-sm font-medium shrink-0 w-full sm:w-auto" style={{ background: "var(--primary)", color: "#fff", opacity: uploading ? 0.6 : 1 }}>
                     {uploading ? "Uploading..." : "📤 Upload"}
                   </button>
                 </div>
@@ -341,12 +341,12 @@ export default function AdminAdsPage() {
                 <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Width (px)</label>
                 <input type="number" value={posWidth} onChange={(e) => setPosWidth(e.target.value)} placeholder="728" className={inputCls} style={inputStyle} />
               </div>
-              <div className="flex items-end gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-end gap-2">
                 <div className="flex-1">
                   <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Height (px)</label>
                   <input type="number" value={posHeight} onChange={(e) => setPosHeight(e.target.value)} placeholder="90" className={inputCls} style={inputStyle} />
                 </div>
-                <button type="submit" className="px-4 py-2.5 rounded-lg text-sm font-bold shrink-0"
+                <button type="submit" className="px-4 py-2.5 rounded-lg text-sm font-bold shrink-0 w-full sm:w-auto"
                   style={{ background: "var(--primary)", color: "#fff" }}>
                   + Add
                 </button>

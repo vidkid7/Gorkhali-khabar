@@ -20,10 +20,10 @@ export default async function AdminLayout({
 
   return (
     <AdminThemeProvider>
-      <div className="flex min-h-screen" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div className="flex min-h-screen overflow-x-hidden" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         <AdminSidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="p-6 md:p-8 max-w-7xl mx-auto">
+        <main className="flex-1 min-w-0 overflow-auto">
+          <div className="mx-auto max-w-7xl px-4 pb-6 pt-20 sm:px-6 md:p-8">
             {children}
           </div>
         </main>

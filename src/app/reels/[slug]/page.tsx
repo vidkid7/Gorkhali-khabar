@@ -16,6 +16,22 @@ async function getReel(slug: string) {
   });
 }
 
+function getYouTubeEmbedUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const id =
+      host === "youtu.be"
+        ? parsed.pathname.slice(1)
+        : host === "youtube.com"
+          ? parsed.searchParams.get("v")
+          : null;
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const reel = await getReel(slug);
@@ -37,6 +53,7 @@ export default async function ReelPage({ params }: Props) {
   const reel = await getReel(slug);
 
   if (!reel) notFound();
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(reel.video_url);
 
   // Fire-and-forget view count increment
   prisma.reel.update({
@@ -59,14 +76,24 @@ export default async function ReelPage({ params }: Props) {
         )}
 
         <div className="aspect-video rounded-lg overflow-hidden bg-black">
-          <video
-            src={reel.video_url}
-            controls
-            autoPlay
-            playsInline
-            poster={reel.thumbnail || undefined}
-            className="w-full h-full object-contain"
-          />
+          {youtubeEmbedUrl ? (
+            <iframe
+              src={youtubeEmbedUrl}
+              title={reel.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="h-full w-full"
+            />
+          ) : (
+            <video
+              src={reel.video_url}
+              controls
+              autoPlay
+              playsInline
+              poster={reel.thumbnail || undefined}
+              className="w-full h-full object-contain"
+            />
+          )}
         </div>
 
         {reel.description && (

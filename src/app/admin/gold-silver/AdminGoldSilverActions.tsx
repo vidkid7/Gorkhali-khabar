@@ -26,7 +26,7 @@ export function AdminGoldSilverActions() {
 
   if (!show) return (
     <button onClick={() => setShow(true)}
-      className="px-4 py-2 rounded-lg text-sm font-bold text-white"
+      className="w-full px-4 py-2 rounded-lg text-sm font-bold text-white sm:w-auto"
       style={{ background: "var(--accent)" }}>
       + Add Price
     </button>
@@ -49,14 +49,14 @@ export function AdminGoldSilverActions() {
         <input placeholder="Source" value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}
           className="text-sm px-3 py-2 rounded-lg" style={inputStyle} />
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button type="submit" disabled={loading}
-          className="px-4 py-2 rounded-lg text-sm font-bold text-white"
+          className="w-full px-4 py-2 rounded-lg text-sm font-bold text-white sm:w-auto"
           style={{ background: "var(--accent)" }}>
           {loading ? "Saving..." : "Save"}
         </button>
         <button type="button" onClick={() => setShow(false)}
-          className="px-4 py-2 rounded-lg text-sm" style={{ color: "var(--muted)" }}>Cancel</button>
+          className="w-full px-4 py-2 rounded-lg text-sm sm:w-auto" style={{ color: "var(--muted)" }}>Cancel</button>
       </div>
     </form>
   );

@@ -101,12 +101,12 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">Settings</h1>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="btn-primary"
+          className="btn-primary w-full sm:w-auto"
           style={{ opacity: saving ? 0.6 : 1 }}
         >
           {saving ? "Saving..." : "Save Settings"}

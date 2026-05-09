@@ -45,19 +45,19 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
 
       {/* Filters */}
       <div className="card p-4">
-        <form className="flex flex-wrap gap-3">
+        <form className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <input
             type="text"
             name="search"
             placeholder="Search by admin or entity..."
             defaultValue={search}
-            className="flex-1 min-w-48 px-3 py-2 rounded-md text-sm"
+            className="min-w-0 flex-1 px-3 py-2 rounded-md text-sm"
             style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}
           />
           <select
             name="action"
             defaultValue={action}
-            className="px-3 py-2 rounded-md text-sm"
+            className="w-full px-3 py-2 rounded-md text-sm sm:w-auto"
             style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}
           >
             <option value="">All Actions</option>
@@ -67,7 +67,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
             <option value="PUBLISH">Publish</option>
             <option value="SETTINGS_CHANGE">Settings Change</option>
           </select>
-          <button type="submit" className="btn-secondary">Filter</button>
+          <button type="submit" className="btn-secondary w-full sm:w-auto">Filter</button>
         </form>
       </div>
 
@@ -112,7 +112,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {page > 1 && (
             <a
               href={`/admin/audit-log?page=${page - 1}${search ? `&search=${search}` : ""}${action ? `&action=${action}` : ""}`}

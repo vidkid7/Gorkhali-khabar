@@ -53,6 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="ne"
+      data-scroll-behavior="smooth"
       className={`${notoSansDevanagari.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >

@@ -75,8 +75,8 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
         <h2 className="text-base font-semibold mb-4" style={{ color: "var(--foreground)" }}>
           नयाँ ट्याग थप्नुहोस् / Add New Tag
         </h2>
-        <form onSubmit={handleCreate} className="flex flex-wrap gap-3 items-end">
-          <div className="flex-1 min-w-[160px]">
+        <form onSubmit={handleCreate} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="min-w-0 flex-1 sm:min-w-[160px]">
             <label className="block text-xs font-medium mb-1" style={{ color: "var(--muted)" }}>
               नाम (नेपाली) *
             </label>
@@ -89,7 +89,7 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
               className="input"
             />
           </div>
-          <div className="flex-1 min-w-[160px]">
+          <div className="min-w-0 flex-1 sm:min-w-[160px]">
             <label className="block text-xs font-medium mb-1" style={{ color: "var(--muted)" }}>
               Name (English)
             </label>
@@ -101,7 +101,7 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
               className="input"
             />
           </div>
-          <button type="submit" disabled={loading || !name.trim()} className="btn-primary">
+          <button type="submit" disabled={loading || !name.trim()} className="btn-primary w-full sm:w-auto">
             {loading ? "थप्दै..." : "+ थप्नुहोस्"}
           </button>
         </form>

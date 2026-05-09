@@ -6,15 +6,16 @@ const adminPaths = ["/admin", "/api/v1/admin"];
 // Simple in-memory rate limiter for API routes
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 100; // max requests per window
+const RATE_LIMIT_MAX = 100; // max write requests per endpoint/window
+const RATE_LIMIT_READ_MAX = 300; // public pages can fan out to several read APIs
 const RATE_LIMIT_AUTH_MAX = 10; // stricter for auth endpoints
 
-function isRateLimited(ip: string, maxRequests: number): boolean {
+function isRateLimited(key: string, maxRequests: number): boolean {
   const now = Date.now();
-  const entry = rateLimitMap.get(ip);
+  const entry = rateLimitMap.get(key);
 
   if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
     return false;
   }
 
@@ -36,7 +37,7 @@ if (typeof globalThis !== "undefined") {
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -50,9 +51,14 @@ export function middleware(request: NextRequest) {
       // Let NextAuth handle its own security (CSRF tokens, etc.)
     } else {
       const isCustomAuthPath = pathname.startsWith("/api/v1/auth/");
-      const limit = isCustomAuthPath ? RATE_LIMIT_AUTH_MAX : RATE_LIMIT_MAX;
+      const limit = isCustomAuthPath
+        ? RATE_LIMIT_AUTH_MAX
+        : request.method === "GET"
+          ? RATE_LIMIT_READ_MAX
+          : RATE_LIMIT_MAX;
+      const rateLimitKey = `${ip}:${request.method}:${pathname}`;
 
-      if (isRateLimited(ip, limit)) {
+      if (isRateLimited(rateLimitKey, limit)) {
         return NextResponse.json(
           { error: "Too many requests. Please try again later." },
           { status: 429 }
@@ -76,10 +82,11 @@ export function middleware(request: NextRequest) {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://*.googleusercontent.com https://picsum.photos https://*.railway.app",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://*.googleusercontent.com https://picsum.photos https://fastly.picsum.photos https://*.railway.app",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://accounts.google.com https://wttr.in https://*.railway.app",
-    "frame-src https://accounts.google.com",
+    "frame-src https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com",
+    "media-src 'self' blob: data: https:",
     "base-uri 'self'",
     "form-action 'self'",
   ];

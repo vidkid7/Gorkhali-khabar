@@ -16,8 +16,8 @@ interface ExchangeRate {
 }
 
 interface GoldSilverData {
-  gold: { tola_24k: number; tola_22k: number; gram_24k: number; international_oz_usd: number };
-  silver: { tola: number; gram: number; international_oz_usd: number };
+  gold: { tola_24k: number; tola_22k: number; gram_24k: number; international_oz_usd?: number };
+  silver: { tola: number; gram: number; international_oz_usd?: number };
 }
 
 // Currency flag emoji mapping
@@ -44,11 +44,18 @@ export default function FinancePage() {
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
-  const fmt = (n: number) => language === "ne" ? toNepaliDigits(n) : n.toLocaleString();
-  const fmtDec = (n: number, decimals = 2) =>
+  const fmt = (n: number | null | undefined) => {
+    if (typeof n !== "number" || Number.isNaN(n)) return "—";
+    return language === "ne" ? toNepaliDigits(n) : n.toLocaleString();
+  };
+  const fmtDec = (n: number | null | undefined, decimals = 2) => {
+    if (typeof n !== "number" || Number.isNaN(n)) return "—";
+    return (
     language === "ne"
       ? toNepaliDigits(parseFloat(n.toFixed(decimals)))
-      : n.toFixed(decimals);
+      : n.toFixed(decimals)
+    );
+  };
 
   return (
     <>
@@ -179,7 +186,7 @@ export default function FinancePage() {
                         { label_ne: "२२ क्यारेट (तोला)", label_en: "22 Carat (per Tola)", value: goldSilver.gold.tola_22k },
                         { label_ne: "२४ क्यारेट (ग्राम)", label_en: "24 Carat (per Gram)", value: goldSilver.gold.gram_24k },
                         { label_ne: "अन्तर्राष्ट्रिय (प्रति औंस, USD)", label_en: "International (per oz, USD)", value: goldSilver.gold.international_oz_usd, prefix: "$" },
-                      ].map((row, i) => (
+                      ].filter((row) => typeof row.value === "number").map((row, i) => (
                         <div key={i} className="flex items-center justify-between p-3 rounded-lg"
                           style={{ background: "var(--surface-alt)", border: "1px solid var(--border)" }}>
                           <span className="text-sm" style={{ color: "var(--muted)" }}>
@@ -208,7 +215,7 @@ export default function FinancePage() {
                         { label_ne: "चाँदी (तोला)", label_en: "Silver (per Tola)", value: goldSilver.silver.tola },
                         { label_ne: "चाँदी (ग्राम)", label_en: "Silver (per Gram)", value: goldSilver.silver.gram },
                         { label_ne: "अन्तर्राष्ट्रिय (प्रति औंस, USD)", label_en: "International (per oz, USD)", value: goldSilver.silver.international_oz_usd, prefix: "$", decimal: true },
-                      ].map((row, i) => (
+                      ].filter((row) => typeof row.value === "number").map((row, i) => (
                         <div key={i} className="flex items-center justify-between p-3 rounded-lg"
                           style={{ background: "var(--surface-alt)", border: "1px solid var(--border)" }}>
                           <span className="text-sm" style={{ color: "var(--muted)" }}>

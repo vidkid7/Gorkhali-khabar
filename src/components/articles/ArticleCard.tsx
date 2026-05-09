@@ -51,7 +51,7 @@ export function ArticleCard({
 
   if (variant === "horizontal") {
     return (
-      <Link href={`/articles/${slug}`} className="card flex flex-row group">
+      <Link href={`/articles/${slug}`} className="card flex w-full min-w-0 flex-row group">
         <div className="relative w-36 h-28 shrink-0">
           {featured_image ? (
             <Image src={featured_image} alt={displayTitle} fill
@@ -90,7 +90,7 @@ export function ArticleCard({
 
   if (variant === "hero") {
     return (
-      <Link href={`/articles/${slug}`} className="card group block relative overflow-hidden">
+      <Link href={`/articles/${slug}`} className="card group block w-full min-w-0 relative overflow-hidden">
         <div className="relative w-full h-72 lg:h-96">
           {featured_image ? (
             <Image src={featured_image} alt={displayTitle} fill

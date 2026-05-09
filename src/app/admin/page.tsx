@@ -109,14 +109,14 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-7">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold">ड्यासबोर्ड</h1>
           <p className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>
             स्वागत छ! साइटको अवस्था हेर्नुहोस्।
           </p>
         </div>
-        <Link href="/admin/articles/new" className="btn-primary">
+        <Link href="/admin/articles/new" className="btn-primary w-full sm:w-auto">
           + नयाँ लेख
         </Link>
       </div>
@@ -134,12 +134,12 @@ export default async function AdminDashboard() {
           <Link
             key={card.label}
             href={card.href}
-            className="card p-4 hover:scale-[1.03] transition-transform"
+            className="card p-3 sm:p-4 hover:scale-[1.03] transition-transform"
           >
             <div className="flex items-start justify-between gap-1">
               <div className="min-w-0">
                 <p className="text-[11px] font-medium truncate" style={{ color: "var(--muted)" }}>{card.label}</p>
-                <p className="text-2xl font-bold mt-0.5 tabular-nums leading-tight">{card.value}</p>
+                <p className="text-xl sm:text-2xl font-bold mt-0.5 tabular-nums leading-tight break-words">{card.value}</p>
                 <p className="text-[11px] mt-0.5 truncate" style={{ color: "var(--muted)" }}>{card.sub}</p>
               </div>
               <span className="text-xl shrink-0">{card.icon}</span>
@@ -226,7 +226,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Quick links */}
-          <div className="mt-5 pt-4 border-t grid grid-cols-3 gap-2" style={{ borderColor: "var(--border)" }}>
+          <div className="mt-5 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ borderColor: "var(--border)" }}>
             {[
               { label: "नयाँ लेख", href: "/admin/articles/new", icon: "✏️" },
               { label: "विश्लेषण", href: "/admin/analytics", icon: "📈" },

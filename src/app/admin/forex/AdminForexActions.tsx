@@ -26,7 +26,7 @@ export function AdminForexActions() {
 
   if (!show) return (
     <button onClick={() => setShow(true)}
-      className="px-4 py-2 rounded-lg text-sm font-bold text-white"
+      className="w-full px-4 py-2 rounded-lg text-sm font-bold text-white sm:w-auto"
       style={{ background: "var(--accent)" }}>
       + Add Rate
     </button>
@@ -37,7 +37,7 @@ export function AdminForexActions() {
   return (
     <form onSubmit={handleSubmit} className="card p-4 space-y-3">
       <h2 className="text-sm font-bold">Add Forex Rate</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })}
           className="text-sm px-3 py-2 rounded-lg" style={inputStyle} required />
         <input placeholder="Currency Code (USD)" value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })}
@@ -51,14 +51,14 @@ export function AdminForexActions() {
         <input type="number" step="0.01" placeholder="Sell Rate (NPR)" value={form.sell || ""} onChange={e => setForm({ ...form, sell: +e.target.value })}
           className="text-sm px-3 py-2 rounded-lg" style={inputStyle} required />
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button type="submit" disabled={loading}
-          className="px-4 py-2 rounded-lg text-sm font-bold text-white"
+          className="w-full px-4 py-2 rounded-lg text-sm font-bold text-white sm:w-auto"
           style={{ background: "var(--accent)" }}>
           {loading ? "Saving..." : "Save"}
         </button>
         <button type="button" onClick={() => setShow(false)}
-          className="px-4 py-2 rounded-lg text-sm" style={{ color: "var(--muted)" }}>Cancel</button>
+          className="w-full px-4 py-2 rounded-lg text-sm sm:w-auto" style={{ color: "var(--muted)" }}>Cancel</button>
       </div>
     </form>
   );

@@ -2,23 +2,23 @@ import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { ArticleCard } from "@/components/articles/ArticleCard";
 import { BreakingNewsTicker } from "@/components/ui/BreakingNewsTicker";
 import { SidebarListClient } from "@/components/ui/SidebarListClient";
 import { CategorySection } from "@/components/home/CategorySection";
 import { ReelsCarousel } from "@/components/home/ReelsCarousel";
 import { LiveScoreWidget } from "@/components/home/LiveScoreWidget";
-import { SectionHeader } from "@/components/home/SectionHeader";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FinanceWidget } from "@/components/widgets/FinanceWidget";
 import { QuickLinks } from "@/components/home/QuickLinks";
 import { EditorsPickClient } from "@/components/home/EditorsPickClient";
 import { LatestUpdatesPanel } from "@/components/ui/LatestUpdatesPanel";
 import { QuickNewsBanner } from "@/components/ui/QuickNewsBanner";
+import { TodayStrip } from "@/components/home/TodayStrip";
+import { HeroDeck } from "@/components/home/HeroDeck";
+import { DailyBrief } from "@/components/home/DailyBrief";
 import {
 
   HeroSkeleton,
-  ArticleCardSkeleton,
   SidebarSkeleton,
 } from "@/components/ui/SkeletonLoader";
 
@@ -117,13 +117,6 @@ async function getEditorsPick() {
   });
 }
 
-async function getCategories() {
-  return prisma.category.findMany({
-    where: { is_active: true },
-    orderBy: { sort_order: "asc" },
-  });
-}
-
 // ─── Server Components ───────────────────────────────
 
 async function BreakingNewsSection() {
@@ -150,28 +143,7 @@ async function BreakingNewsSection() {
 async function HeroSection() {
   const featured = await getFeaturedArticles();
   if (!featured.length) return null;
-  const [main, ...rest] = featured;
-
-  return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <ArticleCard
-        key={main.id} slug={main.slug} title={main.title} title_en={main.title_en}
-        excerpt={main.excerpt} excerpt_en={main.excerpt_en} featured_image={main.featured_image}
-        category={main.category} author={main.author} reading_time={main.reading_time}
-        published_at={main.published_at} view_count={main.view_count} comment_count={main.comment_count} variant="hero"
-      />
-      <div className="space-y-4">
-        {rest.map((a) => (
-          <ArticleCard
-            key={a.id} slug={a.slug} title={a.title} title_en={a.title_en}
-            featured_image={a.featured_image} category={a.category} author={a.author}
-            reading_time={a.reading_time} published_at={a.published_at}
-            view_count={a.view_count} comment_count={a.comment_count} variant="horizontal"
-          />
-        ))}
-      </div>
-    </section>
-  );
+  return <HeroDeck articles={JSON.parse(JSON.stringify(featured))} />;
 }
 
 async function NewsSectionServer() {
@@ -265,6 +237,24 @@ async function EditorsPickSection() {
   return <EditorsPickClient articles={articles} />;
 }
 
+async function DailyBriefSection() {
+  const articles = await prisma.article.findMany({
+    where: { status: "PUBLISHED" },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      title_en: true,
+      published_at: true,
+      category: { select: { name: true, name_en: true, slug: true, color: true } },
+    },
+    orderBy: [{ is_featured: "desc" }, { published_at: "desc" }],
+    take: 5,
+  });
+
+  return <DailyBrief articles={JSON.parse(JSON.stringify(articles))} />;
+}
+
 async function PoliticsSectionServer() {
   const articles = await getArticlesByCategory("rajniti", 5);
   return <CategorySection sectionKey="sections.politics" articles={JSON.parse(JSON.stringify(articles))} color="#c62828" slug="rajniti" layout="featured" />;
@@ -300,7 +290,7 @@ async function EducationSectionServer() {
   return <CategorySection sectionKey="sections.education" articles={JSON.parse(JSON.stringify(articles))} color="#1976d2" slug="shiksha" layout="grid" />;
 }
 
-async function QuickNewsBannerSection({ category, lang = "ne" }: { category: string; lang?: "ne" | "en" }) {
+async function QuickNewsBannerSection({ category }: { category: string }) {
   const articles = await prisma.article.findMany({
     where: { status: "PUBLISHED", category: { slug: category } },
     select: {
@@ -350,26 +340,40 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-      <Suspense fallback={null}>
-        <BreakingNewsSection />
-      </Suspense>
+      <div className="hidden md:block">
+        <Suspense fallback={null}>
+          <BreakingNewsSection />
+        </Suspense>
+      </div>
 
       {/* Latest Updates floating panel */}
       <LatestUpdatesPanel />
 
+      <TodayStrip />
+
       {/* Header Banner Ad */}
-      <div className="mx-auto max-w-7xl px-4 pt-4">
+      <div className="mx-auto hidden max-w-7xl px-4 pt-4 md:block">
         <AdSlot position="HEADER" />
       </div>
 
-      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-4 sm:py-6 space-y-8 sm:space-y-10 pb-safe">
+      <main className="mx-auto w-full max-w-7xl min-w-0 px-3 sm:px-4 py-4 sm:py-6 space-y-8 sm:space-y-10 pb-safe">
         {/* Hero */}
         <Suspense fallback={<HeroSkeleton />}>
           <HeroSection />
         </Suspense>
 
+        {/* Daily Brief */}
+        <Suspense fallback={<SectionSkeleton />}>
+          <DailyBriefSection />
+        </Suspense>
+
         {/* Quick Links */}
         <QuickLinks />
+
+        {/* Reels Carousel */}
+        <Suspense fallback={<div className="h-72 bg-surface rounded-xl animate-pulse" />}>
+          <ReelsSectionServer />
+        </Suspense>
 
         {/* News + Sidebar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -397,11 +401,6 @@ export default async function HomePage() {
 
         {/* Ad between sections */}
         <AdSlot position="BETWEEN_SECTIONS" />
-
-        {/* Reels Carousel */}
-        <Suspense fallback={<div className="h-72 bg-surface rounded-xl animate-pulse" />}>
-          <ReelsSectionServer />
-        </Suspense>
 
         <hr className="section-divider" />
 

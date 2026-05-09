@@ -1250,8 +1250,8 @@ html, body {
   box-sizing: border-box;
 }
 
-/* Ensure images never overflow their containers */
-img {
+/* Ensure plain images never overflow their containers. Next/Image manages its own sizing. */
+img:not([data-nimg]) {
   max-width: 100%;
   height: auto;
 }
@@ -1321,6 +1321,14 @@ img {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+
+  .overflow-x-auto > table {
+    min-width: 42rem;
+  }
+
+  .table-auto {
+    min-width: 42rem;
+  }
 }
 
 /* Extra small screens (< 375px) */
@@ -1365,8 +1373,20 @@ img {
 /* ─── Prevent long words from breaking layout on mobile ─── */
 @media (max-width: 768px) {
   h1, h2, h3, h4, h5, h6, p, a, span {
-    word-break: break-word;
     overflow-wrap: break-word;
+    word-break: normal;
+  }
+}
+
+.cookie-consent-shell {
+  bottom: 0;
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 767px) {
+  .cookie-consent-shell {
+    bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    padding-bottom: 0.5rem;
   }
 }
 
@@ -1377,5 +1397,3 @@ img {
     padding-right: 0.75rem;
   }
 }
-
-

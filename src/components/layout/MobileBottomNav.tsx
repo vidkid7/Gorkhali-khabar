@@ -37,14 +37,16 @@ export function MobileBottomNav() {
       label: mn("होम", "Home"),
     },
     {
-      href: "/categories/samachar",
+      href: "/#daily-brief",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points="16 7 22 7 22 13" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M5 5h14" strokeLinecap="round" />
+          <path d="M5 12h10" strokeLinecap="round" />
+          <path d="M5 19h7" strokeLinecap="round" />
+          <path d="M18 15l2 2 3-5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ),
-      label: mn("ट्रेन्डिङ", "Trending"),
+      label: mn("ब्रिफ", "Brief"),
     },
     {
       href: "/patro",

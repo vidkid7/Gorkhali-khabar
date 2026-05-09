@@ -93,6 +93,7 @@ export function Footer() {
                   width={50} 
                   height={50} 
                   className="rounded-lg shadow-md"
+                  style={{ width: "auto", height: "auto" }}
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} 
                 />
               ) : (

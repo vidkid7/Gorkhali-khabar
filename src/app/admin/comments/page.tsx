@@ -40,11 +40,11 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
 
       {/* Filter */}
       <div className="card p-4">
-        <form className="flex flex-wrap gap-3">
+        <form className="flex flex-col gap-3 sm:flex-row">
           <select
             name="status"
             defaultValue={status}
-            className="px-3 py-2 rounded-md text-sm"
+            className="w-full px-3 py-2 rounded-md text-sm sm:w-auto"
             style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}
           >
             <option value="">All Status</option>
@@ -53,7 +53,7 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
             <option value="REJECTED">Rejected</option>
             <option value="SPAM">Spam</option>
           </select>
-          <button type="submit" className="btn-secondary">Filter</button>
+          <button type="submit" className="btn-secondary w-full sm:w-auto">Filter</button>
         </form>
       </div>
 
@@ -108,7 +108,7 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {page > 1 && (
             <a
               href={`/admin/comments?page=${page - 1}${status ? `&status=${status}` : ""}`}

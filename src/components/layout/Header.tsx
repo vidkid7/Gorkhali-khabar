@@ -210,7 +210,7 @@ export function Header() {
                   width={60}
                   height={60}
                   className="object-contain rounded-lg"
-                  style={{ maxHeight: 52, width: "auto" }}
+                  style={{ maxHeight: 52, width: "auto", height: "auto" }}
                   priority
                   unoptimized
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -284,13 +284,13 @@ export function Header() {
             }`}
           >
             {config.site_logo && (
-              <div className="rounded-full overflow-hidden ring-2 ring-white/60 bg-white shrink-0" style={{ width: 38, height: 38 }}>
+              <div className="relative rounded-full overflow-hidden ring-2 ring-white/60 bg-white shrink-0" style={{ width: 38, height: 38 }}>
                 <Image
                   src={config.site_logo}
                   alt={config.site_name?.ne || "Logo"}
-                  width={38}
-                  height={38}
-                  className="object-cover w-full h-full"
+                  fill
+                  sizes="38px"
+                  className="object-contain"
                   unoptimized
                 />
               </div>
@@ -431,8 +431,8 @@ export function Header() {
                 {/* Render items twice for seamless loop (marquee moves -50%) */}
                 {[...trendingTopics, ...trendingTopics].map((topic, i) => (
                   <Link key={i} href={`/articles/${topic.slug}`} className="flex items-center gap-1.5 shrink-0 group">
-                    <div className="w-7 h-7 rounded-full overflow-hidden bg-muted shrink-0 ring-2 ring-white dark:ring-gray-700">
-                      <Image src={topic.image || `https://picsum.photos/seed/${i}/40/40`} alt="" width={28} height={28} className="object-cover w-full h-full" unoptimized />
+                    <div className="relative w-7 h-7 rounded-full overflow-hidden bg-muted shrink-0 ring-2 ring-white dark:ring-gray-700">
+                      <Image src={topic.image || `https://picsum.photos/seed/${i}/40/40`} alt="" fill sizes="28px" className="object-cover" />
                     </div>
                     <span className="text-xs text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[100px] truncate">
                       {topic.title}

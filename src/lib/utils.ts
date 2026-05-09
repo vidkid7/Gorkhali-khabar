@@ -26,14 +26,29 @@ export function timeAgo(date: Date | string, language: SupportedLanguage = "ne")
     if (diffMins < 60) return `${toNep(diffMins)} मिनेट अगाडि`;
     if (diffHours < 24) return `${toNep(diffHours)} घण्टा अगाडि`;
     if (diffDays < 7) return `${toNep(diffDays)} दिन अगाडि`;
-    return then.toLocaleDateString("ne-NP");
+    return formatStableDate(then, language);
   }
 
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins} min ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  return then.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return formatStableDate(then, language);
+}
+
+function formatStableDate(date: Date, language: SupportedLanguage): string {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
+
+  if (language === "ne") {
+    const toNep = (value: number | string) =>
+      String(value).replace(/\d/g, (d) => "०१२३४५६७८९"[parseInt(d)]);
+    return `${toNep(year)}-${toNep(String(month).padStart(2, "0"))}-${toNep(String(day).padStart(2, "0"))}`;
+  }
+
+  return `${months[month - 1]} ${day}, ${year}`;
 }
 
 /**

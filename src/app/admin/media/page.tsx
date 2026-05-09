@@ -158,7 +158,7 @@ export default function AdminMediaPage() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="px-4 py-2 rounded-md text-sm font-medium"
+            className="w-full px-4 py-2 rounded-md text-sm font-medium sm:w-auto"
             style={{ background: "var(--accent)", color: "#fff", opacity: uploading ? 0.5 : 1 }}
           >
             {uploading ? "Uploading..." : "+ Upload File"}
@@ -175,17 +175,17 @@ export default function AdminMediaPage() {
       {/* Add by URL */}
       <div className="p-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <p className="text-sm font-semibold mb-2" style={{ color: "var(--muted)" }}>Or add by URL</p>
-        <form onSubmit={handleUrlAdd} className="flex gap-3">
+        <form onSubmit={handleUrlAdd} className="flex flex-col gap-3 sm:flex-row">
           <input
             type="url"
             placeholder="https://example.com/image.jpg"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            className="flex-1 px-3 py-2 rounded-md text-sm"
+            className="min-w-0 flex-1 px-3 py-2 rounded-md text-sm"
             style={inputStyle}
           />
           <button type="submit" disabled={addingUrl || !urlInput.trim()}
-            className="px-4 py-2 rounded-md text-sm font-medium"
+            className="w-full px-4 py-2 rounded-md text-sm font-medium sm:w-auto"
             style={{ background: "var(--accent)", color: "#fff", opacity: addingUrl || !urlInput.trim() ? 0.5 : 1 }}>
             {addingUrl ? "Adding..." : "Add URL"}
           </button>
@@ -194,16 +194,16 @@ export default function AdminMediaPage() {
 
       {/* Search */}
       <div className="p-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-        <form onSubmit={(e) => { e.preventDefault(); setPage(1); loadFiles(); }} className="flex gap-3">
+        <form onSubmit={(e) => { e.preventDefault(); setPage(1); loadFiles(); }} className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
             placeholder="Search files..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-3 py-2 rounded-md text-sm"
+            className="min-w-0 flex-1 px-3 py-2 rounded-md text-sm"
             style={inputStyle}
           />
-          <button type="submit" className="px-4 py-2 rounded-md text-sm font-medium"
+          <button type="submit" className="w-full px-4 py-2 rounded-md text-sm font-medium sm:w-auto"
             style={{ background: "var(--accent)", color: "#fff" }}>
             Search
           </button>
@@ -272,7 +272,7 @@ export default function AdminMediaPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {page > 1 && (
             <button onClick={() => setPage(page - 1)} className="px-3 py-1.5 rounded-md text-sm"
               style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
