@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getClientIp, normalizeEmail } from "@/lib/security";
 import type { ApiResponse } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 const newsletterSchema = z.object({
-  email: z.string().trim().email(),
+  email: z.string().trim().email().max(254),
   language: z.enum(["ne", "en"]).optional().default("ne"),
 });
 
 export async function POST(request: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(
+      `newsletter:${getClientIp(request)}`,
+      8,
+      15 * 60 * 1000
+    );
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "धेरै अनुरोधहरू। कृपया पछि प्रयास गर्नुहोस्" },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfter) } }
+      );
+    }
+
     const body = await request.json();
     const parsed = newsletterSchema.safeParse(body);
 
@@ -22,7 +35,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const email = parsed.data.email.toLowerCase();
+    const email = normalizeEmail(parsed.data.email);
     const subscription = await prisma.newsletterSubscription.upsert({
       where: { email },
       update: {

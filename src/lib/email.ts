@@ -1,14 +1,32 @@
 import nodemailer from "nodemailer";
+import { escapeHtml, escapeHtmlAttribute, hasControlCharacters } from "@/lib/security";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
+
+function safeHeaderValue(value: string | undefined, fallback: string) {
+  if (!value || hasControlCharacters(value)) return fallback;
+  return value;
+}
+
+function getTransporter() {
+  if (transporter) return transporter;
+
+  const port = parseInt(process.env.SMTP_PORT || "587", 10);
+  transporter = nodemailer.createTransport({
+    name: "gorkhali-khabar",
+    host: safeHeaderValue(process.env.SMTP_HOST, "smtp.gmail.com"),
+    port,
+    secure: port === 465,
+    requireTLS: port !== 465,
+    tls: { minVersion: "TLSv1.2" },
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  return transporter;
+}
 
 interface SendEmailOptions {
   to: string;
@@ -24,10 +42,13 @@ export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
   }
 
   try {
-    const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM || "noreply@gorkhali.com",
-      to,
-      subject,
+    const safeTo = safeHeaderValue(to, "");
+    if (!safeTo) throw new Error("Invalid recipient email");
+
+    const info = await getTransporter().sendMail({
+      from: safeHeaderValue(process.env.SMTP_FROM, "noreply@gorkhali.com"),
+      to: safeTo,
+      subject: safeHeaderValue(subject, "Notification"),
       html,
       text: text || html.replace(/<[^>]*>/g, ""),
     });
@@ -43,11 +64,13 @@ export function verificationEmailTemplate(
   verifyUrl: string,
   lang: "ne" | "en" = "ne"
 ) {
+  const safeName = escapeHtml(name);
+  const safeVerifyUrl = escapeHtmlAttribute(verifyUrl);
   const content =
     lang === "ne"
       ? {
           title: "इमेल प्रमाणीकरण",
-          greeting: `नमस्कार ${name},`,
+          greeting: `नमस्कार ${safeName},`,
           body: "तपाईंको इमेल ठेगाना प्रमाणित गर्न तलको बटनमा क्लिक गर्नुहोस्:",
           button: "इमेल प्रमाणित गर्नुहोस्",
           expiry: "यो लिंक २४ घण्टामा समाप्त हुनेछ।",
@@ -55,7 +78,7 @@ export function verificationEmailTemplate(
         }
       : {
           title: "Email Verification",
-          greeting: `Hello ${name},`,
+          greeting: `Hello ${safeName},`,
           body: "Click the button below to verify your email address:",
           button: "Verify Email",
           expiry: "This link will expire in 24 hours.",
@@ -70,7 +93,7 @@ export function verificationEmailTemplate(
       <h2 style="color: #c62828;">${content.title}</h2>
       <p>${content.greeting}</p>
       <p>${content.body}</p>
-      <a href="${verifyUrl}" style="display: inline-block; background: #c62828; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
+      <a href="${safeVerifyUrl}" style="display: inline-block; background: #c62828; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
         ${content.button}
       </a>
       <p style="color: #666; font-size: 14px;">${content.expiry}</p>
@@ -86,11 +109,13 @@ export function passwordResetEmailTemplate(
   resetUrl: string,
   lang: "ne" | "en" = "ne"
 ) {
+  const safeName = escapeHtml(name);
+  const safeResetUrl = escapeHtmlAttribute(resetUrl);
   const content =
     lang === "ne"
       ? {
           title: "पासवर्ड रिसेट",
-          greeting: `नमस्कार ${name},`,
+          greeting: `नमस्कार ${safeName},`,
           body: "तपाईंको पासवर्ड रिसेट गर्न तलको बटनमा क्लिक गर्नुहोस्:",
           button: "पासवर्ड रिसेट गर्नुहोस्",
           expiry: "यो लिंक १ घण्टामा समाप्त हुनेछ।",
@@ -98,7 +123,7 @@ export function passwordResetEmailTemplate(
         }
       : {
           title: "Password Reset",
-          greeting: `Hello ${name},`,
+          greeting: `Hello ${safeName},`,
           body: "Click the button below to reset your password:",
           button: "Reset Password",
           expiry: "This link will expire in 1 hour.",
@@ -113,7 +138,7 @@ export function passwordResetEmailTemplate(
       <h2 style="color: #c62828;">${content.title}</h2>
       <p>${content.greeting}</p>
       <p>${content.body}</p>
-      <a href="${resetUrl}" style="display: inline-block; background: #c62828; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
+      <a href="${safeResetUrl}" style="display: inline-block; background: #c62828; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
         ${content.button}
       </a>
       <p style="color: #666; font-size: 14px;">${content.expiry}</p>
@@ -128,17 +153,18 @@ export function welcomeEmailTemplate(
   name: string,
   lang: "ne" | "en" = "ne"
 ) {
+  const safeName = escapeHtml(name);
   const content =
     lang === "ne"
       ? {
           title: "स्वागत छ!",
-          greeting: `नमस्कार ${name},`,
+          greeting: `नमस्कार ${safeName},`,
           body: "समाचार पोर्टलमा तपाईंको स्वागत छ। अब तपाईं समाचार पढ्न, टिप्पणी गर्न र बुकमार्क गर्न सक्नुहुन्छ।",
           footer: "समाचार पोर्टल टोली",
         }
       : {
           title: "Welcome!",
-          greeting: `Hello ${name},`,
+          greeting: `Hello ${safeName},`,
           body: "Welcome to News Portal. You can now read articles, post comments, and bookmark your favorites.",
           footer: "News Portal Team",
         };

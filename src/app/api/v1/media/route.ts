@@ -3,12 +3,17 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
 import { getStorageProvider } from "@/lib/storage";
+import { isPrivateHostname } from "@/lib/security";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { MediaFile } from "@prisma/client";
 import path from "path";
 
 export async function GET(request: NextRequest) {
   try {
+    const { error } = await requireRole(["ADMIN", "EDITOR", "AUTHOR"]);
+    if (error === "unauthorized") return unauthorizedResponse();
+    if (error === "forbidden") return forbiddenResponse();
+
     const { searchParams } = request.nextUrl;
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const pageSize = Math.min(50, Math.max(1, parseInt(searchParams.get("pageSize") || "20")));
@@ -85,16 +90,23 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      // Only allow http/https schemes
-      if (!/^https?:\/\//i.test(rawUrl)) {
+      const urlObj = new URL(rawUrl);
+      // Only allow http/https schemes and public hosts.
+      if (!["http:", "https:"].includes(urlObj.protocol) || isPrivateHostname(urlObj.hostname)) {
         return NextResponse.json<ApiResponse>(
           { success: false, error: "केवल http/https URL अनुमति छ" },
           { status: 400 }
         );
       }
 
-      const urlObj = new URL(rawUrl);
-      const ext = path.extname(urlObj.pathname) || "";
+      const ext = path.extname(urlObj.pathname).toLowerCase();
+      const allowedRemoteExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif"];
+      if (!allowedRemoteExtensions.includes(ext)) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "केवल सार्वजनिक छवि URL अनुमति छ" },
+          { status: 400 }
+        );
+      }
       const filename = `url-${Date.now()}${ext}`;
       const original_name = decodeURIComponent(path.basename(urlObj.pathname)) || filename;
 
@@ -144,7 +156,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "video/mp4", "video/webm", "application/pdf"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/avif", "video/mp4", "video/webm", "application/pdf"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "यो फाइल प्रकार समर्थित छैन" },

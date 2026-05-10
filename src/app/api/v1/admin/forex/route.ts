@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 
 export async function GET() {
+  const { error } = await requireRole(["ADMIN", "EDITOR"]);
+  if (error === "unauthorized") return unauthorizedResponse();
+  if (error === "forbidden") return forbiddenResponse();
+
   const rates = await prisma.forexRate.findMany({ orderBy: [{ date: "desc" }, { currency: "asc" }], take: 50 });
   return NextResponse.json({ success: true, data: rates });
 }

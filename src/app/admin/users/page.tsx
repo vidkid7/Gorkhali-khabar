@@ -1,15 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
 import { AdminUserRoleSelect } from "@/components/admin/AdminUserRoleSelect";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
-  const session = await auth();
+  const { error, session } = await requireRole(["ADMIN"]);
 
   // Only ADMIN can access this page
-  if (session?.user.role !== "ADMIN") {
+  if (error) {
     redirect("/admin");
   }
 

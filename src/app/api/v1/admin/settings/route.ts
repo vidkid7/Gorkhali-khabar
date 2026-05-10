@@ -6,6 +6,10 @@ import type { ApiResponse } from "@/types";
 
 export async function GET() {
   try {
+    const { error } = await requireRole(["ADMIN"]);
+    if (error === "unauthorized") return unauthorizedResponse();
+    if (error === "forbidden") return forbiddenResponse();
+
     const settings = await prisma.siteSettings.findMany();
 
     const settingsMap: Record<string, unknown> = {};

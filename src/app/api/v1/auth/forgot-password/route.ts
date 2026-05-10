@@ -2,13 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, passwordResetEmailTemplate } from "@/lib/email";
+import { absoluteSiteUrl, checkRateLimit, getClientIp, normalizeEmail } from "@/lib/security";
 import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const rateLimit = checkRateLimit(
+      `forgot-password:${getClientIp(request)}`,
+      5,
+      15 * 60 * 1000
+    );
+    if (!rateLimit.allowed) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "धेरै अनुरोधहरू। कृपया पछि प्रयास गर्नुहोस्" },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfter) } }
+      );
+    }
 
-    if (!email) {
+    const { email: rawEmail } = await request.json();
+    const email = typeof rawEmail === "string" ? normalizeEmail(rawEmail) : "";
+
+    if (!email || email.length > 254) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "इमेल आवश्यक छ" },
         { status: 400 }
@@ -42,7 +56,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password?token=${token}`;
+    const resetUrl = absoluteSiteUrl(request, `/auth/reset-password?token=${token}`);
     const lang = (user.language as "ne" | "en") || "ne";
 
     await sendEmail({

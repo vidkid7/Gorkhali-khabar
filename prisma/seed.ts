@@ -7,15 +7,26 @@ function hoursAgo(h: number) { return new Date(Date.now() - h * 3600000); }
 function daysAgo(d: number) { return new Date(Date.now() - d * 86400000); }
 function rand(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+function seedPassword(envName: string, devFallback: string) {
+  const value = process.env[envName];
+  if (value) return value;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(`${envName} must be set before seeding production data.`);
+  }
+  return devFallback;
+}
 
 async function main() {
   console.log("🌱 Seeding database...");
 
   // ─── Users ─────────────────────────────────────────
   const pw = (p: string) => bcrypt.hash(p, 10);
-  const adminPw = await pw("Admin@12345");
-  const editorPw = await pw("Editor@12345");
-  const authorPw = await pw("Author@12345");
+  const adminSeedPassword = seedPassword("SEED_ADMIN_PASSWORD", "Admin@12345");
+  const editorSeedPassword = seedPassword("SEED_EDITOR_PASSWORD", "Editor@12345");
+  const authorSeedPassword = seedPassword("SEED_AUTHOR_PASSWORD", "Author@12345");
+  const adminPw = await pw(adminSeedPassword);
+  const editorPw = await pw(editorSeedPassword);
+  const authorPw = await pw(authorSeedPassword);
 
   const admin = await prisma.user.upsert({ where: { email: "admin@gorkhali.com" }, update: {}, create: { name: "राजेश शर्मा", email: "admin@gorkhali.com", password_hash: adminPw, role: UserRole.ADMIN, email_verified: new Date() } });
   const editor = await prisma.user.upsert({ where: { email: "editor@gorkhali.com" }, update: {}, create: { name: "सुनिता पौडेल", email: "editor@gorkhali.com", password_hash: editorPw, role: UserRole.EDITOR, email_verified: new Date() } });
@@ -553,9 +564,11 @@ async function main() {
   console.log("   ✅ Rashifal seeded");
 
   console.log("\n✅ All done!");
-  console.log("   Admin:  admin@gorkhali.com  / Admin@12345");
-  console.log("   Editor: editor@gorkhali.com / Editor@12345");
-  console.log("   Author: author@gorkhali.com / Author@12345");
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`   Admin:  admin@gorkhali.com  / ${adminSeedPassword}`);
+    console.log(`   Editor: editor@gorkhali.com / ${editorSeedPassword}`);
+    console.log(`   Author: author@gorkhali.com / ${authorSeedPassword}`);
+  }
 }
 
 main()

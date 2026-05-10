@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleContent } from "@/components/articles/ArticleContent";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
+import { sanitizeArticleHtml } from "@/lib/html";
 
 export const dynamic = "force-dynamic";
 
@@ -113,8 +114,8 @@ export default async function ArticlePage({ params }: Props) {
         <ArticleContent
           title={article.title}
           title_en={article.title_en}
-          content={article.content}
-          content_en={article.content_en}
+          content={sanitizeArticleHtml(article.content)}
+          content_en={article.content_en ? sanitizeArticleHtml(article.content_en) : null}
           excerpt={article.excerpt}
           excerpt_en={article.excerpt_en}
           featured_image={article.featured_image}

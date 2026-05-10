@@ -59,6 +59,10 @@ model User {
   admin_theme     String    @default("light")
   language        String    @default("ne")
   is_active       Boolean   @default(true)
+  failed_login_count Int    @default(0)
+  locked_until    DateTime? @db.Timestamptz
+  last_failed_login_at DateTime? @db.Timestamptz
+  session_version Int       @default(0)
   totp_secret     String?
   totp_enabled    Boolean   @default(false)
   created_at      DateTime  @default(now()) @db.Timestamptz

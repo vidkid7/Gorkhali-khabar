@@ -6,10 +6,17 @@ import { useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+function safeCallbackUrl(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {
+    return "/";
+  }
+  return value;
+}
+
 function LoginForm() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

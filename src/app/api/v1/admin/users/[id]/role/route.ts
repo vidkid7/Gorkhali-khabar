@@ -41,9 +41,21 @@ export async function PATCH(
     }
 
     const oldRole = user.role;
+    if (oldRole === "ADMIN" && role !== "ADMIN") {
+      const adminCount = await prisma.user.count({
+        where: { role: "ADMIN", is_active: true },
+      });
+      if (adminCount <= 1) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "Cannot remove the last active admin" },
+          { status: 400 }
+        );
+      }
+    }
+
     const updated = await prisma.user.update({
       where: { id },
-      data: { role },
+      data: { role, session_version: { increment: 1 } },
       select: { id: true, name: true, email: true, role: true },
     });
 

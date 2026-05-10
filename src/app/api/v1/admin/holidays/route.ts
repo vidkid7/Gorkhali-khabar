@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 
 export async function GET() {
+  const { error } = await requireRole(["ADMIN", "EDITOR"]);
+  if (error === "unauthorized") return unauthorizedResponse();
+  if (error === "forbidden") return forbiddenResponse();
+
   const holidays = await prisma.holiday.findMany({ orderBy: [{ bs_year: "desc" }, { bs_month: "asc" }, { bs_day: "asc" }] });
   return NextResponse.json({ success: true, data: holidays });
 }

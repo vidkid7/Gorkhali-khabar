@@ -3,10 +3,23 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { passwordResetSchema } from "@/lib/validations";
+import { checkRateLimit, getClientIp } from "@/lib/security";
 import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(
+      `reset-password:${getClientIp(request)}`,
+      10,
+      15 * 60 * 1000
+    );
+    if (!rateLimit.allowed) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "धेरै अनुरोधहरू। कृपया पछि प्रयास गर्नुहोस्" },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfter) } }
+      );
+    }
+
     const body = await request.json();
     const parsed = passwordResetSchema.safeParse(body);
 
@@ -40,7 +53,13 @@ export async function POST(request: NextRequest) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetToken.userId },
-        data: { password_hash },
+        data: {
+          password_hash,
+          failed_login_count: 0,
+          locked_until: null,
+          last_failed_login_at: null,
+          session_version: { increment: 1 },
+        },
       }),
       prisma.passwordResetToken.update({
         where: { id: resetToken.id },

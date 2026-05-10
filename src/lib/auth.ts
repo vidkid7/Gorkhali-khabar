@@ -4,7 +4,16 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { loginSchema } from "@/lib/validations";
+import { checkRateLimit, getClientIp, isKnownSeedPassword } from "@/lib/security";
 import type { UserRole } from "@prisma/client";
+
+const LOGIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_RATE_LIMIT_MAX = 10;
+const ACCOUNT_LOCK_WINDOW_MS = 15 * 60 * 1000;
+const ACCOUNT_LOCK_MAX_FAILURES = 5;
+const DUMMY_PASSWORD_HASH =
+  "$2b$12$rN6gn4q1MqAelqfkLKKqnOK6sqY8Sr74jkLLzbVcdOU8xjs9d7Bvm";
 
 declare module "next-auth" {
   interface Session {
@@ -15,11 +24,13 @@ declare module "next-auth" {
       image?: string | null;
       role: UserRole;
       email_verified: Date | null;
+      session_version: number;
     };
   }
   interface User {
     role: UserRole;
     email_verified: Date | null;
+    session_version: number;
   }
 }
 
@@ -28,13 +39,14 @@ declare module "@auth/core/jwt" {
     id: string;
     role: UserRole;
     email_verified: Date | null;
+    session_version: number;
   }
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: PrismaAdapter(prisma) as any,
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 12 * 60 * 60, updateAge: 60 * 60 },
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
@@ -50,21 +62,74 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+      async authorize(credentials, request) {
+        const parsed = loginSchema.safeParse({
+          email: String(credentials?.email ?? ""),
+          password: String(credentials?.password ?? ""),
+        });
+
+        if (!parsed.success) return null;
+
+        const { email, password } = parsed.data;
+        const ip = request ? getClientIp(request) : "unknown";
+        const rateLimit = checkRateLimit(
+          `credentials:${ip}:${email}`,
+          LOGIN_RATE_LIMIT_MAX,
+          LOGIN_RATE_LIMIT_WINDOW_MS
+        );
+        if (!rateLimit.allowed) return null;
 
         try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email as string },
+            where: { email },
           });
 
-          if (!user || !user.password_hash || !user.is_active) return null;
+          if (!user || !user.password_hash || !user.is_active) {
+            await bcrypt.compare(password, DUMMY_PASSWORD_HASH);
+            return null;
+          }
 
-          const isValid = await bcrypt.compare(
-            credentials.password as string,
-            user.password_hash
-          );
-          if (!isValid) return null;
+          if (user.locked_until && user.locked_until > new Date()) {
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(password, user.password_hash);
+          if (!isValid) {
+            const lastFailureWasRecent =
+              user.last_failed_login_at &&
+              Date.now() - user.last_failed_login_at.getTime() < ACCOUNT_LOCK_WINDOW_MS;
+            const nextFailureCount = (lastFailureWasRecent ? user.failed_login_count : 0) + 1;
+            const shouldLock = nextFailureCount >= ACCOUNT_LOCK_MAX_FAILURES;
+
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                failed_login_count: nextFailureCount,
+                last_failed_login_at: new Date(),
+                locked_until: shouldLock
+                  ? new Date(Date.now() + ACCOUNT_LOCK_WINDOW_MS)
+                  : null,
+              },
+            });
+            return null;
+          }
+
+          if (
+            process.env.NODE_ENV === "production" &&
+            user.role !== "READER" &&
+            isKnownSeedPassword(password)
+          ) {
+            return null;
+          }
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              failed_login_count: 0,
+              locked_until: null,
+              last_failed_login_at: null,
+            },
+          });
 
           return {
             id: user.id,
@@ -73,6 +138,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: user.image,
             role: user.role,
             email_verified: user.email_verified,
+            session_version: user.session_version,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -87,6 +153,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id as string;
         token.role = (user as { role: UserRole }).role;
         token.email_verified = (user as { email_verified: Date | null }).email_verified;
+        token.session_version = (user as { session_version: number }).session_version;
       }
       return token;
     },
@@ -95,6 +162,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.email_verified = token.email_verified as Date | null;
+        session.user.session_version = Number(token.session_version ?? 0);
       }
       return session;
     },

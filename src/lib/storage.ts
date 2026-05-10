@@ -92,7 +92,9 @@ class LocalProvider implements StorageProvider {
 
   async delete(url: string): Promise<void> {
     try {
-      const filePath = path.join(process.cwd(), "public", url);
+      const uploadRoot = path.resolve(process.cwd(), "public", "uploads");
+      const filePath = path.resolve(process.cwd(), "public", url.replace(/^\/+/, ""));
+      if (!filePath.startsWith(`${uploadRoot}${path.sep}`)) return;
       await unlink(filePath);
     } catch {
       // File may already be deleted

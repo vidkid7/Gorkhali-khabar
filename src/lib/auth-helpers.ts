@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 import type { ApiResponse } from "@/types";
@@ -12,6 +13,30 @@ export async function requireAuth() {
   if (!session?.user) {
     return { error: "unauthorized" as const, session: null };
   }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      role: true,
+      email_verified: true,
+      is_active: true,
+      session_version: true,
+    },
+  });
+
+  if (!user?.is_active) {
+    return { error: "unauthorized" as const, session: null };
+  }
+
+  if ((session.user.session_version ?? 0) !== user.session_version) {
+    return { error: "unauthorized" as const, session: null };
+  }
+
+  session.user.role = user.role;
+  session.user.email_verified = user.email_verified;
+  session.user.session_version = user.session_version;
+
   return { error: null, session };
 }
 

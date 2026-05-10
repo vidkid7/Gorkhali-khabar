@@ -3,10 +3,23 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, unauthorizedResponse } from "@/lib/auth-helpers";
 import { sendEmail, verificationEmailTemplate } from "@/lib/email";
+import { absoluteSiteUrl, checkRateLimit, getClientIp } from "@/lib/security";
 import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
+    const rateLimit = checkRateLimit(
+      `send-verification:${getClientIp(request)}`,
+      3,
+      15 * 60 * 1000
+    );
+    if (!rateLimit.allowed) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "धेरै अनुरोधहरू। कृपया पछि प्रयास गर्नुहोस्" },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfter) } }
+      );
+    }
+
     const { error, session } = await requireAuth();
     if (error) return unauthorizedResponse();
 
@@ -46,7 +59,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/auth/verify-email?token=${token}`;
+    const verifyUrl = absoluteSiteUrl(request, `/api/v1/auth/verify-email?token=${token}`);
     const lang = (user.language as "ne" | "en") || "ne";
 
     await sendEmail({

@@ -1,11 +1,12 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  name: z.string().min(2, "नाम कम्तीमा २ अक्षरको हुनुपर्छ"),
-  email: z.string().email("मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्"),
+  name: z.string().trim().min(2, "नाम कम्तीमा २ अक्षरको हुनुपर्छ").max(120),
+  email: z.string().trim().toLowerCase().email("मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्").max(254),
   password: z
     .string()
     .min(8, "पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ")
+    .max(128, "पासवर्ड १२८ अक्षरभन्दा लामो हुनु हुँदैन")
     .regex(/[A-Z]/, "कम्तीमा एउटा ठूलो अक्षर चाहिन्छ")
     .regex(/[a-z]/, "कम्तीमा एउटा सानो अक्षर चाहिन्छ")
     .regex(/[0-9]/, "कम्तीमा एउटा अंक चाहिन्छ")
@@ -13,8 +14,8 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.string().email("मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्"),
-  password: z.string().min(1, "पासवर्ड आवश्यक छ"),
+  email: z.string().trim().toLowerCase().email("मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्").max(254),
+  password: z.string().min(1, "पासवर्ड आवश्यक छ").max(128),
 });
 
 export const articleSchema = z.object({
@@ -53,9 +54,10 @@ export const passwordResetSchema = z.object({
   password: z
     .string()
     .min(8, "पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ")
+    .max(128, "पासवर्ड १२८ अक्षरभन्दा लामो हुनु हुँदैन")
     .regex(/[A-Z]/, "कम्तीमा एउटा ठूलो अक्षर चाहिन्छ")
     .regex(/[a-z]/, "कम्तीमा एउटा सानो अक्षर चाहिन्छ")
     .regex(/[0-9]/, "कम्तीमा एउटा अंक चाहिन्छ")
     .regex(/[^A-Za-z0-9]/, "कम्तीमा एउटा विशेष चिन्ह चाहिन्छ"),
-  token: z.string().min(1),
+  token: z.string().regex(/^[a-f0-9]{64}$/i, "अमान्य टोकन"),
 });

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
-import sanitizeHtml from "sanitize-html";
+import { sanitizeArticleHtml } from "@/lib/html";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Article } from "@prisma/client";
 
@@ -88,21 +88,12 @@ export async function POST(request: NextRequest) {
 
     const { tag_ids, ...articleData } = parsed.data;
 
-    const SANITIZE_CONFIG: sanitizeHtml.IOptions = {
-      allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'pre', 'code', 'table', 'thead',
-        'tbody', 'tr', 'th', 'td', 'figure', 'figcaption', 'iframe', 'video', 'source', 'div', 'span'],
-      allowedAttributes: {
-        '*': ['href', 'src', 'alt', 'title', 'class', 'target', 'rel',
-          'width', 'height', 'style', 'frameborder', 'allowfullscreen', 'loading'],
-      },
-    };
     // Sanitize HTML content to prevent XSS
     if (articleData.content) {
-      articleData.content = sanitizeHtml(articleData.content, SANITIZE_CONFIG);
+      articleData.content = sanitizeArticleHtml(articleData.content);
     }
     if (articleData.content_en) {
-      articleData.content_en = sanitizeHtml(articleData.content_en, SANITIZE_CONFIG);
+      articleData.content_en = sanitizeArticleHtml(articleData.content_en);
     }
 
     const wordCount = articleData.content

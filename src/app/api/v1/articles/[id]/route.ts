@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
-import sanitizeHtml from "sanitize-html";
+import { sanitizeArticleHtml } from "@/lib/html";
 import type { ApiResponse } from "@/types";
 
 export async function GET(
@@ -75,21 +75,12 @@ export async function PUT(
 
     const { tag_ids, ...updateData } = parsed.data;
 
-    const SANITIZE_CONFIG: sanitizeHtml.IOptions = {
-      allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'pre', 'code', 'table', 'thead',
-        'tbody', 'tr', 'th', 'td', 'figure', 'figcaption', 'iframe', 'video', 'source', 'div', 'span'],
-      allowedAttributes: {
-        '*': ['href', 'src', 'alt', 'title', 'class', 'target', 'rel',
-          'width', 'height', 'style', 'frameborder', 'allowfullscreen', 'loading'],
-      },
-    };
     // Sanitize HTML content to prevent XSS
     if (updateData.content) {
-      updateData.content = sanitizeHtml(updateData.content, SANITIZE_CONFIG);
+      updateData.content = sanitizeArticleHtml(updateData.content);
     }
     if (updateData.content_en) {
-      updateData.content_en = sanitizeHtml(updateData.content_en, SANITIZE_CONFIG);
+      updateData.content_en = sanitizeArticleHtml(updateData.content_en);
     }
 
     if (updateData.content) {
