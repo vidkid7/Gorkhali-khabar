@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Serif_Devanagari, Noto_Sans_Devanagari, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 const notoSerifDevanagari = Noto_Serif_Devanagari({
   variable: "--font-nepali-serif",
@@ -76,9 +77,7 @@ const themeScript = `
   (function() {
     try {
       var theme = localStorage.getItem('theme');
-      if (!theme) {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
+      if (theme !== 'light' && theme !== 'dark') theme = 'light';
       document.documentElement.dataset.theme = theme;
     } catch(e) {}
   })();
@@ -106,6 +105,7 @@ export default function RootLayout({
         <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
       </head>
       <body className="min-h-full flex flex-col">
+        <LoadingScreen splash minDisplayMs={0} />
         <Providers>{children}</Providers>
       </body>
     </html>

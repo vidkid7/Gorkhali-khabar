@@ -20,7 +20,7 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({
   splash = false,
-  minDisplayMs = 1400,
+  minDisplayMs = 0,
   message = "विश्वसनीय समाचार सेवा",
 }: LoadingScreenProps) {
   const [visible, setVisible] = useState(true);
@@ -32,10 +32,10 @@ export function LoadingScreen({
   }, [splash, minDisplayMs]);
 
   const content = (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-br from-[#1a1a1a] via-[#2d0d0d] to-[#1a0505]">
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: "var(--background)" }}>
       {/* Soft radial glow behind the logo */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c62828]/20 blur-[100px] animate-pulse" />
+        <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[90px] animate-pulse" />
       </div>
 
       {/* Logo with pulse + ring animation */}
@@ -56,13 +56,13 @@ export function LoadingScreen({
 
         {/* Brand name with staggered letter reveal effect */}
         <h1
-          className="animate-title-fade z-10 text-center text-2xl font-bold tracking-tight text-white md:text-3xl"
-          style={{ fontFamily: "var(--font-nepali-serif)" }}
+          className="animate-title-fade z-10 text-center text-2xl font-bold md:text-3xl"
+          style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}
         >
           नमस्ते एक्सप्रेस
         </h1>
 
-        <p className="animate-tagline-fade z-10 mt-2 text-sm text-white/70 md:text-base">
+        <p className="animate-tagline-fade z-10 mt-2 text-sm md:text-base" style={{ color: "var(--muted)" }}>
           {message}
         </p>
 
@@ -80,7 +80,7 @@ export function LoadingScreen({
 
   return (
     <div
-      className={`transition-opacity duration-700 ease-out ${
+      className={`transition-opacity duration-300 ease-out ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       aria-hidden={!visible}
