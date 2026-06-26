@@ -8,6 +8,7 @@ import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleContent } from "@/components/articles/ArticleContent";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
 import { sanitizeArticleHtml } from "@/lib/html";
+import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -50,13 +51,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticle(slug);
   if (!article) return { title: "Not Found" };
 
+  const url = canonicalUrl(`/articles/${article.slug}`);
   return {
     title: article.title,
     description: article.excerpt || undefined,
+    alternates: { canonical: url },
     openGraph: {
       title: article.title,
       description: article.excerpt || undefined,
-      images: article.featured_image ? [article.featured_image] : undefined,
+      url,
+      images: article.featured_image ? [article.featured_image] : [defaultOpenGraphImage()],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt || undefined,
+      images: article.featured_image ? [article.featured_image] : [defaultOpenGraphImage()],
     },
   };
 }
@@ -126,7 +136,7 @@ export default async function ArticlePage({ params }: Props) {
       publisher: {
         "@type": "Organization",
         name: "नमस्ते एक्सप्रेस",
-                logo: { "@type": "ImageObject", url: "/logo.png" },
+                logo: { "@type": "ImageObject", url: defaultOpenGraphImage() },
               },
               mainEntityOfPage: { "@type": "WebPage", "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/articles/${article.slug}` },
               articleSection: article.category.name,

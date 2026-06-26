@@ -106,6 +106,15 @@ export default async function AdminDashboard() {
 
   const maxCat = Math.max(...stats.categoryBreakdown.map((c) => c._count.articles), 1);
 
+  const statCards = [
+    { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: "📝", color: "var(--primary)", href: "/admin/articles" },
+    { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: "👁️", color: "var(--accent)", href: "/admin/analytics" },
+    { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: "💬", color: "var(--warning)", href: "/admin/comments" },
+    { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: "📢", color: "var(--success)", href: "/admin/ads" },
+    { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: "👥", color: "var(--info, var(--primary))", href: "/admin/users" },
+    { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: "🏷️", color: "var(--muted)", href: "/admin/tags" },
+  ];
+
   return (
     <div className="space-y-7">
       {/* Header */}
@@ -116,21 +125,19 @@ export default async function AdminDashboard() {
             स्वागत छ! साइटको अवस्था हेर्नुहोस्।
           </p>
         </div>
-        <Link href="/admin/articles/new" className="btn-primary w-full sm:w-auto">
-          + नयाँ लेख
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/" className="btn-secondary">
+            🌐 साइट हेर्नुहोस्
+          </Link>
+          <Link href="/admin/articles/new" className="btn-primary">
+            + नयाँ लेख
+          </Link>
+        </div>
       </div>
 
       {/* Primary Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {[
-          { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: "📝", color: "var(--primary)", href: "/admin/articles" },
-          { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: "👁️", color: "var(--accent)", href: "/admin/analytics" },
-          { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: "💬", color: "var(--warning)", href: "/admin/comments" },
-          { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: "📢", color: "var(--success)", href: "/admin/ads" },
-          { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: "👥", color: "var(--info, var(--primary))", href: "/admin/users" },
-          { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: "🏷️", color: "var(--muted)", href: "/admin/tags" },
-        ].map((card) => (
+        {statCards.map((card) => (
           <Link
             key={card.label}
             href={card.href}
@@ -228,17 +235,17 @@ export default async function AdminDashboard() {
           {/* Quick links */}
           <div className="mt-5 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ borderColor: "var(--border)" }}>
             {[
-              { label: "नयाँ लेख", href: "/admin/articles/new", icon: "✏️" },
-              { label: "विश्लेषण", href: "/admin/analytics", icon: "📈" },
-              { label: "सेटिङ", href: "/admin/settings", icon: "⚙️" },
+              { label: "नयाँ लेख", href: "/admin/articles/new", icon: "✏️", color: "var(--primary)" },
+              { label: "विश्लेषण", href: "/admin/analytics", icon: "📈", color: "var(--accent)" },
+              { label: "सेटिङ", href: "/admin/settings", icon: "⚙️", color: "var(--muted)" },
             ].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center gap-1.5 p-2.5 rounded-lg text-sm font-medium transition-colors hover:opacity-80"
-                style={{ background: "var(--surface-alt)", color: "var(--foreground)" }}
+                className="flex items-center gap-1.5 p-2.5 rounded-lg text-sm font-medium transition-colors hover:opacity-80 border border-border"
+                style={{ background: "var(--surface)", color: "var(--foreground)" }}
               >
-                <span>{link.icon}</span>
+                <span style={{ color: link.color }}>{link.icon}</span>
                 <span>{link.label}</span>
               </Link>
             ))}

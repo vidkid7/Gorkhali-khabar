@@ -40,19 +40,19 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
 
   return (
     <section className="w-full min-w-0">
-      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)] lg:gap-4">
+      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)] lg:gap-5">
 
         {/* ── Main hero card ── */}
         <article
-          className="relative min-h-[25rem] rounded-xl overflow-hidden sm:min-h-[32rem]"
-          style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
+          className="relative min-h-[26rem] rounded-xl overflow-hidden sm:min-h-[34rem] group"
+          style={{ boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
         >
           {active.featured_image ? (
             <Image
               src={active.featured_image}
               alt={title(active)}
               fill
-              className="object-cover transition-transform duration-700 ease-out"
+              className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
               style={{ transform: "scale(1.01)" }}
               sizes="(max-width: 1024px) 100vw, 60vw"
               priority
@@ -65,14 +65,14 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
           <div className="featured-card-overlay absolute inset-0" />
 
           {/* Top badges */}
-          <div className="absolute left-0 right-0 top-0 flex items-center justify-between gap-3 p-4">
+          <div className="absolute left-0 right-0 top-0 flex items-center justify-between gap-3 p-4 sm:p-5">
             <span className="top-story-badge">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               {language === "ne" ? "मुख्य समाचार" : "Top Story"}
             </span>
             <span
               className="rounded-full px-3 py-1 text-[11px] font-semibold text-white/90"
-              style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)" }}
+              style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
             >
               {active.published_at ? timeAgo(new Date(active.published_at), language) : ""}
             </span>
@@ -80,6 +80,8 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
 
           {/* Content at bottom */}
           <Link href={`/articles/${active.slug}`} className="absolute inset-x-0 bottom-0 block p-5 text-white sm:p-7">
+            {/* Thin accent rule above category */}
+            <span className="block w-10 h-0.5 mb-3 rounded-full" style={{ background: "rgba(255,255,255,0.7)" }} />
             <span
               className="inline-flex rounded-md px-2.5 py-1 text-[11px] font-extrabold tracking-wide"
               style={{ backgroundColor: active.category.color }}
@@ -87,13 +89,13 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               {category(active)}
             </span>
             <h1
-              className="mt-3 max-w-3xl text-2xl font-black sm:text-[2rem]"
+              className="mt-3 max-w-3xl text-2xl font-black sm:text-[2.25rem]"
               style={{ fontFamily: "var(--font-nepali-serif)", lineHeight: "1.6", paddingTop: "0.1em" }}
             >
               {title(active)}
             </h1>
             {excerpt(active) && (
-              <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-white/75 sm:text-[0.9375rem] line-clamp-2">
+              <p className="mt-2.5 max-w-2xl text-sm font-normal leading-relaxed text-white/75 sm:text-[0.9375rem] line-clamp-2">
                 {excerpt(active)}
               </p>
             )}
@@ -122,12 +124,12 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
           </Link>
 
           {/* Slide dot indicators */}
-          <div className="absolute bottom-4 right-5 hidden gap-1.5 sm:flex items-center">
+          <div className="absolute bottom-5 right-5 hidden gap-1.5 sm:flex items-center">
             {articles.slice(0, 5).map((article, index) => (
               <button
                 key={article.id}
                 onClick={() => setActiveIndex(index)}
-                className={`hero-dot ${index === activeIndex ? "active w-7" : "w-2"}`}
+                className={`hero-dot ${index === activeIndex ? "active w-8" : "w-2"}`}
                 aria-label={`${language === "ne" ? "समाचार" : "Story"} ${index + 1}`}
               />
             ))}
@@ -141,7 +143,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               key={article.id}
               type="button"
               onClick={() => setActiveIndex(articles.findIndex((candidate) => candidate.id === article.id))}
-              className="group grid min-w-0 grid-cols-[6.5rem_minmax(0,1fr)] overflow-hidden rounded-xl border border-border bg-surface text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-transparent"
+              className="group grid min-w-0 grid-cols-[6.5rem_minmax(0,1fr)] overflow-hidden rounded-xl border border-border bg-surface text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-border-strong"
             >
               {/* Thumbnail */}
               <div className="relative min-h-[7rem] bg-surface-alt overflow-hidden">
@@ -150,7 +152,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
                     src={article.featured_image}
                     alt={title(article)}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                    className="object-cover transition-transform duration-600 group-hover:scale-[1.05]"
                     sizes="104px"
                   />
                 ) : (

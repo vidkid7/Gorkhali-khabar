@@ -3,13 +3,27 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { getSiteConfig } from "@/lib/site-config";
+import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "हाम्रो बारेमा | About Us",
   description:
-    "नमस्ते एक्सप्रेसको बारेमा - About NamasteXpress",
+    "नमस्ते एक्सप्रेसको बारेमा - About NamasteXpress: Nepal's trusted online news portal delivering unbiased, timely news in Nepali and English.",
+  alternates: { canonical: canonicalUrl("/about") },
+  openGraph: {
+    title: "हाम्रो बारेमा | About Us",
+    description: "नमस्ते एक्सप्रेसको बारेमा - About NamasteXpress",
+    url: canonicalUrl("/about"),
+    images: [defaultOpenGraphImage()],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "हाम्रो बारेमा | About Us",
+    description: "नमस्ते एक्सप्रेसको बारेमा - About NamasteXpress",
+    images: [defaultOpenGraphImage()],
+  },
 };
 
 export default async function AboutPage() {

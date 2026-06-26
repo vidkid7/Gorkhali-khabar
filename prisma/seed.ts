@@ -412,7 +412,7 @@ async function main() {
   const settings: Record<string,unknown> = {
     site_name: { ne: "नमस्ते एक्सप्रेस", en: "NamasteExpress" },
     site_tagline: { ne: "नेपालको विश्वसनीय अनलाइन समाचार सेवा", en: "Nepal's Trusted Online News Service" },
-    site_logo: "/icons/logo.png",
+    site_logo: "/icons/logo.jpeg",
     site_favicon: "/favicon.ico",
     primary_color: "#c62828",
     contact_phone: "+977-1-4234567",

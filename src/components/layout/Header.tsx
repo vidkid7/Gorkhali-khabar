@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useSession, signOut } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNepaliDate } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -13,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { FontSizer } from "@/components/ui/FontSizer";
 import { AdSlot } from "@/components/ads/AdSlot";
 
-/* ─── Navigation Data (matching onlinekhabar.com structure) ─────────── */
+/* ─── Navigation Data ─────────────────────────────────────────────────── */
 
 const MAIN_NAV = [
   { key: "home", href: "/" },
@@ -38,31 +39,31 @@ const MORE_NAV = [
 ];
 
 const SPECIAL_NAV = [
-  { key: "patro", href: "/patro", color: "#e53935" },
-  { key: "shareMarket", href: "/share-market", color: "#1565c0" },
-  { key: "horoscope", href: "/rashifal", color: "#7b1fa2" },
-  { key: "health", href: "/categories/swasthya", color: "#43a047" },
+  { key: "patro", href: "/patro", color: "#c30000" },
+  { key: "shareMarket", href: "/share-market", color: "#1e40af" },
+  { key: "horoscope", href: "/rashifal", color: "#7c3aed" },
+  { key: "health", href: "/categories/swasthya", color: "#15803d" },
 ];
 
-// Sidebar items with Material Design icon paths and colors
+// Sidebar items with icon paths and colors
 const SIDEBAR_ITEMS = [
-  { key: "samachar", href: "/categories/samachar", color: "#1976d2", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" },
-  { key: "business", href: "/categories/arthatantra", color: "#2e7d32", d: "M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z" },
-  { key: "khelkud", href: "/categories/khelkud", color: "#e65100", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 4.3l1.35-.95c1.82.56 3.37 1.76 4.38 3.34l-.39 1.34-1.35.46L13 8.35V6.3zm-3.35-.95L11 6.3v2.05L7.01 10.5l-1.35-.46-.39-1.34c1.01-1.58 2.56-2.78 4.38-3.35zM7.08 17.11l-1.14.1C4.73 15.81 4 13.99 4 12c0-.12.01-.23.02-.35l1.02-.71 1.42.49L8.58 16l-1.5 1.11zm3.68 1.76c-.61-.11-1.19-.31-1.74-.57l.08-1.32 1.31-.97h3.18l1.31.97.08 1.32c-.55.26-1.13.46-1.74.57L12 17.73l-.24 1.14zm6.1-.87l-1.14-.1L14.42 16l2.12-4.57 1.42-.49 1.02.71c.01.12.02.23.02.35 0 1.99-.73 3.81-1.94 5.21z" },
-  { key: "bichar", href: "/categories/bichar", color: "#f9a825", d: "M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" },
-  { key: "lifestyle", href: "/categories/feature", color: "#00897b", d: "M17.66 8L12 2.35 6.34 8C4.78 9.56 4 11.64 4 13.64s.78 4.11 2.34 5.67C7.9 20.87 9.95 21.66 12 21.66s4.1-.79 5.66-2.35C19.22 17.75 20 15.64 20 13.64S19.22 9.56 17.66 8z" },
-  { key: "entertainment", href: "/categories/bichitra", color: "#7b1fa2", d: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" },
-  { key: "rajniti", href: "/categories/rajniti", color: "#c62828", d: "M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" },
-  { key: "antarvaarta", href: "/categories/antarvaarta", color: "#01579b", d: "M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" },
-  { key: "antarrashtriya", href: "/categories/antarrashtriya", color: "#4a148c", d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" },
-  { key: "sahitya", href: "/categories/sahitya", color: "#bf360c", d: "M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" },
-  { key: "prabidhi", href: "/categories/prabidhi", color: "#0097a7", d: "M22 9V7h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H4V5h14v14zM6 13h5v4H6zm6-6h4v3h-4zM6 7h5v5H6zm6 4h4v6h-4z" },
-  { key: "saptaahanta", href: "/categories/saptaahanta", color: "#558b2f", d: "M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" },
-  { key: "shareMarket", href: "/share-market", color: "#1565c0", d: "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z", isNew: true },
-  { key: "health", href: "/categories/swasthya", color: "#2e7d32", d: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", isNew: true },
-  { key: "patro", href: "/patro", color: "#e53935", d: "M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z", isNew: true },
-  { key: "horoscope", href: "/rashifal", color: "#7b1fa2", d: "M12 3L1 9l4 2.18V17h2v-4.82L9 13.4V17h2v-3l1-.54 1 .54V17h2v-3.6l2-1.22V11.18L22 9 12 3zm0 2.33l6.13 3.34L12 11.67 5.87 8.67 12 5.33z", isNew: true },
-  { key: "finance", href: "/finance", color: "#1b5e20", d: "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z", isNew: false },
+  { key: "samachar", href: "/categories/samachar", color: "#1e40af", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" },
+  { key: "business", href: "/categories/arthatantra", color: "#15803d", d: "M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z" },
+  { key: "khelkud", href: "/categories/khelkud", color: "#ea580c", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 4.3l1.35-.95c1.82.56 3.37 1.76 4.38 3.34l-.39 1.34-1.35.46L13 8.35V6.3zm-3.35-.95L11 6.3v2.05L7.01 10.5l-1.35-.46-.39-1.34c1.01-1.58 2.56-2.78 4.38-3.35zM7.08 17.11l-1.14.1C4.73 15.81 4 13.99 4 12c0-.12.01-.23.02-.35l1.02-.71 1.42.49L8.58 16l-1.5 1.11zm3.68 1.76c-.61-.11-1.19-.31-1.74-.57l.08-1.32 1.31-.97h3.18l1.31.97.08 1.32c-.55.26-1.13.46-1.74.57L12 17.73l-.24 1.14zm6.1-.87l-1.14-.1L14.42 16l2.12-4.57 1.42-.49 1.02.71c.01.12.02.23.02.35 0 1.99-.73 3.81-1.94 5.21z" },
+  { key: "bichar", href: "/categories/bichar", color: "#b45309", d: "M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" },
+  { key: "lifestyle", href: "/categories/feature", color: "#0891b2", d: "M17.66 8L12 2.35 6.34 8C4.78 9.56 4 11.64 4 13.64s.78 4.11 2.34 5.67C7.9 20.87 9.95 21.66 12 21.66s4.1-.79 5.66-2.35C19.22 17.75 20 15.64 20 13.64S19.22 9.56 17.66 8z" },
+  { key: "entertainment", href: "/categories/bichitra", color: "#7c3aed", d: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" },
+  { key: "rajniti", href: "/categories/rajniti", color: "#c30000", d: "M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" },
+  { key: "antarvaarta", href: "/categories/antarvaarta", color: "#1d4ed8", d: "M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" },
+  { key: "antarrashtriya", href: "/categories/antarrashtriya", color: "#4c1d95", d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" },
+  { key: "sahitya", href: "/categories/sahitya", color: "#9a3412", d: "M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" },
+  { key: "prabidhi", href: "/categories/prabidhi", color: "#0e7490", d: "M22 9V7h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H4V5h14v14zM6 13h5v4H6zm6-6h4v3h-4zM6 7h5v5H6zm6 4h4v6h-4z" },
+  { key: "saptaahanta", href: "/categories/saptaahanta", color: "#3f6212", d: "M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" },
+  { key: "shareMarket", href: "/share-market", color: "#1e40af", d: "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z", isNew: true },
+  { key: "health", href: "/categories/swasthya", color: "#15803d", d: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", isNew: true },
+  { key: "patro", href: "/patro", color: "#c30000", d: "M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z", isNew: true },
+  { key: "horoscope", href: "/rashifal", color: "#7c3aed", d: "M12 3L1 9l4 2.18V17h2v-4.82L9 13.4V17h2v-3l1-.54 1 .54V17h2v-3.6l2-1.22V11.18L22 9 12 3zm0 2.33l6.13 3.34L12 11.67 5.87 8.67 12 5.33z", isNew: true },
+  { key: "finance", href: "/finance", color: "#14532d", d: "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z", isNew: false },
 ];
 
 /* ─── Social Icons ────────────────────────────────────────────────────── */
@@ -99,7 +100,7 @@ function CatIcon({ d, color }: { d: string; color: string }) {
   return (
     <span
       className="inline-flex items-center justify-center rounded-full shrink-0"
-      style={{ width: 30, height: 30, background: color + "18" }}
+      style={{ width: 30, height: 30, background: color + "15" }}
     >
       <svg viewBox="0 0 24 24" fill={color} style={{ width: 16, height: 16 }}>
         <path d={d} />
@@ -120,6 +121,7 @@ export function Header() {
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { config } = useSiteConfig();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -129,7 +131,9 @@ export function Header() {
   const [today, setToday] = useState<Date | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setToday(new Date()); }, []);
   useEffect(() => { setMounted(true); }, []);
@@ -146,7 +150,6 @@ export function Header() {
     fetch("/api/v1/articles?pageSize=8")
       .then((r) => r.json())
       .then((resp) => {
-        // Handle nested response: {data: {data: [...]}} or {data: [...]}
         const articles = Array.isArray(resp.data) ? resp.data : (resp.data?.data || []);
         setTrendingTopics(
           articles.slice(0, 8).map((a: Record<string, string>) => ({
@@ -163,12 +166,14 @@ export function Header() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
     }
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
   const siteName = language === "en" ? config.site_name.en : config.site_name.ne;
+  const isAdmin = session?.user?.role && ["ADMIN", "EDITOR", "AUTHOR"].includes(session.user.role);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -181,13 +186,15 @@ export function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50" style={{ background: "var(--header-bg)", borderBottom: "1px solid var(--border)", backdropFilter: "blur(12px) saturate(160%)", WebkitBackdropFilter: "blur(12px) saturate(160%)" }}>
+    <header className="sticky top-0 z-50" style={{ background: "var(--header-bg)", borderBottom: "1px solid var(--border)", backdropFilter: "blur(14px) saturate(180%)", WebkitBackdropFilter: "blur(14px) saturate(180%)" }}>
 
-      {/* ══════════ TIER 1: Logo Bar — hidden on scroll, hidden on mobile ══════════ */}
+      {/* ══════════ TIER 1: Logo Bar — clean white, hidden on scroll ══════════ */}
       <div
         className="border-b border-border overflow-hidden transition-all duration-300 hidden md:block"
         style={{ maxHeight: scrolled ? 0 : 120, opacity: scrolled ? 0 : 1 }}
       >
+        {/* Thin accent rule — brand red top border */}
+        <div style={{ height: 3, background: "var(--accent)" }} />
         <div className="mx-auto max-w-7xl px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo + Site Name + Date */}
           <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
@@ -197,22 +204,22 @@ export function Header() {
                 <Image
                   src={config.site_logo}
                   alt={siteName}
-                  width={60}
-                  height={60}
+                  width={90}
+                  height={90}
                   className="object-contain rounded-lg"
-                  style={{ maxHeight: 52, width: "auto", height: "auto" }}
+                  style={{ maxHeight: 78, width: "auto", height: "auto" }}
                   priority
                   unoptimized
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               </div>
             )}
-            {/* Site name + date — always visible */}
+            {/* Site name + date */}
             <div className="flex flex-col justify-center min-w-0">
               <span
                 className="font-bold tracking-tight block"
                 style={{
-                  fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
+                  fontSize: "clamp(1.4rem, 5vw, 2.6rem)",
                   lineHeight: 1.2,
                   paddingTop: "0.1em",
                   paddingBottom: "0.05em",
@@ -222,7 +229,8 @@ export function Header() {
               >
                 {siteName}
               </span>
-              <span className="hidden sm:block text-xs mt-0.5" style={{ color: "var(--muted)", fontFamily: "var(--font-latin)" }}>
+              <span className="hidden sm:flex items-center gap-2 text-xs mt-0.5" style={{ color: "var(--muted)", fontFamily: "var(--font-latin)" }}>
+                <span className="inline-block w-3 h-px" style={{ background: "var(--accent)" }} />
                 {today
                   ? language === "ne"
                     ? formatNepaliDate(today)
@@ -237,28 +245,62 @@ export function Header() {
             <AdSlot position="HEADER" className="w-full" />
           </div>
 
-          {/* Social Icons */}
+          {/* Social + Weather + User */}
           <div className="hidden lg:flex items-center gap-1.5">
             {config.social_facebook && <a href={config.social_facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 transition-colors"><FacebookIcon /></a>}
-            {config.social_twitter && <a href={config.social_twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors"><XIcon /></a>}
+            {config.social_twitter && <a href={config.social_twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors text-foreground"><XIcon /></a>}
             {config.social_youtube && <a href={config.social_youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition-colors"><YouTubeIcon /></a>}
             {config.social_instagram && <a href={config.social_instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-1.5 rounded-full hover:bg-pink-50 dark:hover:bg-pink-900/30 text-pink-600 transition-colors"><InstagramIcon /></a>}
-            {config.social_tiktok && <a href={config.social_tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors"><TikTokIcon /></a>}
+            {config.social_tiktok && <a href={config.social_tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors text-foreground"><TikTokIcon /></a>}
             <div className="ml-2 hidden xl:block">
               <WeatherWidget />
             </div>
+
+            {/* User / Admin menu */}
+            {session?.user && (
+              <div className="relative ml-2" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-xs font-medium"
+                >
+                  <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
+                    {(session.user.name?.[0] || session.user.email?.[0] || "U").toUpperCase()}
+                  </span>
+                  <span className="hidden xl:inline max-w-[8rem] truncate">{session.user.name || session.user.email}</span>
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute top-full right-0 mt-1 w-48 rounded-xl shadow-xl py-1.5 z-50 border animate-slideDown bg-surface border-border">
+                    <Link href="/profile" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt" onClick={() => setUserMenuOpen(false)}>
+                      {t("nav.profile") || (language === "ne" ? "प्रोफाइल" : "Profile")}
+                    </Link>
+                    {isAdmin && (
+                      <Link href="/admin" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt font-medium" style={{ color: "var(--accent)" }} onClick={() => setUserMenuOpen(false)}>
+                        {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => { signOut({ callbackUrl: "/" }); setUserMenuOpen(false); }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt"
+                    >
+                      {t("common.logout") || (language === "ne" ? "लगआउट" : "Logout")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ══════════ TIER 2: Premium Navigation Bar ══════════ */}
+      {/* ══════════ TIER 2: Clean Navigation Bar (white bg, red accent) ══════════ */}
       <div
         style={{
           background: "var(--nav-bg)",
           borderBottom: "1px solid var(--border)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center justify-between min-h-[48px] py-1.5">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center justify-between min-h-[68px] py-1.5">
 
           {/* Compact logo — always visible on mobile, scroll-based on md+ */}
           <Link
@@ -268,12 +310,12 @@ export function Header() {
             }`}
           >
             {config.site_logo && (
-              <div className="relative rounded-full overflow-hidden ring-2 ring-white/60 bg-white shrink-0" style={{ width: 38, height: 38 }}>
+              <div className="relative rounded-lg overflow-hidden ring-1 ring-border bg-white shrink-0" style={{ width: 56, height: 56 }}>
                 <Image
                   src={config.site_logo}
                   alt={config.site_name?.ne || "Logo"}
                   fill
-                  sizes="38px"
+                  sizes="56px"
                   className="object-contain"
                   unoptimized
                 />
@@ -283,26 +325,22 @@ export function Header() {
               className="font-bold whitespace-nowrap leading-tight"
               style={{
                 fontSize: "0.95rem",
-                color: "#fff",
-                textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-                letterSpacing: "0.01em",
+                color: "var(--foreground)",
               }}
             >
               {siteName}
             </span>
           </Link>
 
-          {/* Main nav */}
+          {/* Main nav — clean minimal with red underline */}
           <nav className="hidden lg:flex items-center gap-0" aria-label="Main navigation">
             {MAIN_NAV.map((item) => (
               <Link
                 key={item.key}
                 href={item.href}
-                className="relative px-3 py-2 font-semibold text-nav-text/80 hover:text-nav-text transition-colors whitespace-nowrap group"
-                style={{ fontSize: "14px" }}
+                className="nav-link px-3 py-3 font-semibold text-sm whitespace-nowrap"
               >
                 {t(`nav.${item.key}`)}
-                <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
               </Link>
             ))}
 
@@ -310,19 +348,18 @@ export function Header() {
             <div className="relative" ref={moreRef}>
               <button
                 onClick={(e) => { e.stopPropagation(); setMoreOpen(!moreOpen); }}
-                className="px-3 py-2 font-medium text-nav-text/80 hover:text-nav-text hover:bg-white/5 rounded transition-colors whitespace-nowrap flex items-center gap-1"
-                style={{ fontSize: "14px" }}
+                className="px-3 py-3 font-semibold text-sm text-nav-text hover:text-accent transition-colors whitespace-nowrap flex items-center gap-1"
               >
                 {t("nav.more")}
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`h-3.5 w-3.5 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M19 9l-7 7-7-7" /></svg>
               </button>
               {moreOpen && (
-                <div className="absolute top-full left-0 mt-1 w-52 rounded-lg shadow-lg py-1 z-50 border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+                <div className="absolute top-full left-0 mt-1 w-56 rounded-xl shadow-xl py-1.5 z-50 border animate-slideDown bg-surface border-border">
                   {MORE_NAV.map((item) => (
                     <Link
                       key={item.key}
                       href={item.href}
-                      className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt transition-colors"
+                      className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt hover:text-accent transition-colors"
                       onClick={() => setMoreOpen(false)}
                     >
                       {t(`nav.${item.key}`)}
@@ -335,14 +372,14 @@ export function Header() {
 
           {/* Right controls */}
           <div className="flex items-center gap-2 ml-auto">
-            {/* Special nav (desktop) */}
+            {/* Special nav (desktop) — clean monochrome pills with brand color accents */}
             <div className="hidden xl:flex items-center gap-1.5">
               {SPECIAL_NAV.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
-                  className="flex items-center gap-1 px-2.5 py-1 font-semibold text-white rounded transition-all hover:brightness-110 whitespace-nowrap"
-                  style={{ background: item.color, fontSize: "12px" }}
+                  className="flex items-center gap-1 px-2.5 py-1.5 font-semibold text-xs rounded-md transition-all hover:bg-surface-alt whitespace-nowrap border border-transparent hover:border-border"
+                  style={{ color: item.color }}
                 >
                   {item.key === "patro" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>}
                   {item.key === "shareMarket" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>}
@@ -357,7 +394,7 @@ export function Header() {
             {/* Language */}
             <button
               onClick={() => setLanguage(language === "ne" ? "en" : "ne")}
-              className="px-2.5 py-1 text-xs font-semibold text-nav-text border border-nav-text/20 rounded hover:bg-white/10 transition-colors"
+              className="px-2.5 py-1 text-xs font-bold text-foreground border border-border rounded-md hover:bg-surface-alt transition-colors"
               aria-label={t("common.language")}
             >
               {language === "ne" ? "EN" : "NE"}
@@ -366,7 +403,7 @@ export function Header() {
             {/* Theme */}
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded hover:bg-white/10 text-nav-text/70 hover:text-nav-text transition-colors"
+              className="p-2 rounded-md hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors"
               aria-label={theme === "light" ? t("common.darkMode") : t("common.lightMode")}
             >
               {theme === "light" ? (
@@ -377,14 +414,14 @@ export function Header() {
             </button>
 
             {/* Font Sizer */}
-            <FontSizer variant="light" className="hidden sm:flex" />
+            <FontSizer variant="dark" className="hidden sm:flex" />
 
             <div className="w-px h-5 bg-border hidden sm:block" />
 
             {/* Hamburger */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-1.5 rounded hover:bg-white/10 text-nav-text/70 hover:text-nav-text transition-colors"
+              className="p-2 rounded-md hover:bg-surface-alt text-foreground transition-colors"
               aria-label="Menu"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -393,11 +430,11 @@ export function Header() {
         </div>
       </div>
 
-      {/* ══════════ TIER 3: Trending Topics + Search ══════════ */}
+      {/* ══════════ TIER 3: Trending Topics + Search (subtle gray bg) ══════════ */}
       <div className="border-b border-border" style={{ background: "var(--surface-alt)" }}>
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-3 min-h-[40px] py-1.5">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-3 min-h-[42px] py-1.5">
           {/* Trending label */}
-          <span className="flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold text-white" style={{ background: "var(--accent)" }}>
+          <span className="flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold text-white" style={{ background: "var(--accent)" }}>
             <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
             <span className="hidden xs:inline">{t("common.trending")}</span>
           </span>
@@ -425,10 +462,10 @@ export function Header() {
                         </span>
                       )}
                     </div>
-                    <span className="text-xs font-medium text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[120px] truncate">
+                    <span className="text-xs font-medium text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[140px] truncate">
                       {topic.title}
                     </span>
-                    <span className="text-muted/30 text-xs">·</span>
+                    <span className="text-muted-foreground text-xs">·</span>
                   </Link>
                 ))}
               </div>
@@ -452,19 +489,18 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("common.searchKeywords")}
-                className="w-44 lg:w-52 pl-8 pr-3 py-1.5 text-xs border border-border rounded-full bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+                className="w-44 lg:w-56 pl-8 pr-3 py-1.5 text-xs border border-border rounded-full bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
               />
-              <button type="submit" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-accent transition-colors">
+              <button type="submit" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-accent transition-colors">
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               </button>
             </div>
           </form>
         </div>
       </div>
-
-      {/* ══════════ SIDEBAR DRAWER ══════════ */}
     </header>
 
+    {/* ══════════ SIDEBAR DRAWER ══════════ */}
     {/* Sidebar rendered at document.body level */}
     {mounted && sidebarOpen && createPortal(
         <div
@@ -477,13 +513,13 @@ export function Header() {
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" />
           <nav
-            className="absolute top-0 right-0 w-80 max-w-[90vw] h-full shadow-2xl flex flex-col bg-surface"
+            className="absolute top-0 right-0 w-80 max-w-[90vw] h-full shadow-2xl flex flex-col bg-surface animate-slideDown"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Sidebar header */}
-            <div className="flex items-center justify-between px-4 h-14 bg-nav-bg shrink-0">
-              <span className="font-bold text-nav-text">{siteName}</span>
-              <button onClick={() => setSidebarOpen(false)} className="p-2 rounded hover:bg-white/10 text-nav-text" aria-label="Close menu">
+            <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0" style={{ background: "var(--accent)" }}>
+              <span className="font-bold text-white">{siteName}</span>
+              <button onClick={() => setSidebarOpen(false)} className="p-2 rounded hover:bg-white/20 text-white" aria-label="Close menu">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
@@ -509,7 +545,7 @@ export function Header() {
             {/* Mobile main nav (lg:hidden) */}
             <div className="lg:hidden border-b border-border py-1">
               {MAIN_NAV.map((item) => (
-                <Link key={item.key} href={item.href} className="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-surface-alt" onClick={() => setSidebarOpen(false)}>
+                <Link key={item.key} href={item.href} className="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-surface-alt hover:text-accent" onClick={() => setSidebarOpen(false)}>
                   {t(`nav.${item.key}`)}
                 </Link>
               ))}
@@ -560,6 +596,30 @@ export function Header() {
                 </Link>
               </div>
             </div>
+
+            {/* User / Admin links in sidebar */}
+            {session?.user && (
+              <div className="border-t border-border px-4 py-3 shrink-0">
+                <p className="text-xs font-medium text-muted mb-2">
+                  {language === "ne" ? "प्रयोगकर्ता" : "User"}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/profile" className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border" onClick={() => setSidebarOpen(false)}>
+                    {language === "ne" ? "प्रोफाइल" : "Profile"}
+                  </Link>
+                  {isAdmin && (
+                    <Link href="/admin" className="rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-accent-hover" onClick={() => setSidebarOpen(false)}>
+                      {language === "ne" ? "एडमिन" : "Admin"}
+                    </Link>
+                  )}
+                  {!isAdmin && (
+                    <button onClick={() => signOut({ callbackUrl: "/" })} className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border text-left">
+                      {language === "ne" ? "लगआउट" : "Logout"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Language edition button */}
             <div className="border-t border-border px-4 py-3 shrink-0">

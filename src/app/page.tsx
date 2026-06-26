@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
+import type { Metadata } from "next";
+import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -24,6 +26,25 @@ import {
 } from "@/components/ui/SkeletonLoader";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+  description:
+    "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल — ताजा समाचार, राजनीति, खेलकुद, व्यापार, मनोरञ्जन",
+  alternates: { canonical: canonicalUrl("/") },
+  openGraph: {
+    title: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+    description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
+    url: canonicalUrl("/"),
+    images: [defaultOpenGraphImage()],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+    description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
+    images: [defaultOpenGraphImage()],
+  },
+};
 
 const articleSelect = {
   id: true, slug: true, title: true, title_en: true,
@@ -105,18 +126,6 @@ async function getOldArticles() {
     select: articleSelect,
     orderBy: { view_count: "desc" },
     take: 6,
-  });
-}
-
-async function getProvinceArticles(slug: string) {
-  return prisma.article.findMany({
-    where: { status: "PUBLISHED", category: { slug } },
-    select: {
-      id: true, slug: true, title: true, title_en: true, published_at: true,
-      category: { select: { name: true, name_en: true, slug: true, color: true } },
-    },
-    orderBy: { published_at: "desc" },
-    take: 5,
   });
 }
 
@@ -251,22 +260,56 @@ async function EditorsPickSection() {
 }
 
 async function ProvincialNewsSection() {
-  const [bagmati, koshi, madhesh, gandaki, lumbini, karnali, sudurpaschim] = await Promise.all([
-    getProvinceArticles("bagmati-pradesh"),
-    getProvinceArticles("koshi-pradesh"),
-    getProvinceArticles("madhesh-pradesh"),
-    getProvinceArticles("gandaki-pradesh"),
-    getProvinceArticles("lumbini-pradesh"),
-    getProvinceArticles("karnali-pradesh"),
-    getProvinceArticles("sudurpaschim-pradesh"),
-  ]);
-  return (
-    <ProvincialNews
-      articlesByProvince={JSON.parse(JSON.stringify({
-        bagmati, koshi, madhesh, gandaki, lumbini, karnali, sudurpaschim,
-      }))}
-    />
-  );
+  const provinceSlugs = [
+    "bagmati-pradesh",
+    "koshi-pradesh",
+    "madhesh-pradesh",
+    "gandaki-pradesh",
+    "lumbini-pradesh",
+    "karnali-pradesh",
+    "sudurpaschim-pradesh",
+  ];
+  const provinceKeyBySlug: Record<string, string> = {
+    "bagmati-pradesh": "bagmati",
+    "koshi-pradesh": "koshi",
+    "madhesh-pradesh": "madhesh",
+    "gandaki-pradesh": "gandaki",
+    "lumbini-pradesh": "lumbini",
+    "karnali-pradesh": "karnali",
+    "sudurpaschim-pradesh": "sudurpaschim",
+  };
+
+  try {
+    const articles = await prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        category: { slug: { in: provinceSlugs } },
+      },
+      select: articleSelect,
+      orderBy: { published_at: "desc" },
+      take: 35,
+    });
+
+    const grouped: Record<string, typeof articles> = {
+      bagmati: [],
+      koshi: [],
+      madhesh: [],
+      gandaki: [],
+      lumbini: [],
+      karnali: [],
+      sudurpaschim: [],
+    };
+
+    for (const article of articles) {
+      const key = provinceKeyBySlug[article.category.slug];
+      if (key) grouped[key].push(article);
+    }
+
+    return <ProvincialNews articlesByProvince={JSON.parse(JSON.stringify(grouped))} />;
+  } catch (error) {
+    console.error("ProvincialNewsSection failed to load:", error);
+    return null;
+  }
 }
 
 async function DailyBriefSection() {
@@ -323,27 +366,32 @@ async function EducationSectionServer() {
 }
 
 async function QuickNewsBannerSection({ category }: { category: string }) {
-  const articles = await prisma.article.findMany({
-    where: { status: "PUBLISHED", category: { slug: category } },
-    select: {
-      id: true, slug: true, title: true, title_en: true, published_at: true,
-      category: { select: { name: true, name_en: true, slug: true, color: true } },
-    },
-    orderBy: { published_at: "desc" },
-    take: 1,
-  });
-  if (!articles[0]) return null;
-  const a = articles[0];
-  return (
-    <QuickNewsBanner
-      title={a.title}
-      title_en={a.title_en}
-      slug={a.slug}
-      categoryName={a.category.name}
-      categoryColor={a.category.color}
-      publishedAt={a.published_at}
-    />
-  );
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "PUBLISHED", category: { slug: category } },
+      select: {
+        id: true, slug: true, title: true, title_en: true, published_at: true,
+        category: { select: { name: true, name_en: true, slug: true, color: true } },
+      },
+      orderBy: { published_at: "desc" },
+      take: 1,
+    });
+    if (!articles[0]) return null;
+    const a = articles[0];
+    return (
+      <QuickNewsBanner
+        title={a.title}
+        title_en={a.title_en}
+        slug={a.slug}
+        categoryName={a.category.name}
+        categoryColor={a.category.color}
+        publishedAt={a.published_at}
+      />
+    );
+  } catch (error) {
+    console.error(`QuickNewsBannerSection (${category}) failed to load:`, error);
+    return null;
+  }
 }
 
 
@@ -369,9 +417,36 @@ function SectionSkeleton() {
 // ─── Page ────────────────────────────────────────────
 
 export default async function HomePage() {
+  const siteUrl = canonicalUrl("/");
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsMediaOrganization",
+            name: "नमस्ते एक्सप्रेस",
+            alternateName: "Namaste Express",
+            url: siteUrl,
+            logo: {
+              "@type": "ImageObject",
+              url: defaultOpenGraphImage(),
+              width: 512,
+              height: 512,
+            },
+            sameAs: [
+              "https://www.facebook.com/namasteexpress",
+              "https://www.twitter.com/namasteexpress",
+              "https://www.youtube.com/@namasteexpress",
+            ],
+            description:
+              "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल — ताजा समाचार, राजनीति, खेलकुद, व्यापार, मनोरञ्जन",
+          }),
+        }}
+      />
       <Suspense fallback={null}>
         <BreakingNewsSection />
       </Suspense>

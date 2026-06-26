@@ -49,7 +49,7 @@ function generateStructuredData(article: {
     publisher: {
       "@type": "Organization",
       name: "समाचार पोर्टल",
-      logo: { "@type": "ImageObject", url: `${siteUrl}/icons/logo.png` },
+      logo: { "@type": "ImageObject", url: `${siteUrl}/icons/logo.jpeg` },
     },
     mainEntityOfPage: `${siteUrl}/articles/${article.slug}`,
     articleSection: article.category_name,

@@ -51,7 +51,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
     return (
       <section>
         <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-        <div className="space-y-3">
+        <div className="space-y-1">
           {articles.map((a) => (
             <Link key={a.id} href={`/articles/${a.slug}`} className="side-article-item group">
               {/* Thumbnail */}
@@ -92,12 +92,12 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
     return (
       <section>
         <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {articles.map((a) => (
             <Link
               key={a.id}
               href={`/articles/${a.slug}`}
-              className="group block rounded-xl border border-border bg-surface overflow-hidden shadow-sm transition-all duration-250 hover:-translate-y-1 hover:shadow-lg hover:border-transparent"
+              className="group block rounded-xl border border-border bg-surface overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-border-strong"
             >
               {/* Image */}
               <div className="relative w-full aspect-[16/9] bg-surface-alt overflow-hidden thumb-zoom">
@@ -112,10 +112,10 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
                 ) : (
                   <PlaceholderImg />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               {/* Content */}
-              <div className="p-3.5">
+              <div className="p-4">
                 <span
                   className="text-[10px] font-bold uppercase tracking-wider"
                   style={{ color }}
@@ -123,7 +123,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
                   {catName(a)}
                 </span>
                 <h3
-                  className="mt-1 text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors"
+                  className="mt-1.5 text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors"
                   style={{ lineHeight: "1.6", paddingTop: "0.05em" }}
                 >
                   {title(a)}
@@ -144,7 +144,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
   return (
     <section>
       <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
 
         {/* Main featured card */}
         <Link
@@ -159,7 +159,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
                 src={main.featured_image}
                 alt={title(main)}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
                 sizes="(max-width: 768px) 100vw, 60vw"
                 priority
               />
@@ -188,7 +188,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
             {excerpt(main) && (
               <p className="mt-1.5 text-sm text-white/75 line-clamp-2">{excerpt(main)}</p>
             )}
-            <div className="mt-2.5 flex items-center gap-3 text-xs text-white/60">
+            <div className="mt-2.5 flex items-center gap-3 text-xs text-white/55">
               {main.author.name && <span>{main.author.name}</span>}
               {main.published_at && <span>{timeAgo(new Date(main.published_at), language)}</span>}
             </div>
@@ -196,7 +196,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
         </Link>
 
         {/* Side list */}
-        <div className="lg:col-span-2 space-y-2">
+        <div className="lg:col-span-2 space-y-1">
           {rest.map((a) => (
             <Link
               key={a.id}

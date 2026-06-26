@@ -154,7 +154,7 @@ export function MobileBottomNav() {
           const content = (
             <span
               className="flex flex-col items-center gap-0.5 py-2 px-1 min-w-0 transition-all"
-              style={{ color: active ? "var(--primary)" : "var(--muted)" }}
+              style={{ color: active ? "var(--accent)" : "var(--muted)" }}
             >
               <span className={`transition-transform ${active ? "scale-110" : ""}`}>{item.icon}</span>
               <span className="text-[10px] font-medium leading-none truncate">{item.label}</span>

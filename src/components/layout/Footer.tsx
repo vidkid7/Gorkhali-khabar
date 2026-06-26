@@ -44,7 +44,7 @@ type FooterColumnProps = {
 function FooterColumn({ title, items, translate }: FooterColumnProps) {
   return (
     <div className="min-w-0">
-      <h3 className="mb-3 border-b border-footer-border pb-2 text-xs font-semibold uppercase tracking-wider text-footer-heading">
+      <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-footer-heading">
         {title}
       </h3>
       <ul className="grid gap-2">
@@ -54,7 +54,7 @@ function FooterColumn({ title, items, translate }: FooterColumnProps) {
               href={item.href}
               className="inline-flex max-w-full items-center gap-2 text-sm text-footer-text transition-colors hover:text-footer-heading"
             >
-              <span className="h-1 w-1 shrink-0 rounded-full bg-accent/60" />
+              <span className="h-1 w-1 shrink-0 rounded-full bg-accent/70" />
               <span className="truncate">{translate(`nav.${item.key}`)}</span>
             </Link>
           </li>
@@ -68,12 +68,12 @@ function ContactItem({ icon, label, value }: { icon: ReactNode; label: string; v
   if (!value) return null;
 
   return (
-    <div className="flex min-w-0 items-center gap-3 rounded-xl bg-footer-input-bg px-3 py-2">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-footer-icon-bg text-accent">
+    <div className="flex min-w-0 items-center gap-3 rounded-lg bg-footer-input-bg px-3 py-2">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-footer-icon-bg text-accent">
         {icon}
       </span>
       <span className="min-w-0">
-        <span className="block text-[11px] font-bold text-footer-text">{label}</span>
+        <span className="block text-[10px] font-bold text-footer-text uppercase tracking-wider">{label}</span>
         <span className="block truncate text-sm font-semibold text-footer-heading">{value}</span>
       </span>
     </div>
@@ -88,7 +88,7 @@ function SocialIcon({ children, href, label }: { children: ReactNode; href?: str
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="grid h-10 w-10 place-items-center rounded-full bg-footer-input-bg text-footer-heading transition-colors hover:bg-accent hover:text-white"
+      className="grid h-9 w-9 place-items-center rounded-full bg-footer-input-bg text-footer-heading transition-colors hover:bg-accent hover:text-white"
       aria-label={label}
     >
       {children}
@@ -159,14 +159,19 @@ export function Footer() {
 
   return (
     <footer className="mt-2 bg-footer-bg text-footer-text">
-      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10">
-        <section className="rounded-xl border border-footer-border bg-footer-input-bg p-4 sm:p-6">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.7fr)] lg:items-center">
+      {/* Thin accent rule */}
+      <div style={{ height: 3, background: "var(--accent)" }} />
+
+      {/* Newsletter */}
+      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 sm:pt-12">
+        <section className="rounded-xl border border-footer-border bg-footer-input-bg p-5 sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:items-center">
             <div className="min-w-0">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-accent">
+              <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-accent">
+                <span className="inline-block w-4 h-px" style={{ background: "var(--accent)" }} />
                 {language === "ne" ? "समाचार अलर्ट" : "News alerts"}
               </p>
-              <h2 className="text-2xl font-bold leading-tight text-footer-heading sm:text-3xl" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+              <h2 className="text-xl font-bold leading-tight text-footer-heading sm:text-2xl" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                 {language === "ne" ? "ताजा समाचार इमेलमा पाउनुहोस्" : "Get the latest news by email"}
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-footer-text">
@@ -186,13 +191,13 @@ export function Footer() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={language === "ne" ? "आफ्नो इमेल प्रविष्ट गर्नुहोस्" : "Enter your email"}
-                className="min-w-0 rounded border border-footer-border bg-footer-input-bg px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent/40"
+                className="min-w-0 rounded-md border border-footer-border bg-footer-input-bg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent/40"
                 required
               />
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="rounded bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-70"
+                className="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-70"
               >
                 {status === "submitting"
                   ? language === "ne" ? "पठाउँदै..." : "Saving..."
@@ -208,26 +213,28 @@ export function Footer() {
         </section>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)] lg:gap-10">
+      {/* Main footer grid */}
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-14">
+          {/* Brand column */}
           <div className="min-w-0 space-y-5">
             <Link href="/" className="inline-flex max-w-full items-center gap-3">
               {config.site_logo ? (
                 <Image
                   src={config.site_logo}
                   alt={siteName}
-                  width={56}
-                  height={56}
-                  className="h-12 w-12 shrink-0 rounded-xl bg-white object-contain p-1 shadow-sm"
+                  width={84}
+                  height={84}
+                  className="h-16 w-16 shrink-0 rounded-xl bg-white object-contain p-1 shadow-sm"
                   unoptimized
                 />
               ) : (
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-accent text-xl font-black text-white">
-                  स
+                <span className="grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-accent text-2xl font-black text-white">
+                  न
                 </span>
               )}
               <span className="min-w-0">
-                <span className="block truncate text-2xl font-bold text-footer-heading" style={{ fontFamily: "var(--font-nepali-serif)" }}>{siteName}</span>
+                <span className="block truncate text-xl font-bold text-footer-heading" style={{ fontFamily: "var(--font-nepali-serif)" }}>{siteName}</span>
                 {config.registration_number && (
                   <span className="block truncate text-xs text-footer-text">
                     {language === "ne" ? "दर्ता नं:" : "Reg:"} {config.registration_number}
@@ -238,7 +245,7 @@ export function Footer() {
 
             {tagline && <p className="max-w-md text-sm leading-6 text-footer-text">{tagline}</p>}
 
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="grid gap-2">
               <ContactItem icon={phoneIcon} label={language === "ne" ? "फोन" : "Phone"} value={config.contact_phone} />
               <ContactItem icon={mailIcon} label={language === "ne" ? "इमेल" : "Email"} value={config.contact_email} />
               <ContactItem icon={locationIcon} label={language === "ne" ? "ठेगाना" : "Address"} value={address} />
@@ -263,6 +270,7 @@ export function Footer() {
             </div>
           </div>
 
+          {/* Links columns */}
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <FooterColumn title={sectionTitle("समाचार", "News")} items={FOOTER_SECTIONS.news} translate={t} />
             <FooterColumn title={sectionTitle("बिजनेस", "Business")} items={FOOTER_SECTIONS.business} translate={t} />
@@ -280,12 +288,18 @@ export function Footer() {
         </div>
       </div>
 
+      {/* Bottom bar */}
       <div className="border-t border-footer-border">
-        <div className="mx-auto max-w-7xl px-4 py-5 pb-24 text-center text-xs font-semibold text-footer-text sm:px-6 md:flex md:items-center md:justify-between md:pb-5 md:text-left">
+        <div className="mx-auto max-w-7xl px-4 py-5 pb-24 text-center text-xs font-medium text-footer-text sm:px-6 md:flex md:items-center md:justify-between md:pb-5 md:text-left">
           <p>{copyright}</p>
-          <Link href="/about" className="mt-2 inline-flex hover:text-footer-heading md:mt-0">
-            {t("footer.about")}
-          </Link>
+          <div className="mt-2 flex items-center justify-center gap-4 md:mt-0">
+            <Link href="/about" className="hover:text-footer-heading">
+              {t("footer.about")}
+            </Link>
+            <Link href="/admin" className="hover:text-footer-heading">
+              {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

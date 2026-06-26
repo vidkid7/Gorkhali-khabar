@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FontSizeProvider, useFontSize } from "@/contexts/FontSizeContext";
 import { useAdminRole } from "@/components/admin/AdminRoleProvider";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import { signOut } from "next-auth/react";
 
 const navItems = [
   { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: "📊", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
@@ -60,6 +63,7 @@ function FontSizerInline() {
 function SidebarContent() {
   const pathname = usePathname();
   const role = useAdminRole();
+  const { config } = useSiteConfig();
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [lang, setLang] = useState<"ne" | "en">("ne");
@@ -96,11 +100,15 @@ function SidebarContent() {
       {/* Mobile toggle */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg shadow-md"
-        style={{ background: "var(--surface)", color: "var(--foreground)", border: "1px solid var(--border)" }}
+        className="fixed top-4 left-4 z-50 md:hidden p-2.5 rounded-lg shadow-md border border-border"
+        style={{ background: "var(--surface)", color: "var(--foreground)" }}
         aria-label="Toggle sidebar"
       >
-        {open ? "✕" : "☰"}
+        {open ? (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M6 18L18 6M6 6l12 12" /></svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+        )}
       </button>
 
       <aside
@@ -108,7 +116,7 @@ function SidebarContent() {
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
         style={{
-          width: "15rem",
+          width: "16rem",
           background: "var(--sidebar-bg)",
           borderRight: "1px solid var(--border)",
           boxShadow: "var(--shadow-md)",
@@ -116,25 +124,31 @@ function SidebarContent() {
       >
         {/* Brand Header */}
         <div
-          className="px-4 py-3 border-b flex items-center justify-between"
+          className="px-4 py-3.5 border-b flex items-center justify-between"
           style={{ borderColor: "var(--border)" }}
         >
-          <Link href="/admin" className="flex items-center gap-2.5" style={{ color: "var(--foreground)" }}>
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm"
-              style={{ background: "var(--accent)" }}
-            >
-              स
-            </div>
-            <div className="leading-tight">
-              <p className="text-sm font-bold">Admin Panel</p>
-              <p className="text-[10px]" style={{ color: "var(--muted)" }}>प्रशासन</p>
+          <Link href="/admin" className="flex items-center gap-3" style={{ color: "var(--foreground)" }}>
+            {config.site_logo ? (
+              <div className="relative w-9 h-9 rounded-lg bg-white overflow-hidden ring-1 ring-border shrink-0">
+                <Image src={config.site_logo} alt="Logo" fill className="object-contain p-0.5" unoptimized />
+              </div>
+            ) : (
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0"
+                style={{ background: "var(--accent)" }}
+              >
+                न
+              </div>
+            )}
+            <div className="leading-tight min-w-0">
+              <p className="text-sm font-bold truncate">Admin Panel</p>
+              <p className="text-[10px] truncate" style={{ color: "var(--muted)" }}>प्रशासन · {config.site_name?.ne}</p>
             </div>
           </Link>
           {/* Language toggle in header */}
           <button
             onClick={toggleLang}
-            className="text-[10px] font-bold px-1.5 py-1 rounded border transition-colors"
+            className="text-[10px] font-bold px-2 py-1 rounded border transition-colors hover:bg-surface-alt"
             style={{ borderColor: "var(--border)", color: "var(--muted)" }}
             title="Toggle language labels"
           >
@@ -143,7 +157,7 @@ function SidebarContent() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: "thin" }}>
+        <nav className="flex-1 overflow-y-auto py-2 px-2" style={{ scrollbarWidth: "thin" }}>
           {navItems.filter(item => item.roles.includes(role)).map((item) => {
             const active = isActive(item.href);
             return (
@@ -151,12 +165,7 @@ function SidebarContent() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 mx-2 rounded-lg text-sm font-medium transition-all"
-                style={{
-                  background: active ? "var(--accent)" : "transparent",
-                  color: active ? "#fff" : "var(--muted)",
-                  marginBottom: "1px",
-                }}
+                className={`admin-nav-link ${active ? "active" : ""}`}
               >
                 <span className="text-base shrink-0">{item.icon}</span>
                 <div className="min-w-0 flex-1">
@@ -188,8 +197,8 @@ function SidebarContent() {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors"
-            style={{ background: "var(--surface)", color: "var(--foreground)", border: "1px solid var(--border)" }}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors border border-border hover:bg-surface-alt"
+            style={{ background: "var(--surface)", color: "var(--foreground)" }}
           >
             {theme === "light" ? "🌙" : "☀️"}
             <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
@@ -198,11 +207,21 @@ function SidebarContent() {
           {/* Back to site */}
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
-            style={{ color: "var(--muted)" }}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border border-border hover:bg-surface-alt"
+            style={{ color: "var(--foreground)", background: "var(--surface)" }}
           >
-            ← साइटमा फर्कनुहोस्
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10" /></svg>
+            <span>साइटमा फर्कनुहोस् / Back to site</span>
           </Link>
+
+          {/* Logout */}
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors border border-transparent hover:bg-error-light text-error"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span>Logout / लगआउट</span>
+          </button>
         </div>
       </aside>
 
@@ -224,4 +243,3 @@ export function AdminSidebar() {
     </FontSizeProvider>
   );
 }
-

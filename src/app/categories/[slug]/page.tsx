@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import Link from "next/link";
+import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -59,14 +60,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = await getCategory(slug);
   if (!category) return { title: "Not Found" };
 
+  const title = category.name_en
+    ? `${category.name} | ${category.name_en}`
+    : `${category.name}`;
+  const description =
+    category.description ||
+    `${category.name} सम्बन्धी ताजा समाचार, लेख र अपडेटहरू - नमस्ते एक्सप्रेस`;
+  const url = canonicalUrl(`/categories/${category.slug}`);
+
   return {
-    title: category.name_en
-      ? `${category.name} | ${category.name_en}`
-      : category.name,
-    description: category.description || `${category.name} - नमस्ते एक्सप्रेस`,
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
       title: category.name,
-      description: category.description || undefined,
+      description,
+      url,
+      images: [defaultOpenGraphImage()],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: category.name,
+      description,
+      images: [defaultOpenGraphImage()],
     },
   };
 }

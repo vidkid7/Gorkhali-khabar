@@ -5,6 +5,8 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import Image from "next/image";
 
 function safeCallbackUrl(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {
@@ -14,7 +16,8 @@ function safeCallbackUrl(value: string | null) {
 }
 
 function LoginForm() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { config } = useSiteConfig();
   const searchParams = useSearchParams();
   const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
   const [email, setEmail] = useState("");
@@ -53,15 +56,29 @@ function LoginForm() {
     }
   }
 
+  const siteName = language === "en" ? config.site_name.en : config.site_name.ne;
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "var(--background)" }}>
       <div className="card w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>
-          {t("auth.loginTitle")}
-        </h1>
+        <div className="text-center mb-6">
+          {config.site_logo && (
+            <div className="flex justify-center mb-4">
+              <div className="relative w-16 h-16 rounded-xl bg-white shadow-sm overflow-hidden ring-1 ring-border p-1">
+                <Image src={config.site_logo} alt={siteName} fill className="object-contain" unoptimized />
+              </div>
+            </div>
+          )}
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>
+            {t("auth.loginTitle")}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
+            {language === "ne" ? "नमस्ते एक्सप्रेसमा स्वागत छ" : "Welcome to Namaste Express"}
+          </p>
+        </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-md bg-red-50 text-red-700 text-sm border border-red-200">
+          <div className="mb-4 p-3 rounded-md bg-error-light text-error text-sm border border-error/20">
             {error}
           </div>
         )}
@@ -71,6 +88,7 @@ function LoginForm() {
             <label
               htmlFor="email"
               className="block text-sm font-medium mb-1"
+              style={{ color: "var(--foreground)" }}
             >
               {t("auth.email")}
             </label>
@@ -80,7 +98,7 @@ function LoginForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
               placeholder="you@example.com"
             />
           </div>
@@ -89,6 +107,7 @@ function LoginForm() {
             <label
               htmlFor="password"
               className="block text-sm font-medium mb-1"
+              style={{ color: "var(--foreground)" }}
             >
               {t("auth.password")}
             </label>
@@ -98,7 +117,7 @@ function LoginForm() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
             />
           </div>
 

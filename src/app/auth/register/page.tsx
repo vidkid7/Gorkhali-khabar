@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import Image from "next/image";
 
 export default function RegisterPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { config } = useSiteConfig();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,11 +48,18 @@ export default function RegisterPage() {
     }
   }
 
+  const siteName = language === "en" ? config.site_name.en : config.site_name.ne;
+
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "var(--background)" }}>
         <div className="card w-full max-w-md p-8 text-center">
-          <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>{t("common.success")}</h1>
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-success-light flex items-center justify-center">
+            <svg className="w-8 h-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>{t("common.success")}</h1>
           <p className="text-muted mb-6">{t("auth.verifyEmail")}</p>
           <Link href="/auth/login" className="btn-primary">
             {t("common.login")}
@@ -60,21 +70,33 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "var(--background)" }}>
       <div className="card w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>
-          {t("auth.registerTitle")}
-        </h1>
+        <div className="text-center mb-6">
+          {config.site_logo && (
+            <div className="flex justify-center mb-4">
+              <div className="relative w-16 h-16 rounded-xl bg-white shadow-sm overflow-hidden ring-1 ring-border p-1">
+                <Image src={config.site_logo} alt={siteName} fill className="object-contain" unoptimized />
+              </div>
+            </div>
+          )}
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>
+            {t("auth.registerTitle")}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
+            {language === "ne" ? "नमस्ते एक्सप्रेसमा स्वागत छ" : "Welcome to Namaste Express"}
+          </p>
+        </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-md bg-red-50 text-red-700 text-sm border border-red-200">
+          <div className="mb-4 p-3 rounded-md bg-error-light text-error text-sm border border-error/20">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
+            <label htmlFor="name" className="block text-sm font-medium mb-1" style={{ color: "var(--foreground)" }}>
               {t("auth.name")}
             </label>
             <input
@@ -83,12 +105,12 @@ export default function RegisterPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
             />
           </div>
 
           <div>
-            <label htmlFor="reg-email" className="block text-sm font-medium mb-1">
+            <label htmlFor="reg-email" className="block text-sm font-medium mb-1" style={{ color: "var(--foreground)" }}>
               {t("auth.email")}
             </label>
             <input
@@ -97,13 +119,13 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="reg-password" className="block text-sm font-medium mb-1">
+            <label htmlFor="reg-password" className="block text-sm font-medium mb-1" style={{ color: "var(--foreground)" }}>
               {t("auth.password")}
             </label>
             <input
@@ -113,7 +135,7 @@ export default function RegisterPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
             />
           </div>
 
@@ -121,6 +143,7 @@ export default function RegisterPage() {
             <label
               htmlFor="reg-confirm"
               className="block text-sm font-medium mb-1"
+              style={{ color: "var(--foreground)" }}
             >
               {t("auth.confirmPassword")}
             </label>
@@ -131,7 +154,7 @@ export default function RegisterPage() {
               minLength={8}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input"
             />
           </div>
 
