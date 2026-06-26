@@ -69,7 +69,7 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
                     <svg className="h-5 w-5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   </div>
                   <div className="absolute bottom-0 p-3 text-white">
-                    <p className="line-clamp-3 text-sm font-extrabold leading-tight" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title}</p>
+                    <p className="line-clamp-3 text-sm font-extrabold leading-[1.55]" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title}</p>
                     <p className="text-[10px] mt-1 opacity-70">▶ {toNepaliDigits(reel.view_count)}</p>
                   </div>
                 </div>

@@ -34,7 +34,7 @@ export function QuickNewsBanner({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[11px] font-bold text-muted">{categoryName}</span>
-        <span className="mt-0.5 block line-clamp-3 text-sm font-extrabold leading-snug text-foreground transition-colors group-hover:text-primary" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+        <span className="mt-0.5 block line-clamp-3 text-sm font-extrabold leading-[1.55] text-foreground transition-colors group-hover:text-primary" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {displayTitle}
         </span>
       </span>

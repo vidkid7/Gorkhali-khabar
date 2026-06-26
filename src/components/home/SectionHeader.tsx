@@ -15,16 +15,20 @@ export function SectionHeader({ titleKey, color, href }: SectionHeaderProps) {
   const viewAll = t("common.viewAll");
 
   return (
-    <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: `2px solid var(--border)` }}>
-      <div className="flex items-center gap-3">
-        <div className="w-1 h-7 rounded-full" style={{ backgroundColor: color }} />
-        <h2 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>{title}</h2>
+    <div
+      className="section-header-premium"
+      style={{ "--section-color": color } as React.CSSProperties}
+    >
+      <div className="sh-title">
+        <div className="sh-bar" />
+        <h2 className="sh-text">{title}</h2>
       </div>
       {href && (
-        <Link href={href}
-          className="text-xs font-semibold px-3 py-1.5 rounded-md transition-all hover:shadow-sm"
-          style={{ background: color, color: "#fff" }}>
-          {viewAll} →
+        <Link href={href} className="sh-link">
+          {viewAll}
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </Link>
       )}
     </div>

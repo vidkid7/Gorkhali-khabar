@@ -28,30 +28,57 @@ interface CategorySectionProps {
   layout?: "grid" | "featured" | "list";
 }
 
+function PlaceholderImg() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-surface-alt">
+      <svg className="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    </div>
+  );
+}
+
 export function CategorySection({ sectionKey, articles, color, slug, layout = "featured" }: CategorySectionProps) {
   const { language } = useLanguage();
   if (!articles.length) return null;
 
   const title = (a: CategoryArticle) => (language === "en" && a.title_en ? a.title_en : a.title);
   const excerpt = (a: CategoryArticle) => (language === "en" && a.excerpt_en ? a.excerpt_en : a.excerpt);
+  const catName = (a: CategoryArticle) => (language === "en" && a.category.name_en ? a.category.name_en : a.category.name);
 
+  /* ── List layout ── */
   if (layout === "list") {
     return (
       <section>
         <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-        <div className="space-y-4">
+        <div className="space-y-3">
           {articles.map((a) => (
-            <Link key={a.id} href={`/articles/${a.slug}`} className="flex gap-4 group">
-              <div className="relative w-28 h-20 shrink-0 rounded-lg overflow-hidden bg-surface">
+            <Link key={a.id} href={`/articles/${a.slug}`} className="side-article-item group">
+              {/* Thumbnail */}
+              <div className="relative w-24 h-[4.5rem] shrink-0 rounded-lg overflow-hidden bg-surface-alt thumb-zoom">
                 {a.featured_image ? (
-                  <Image src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="112px" />
+                  <Image src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="96px" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">📰</span></div>
+                  <PlaceholderImg />
                 )}
               </div>
+              {/* Text */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors">{title(a)}</h3>
-                <p className="text-xs text-muted mt-1">{a.published_at ? timeAgo(new Date(a.published_at), language) : ""}</p>
+                <span
+                  className="text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color }}
+                >
+                  {catName(a)}
+                </span>
+                <h3
+                  className="text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors mt-0.5"
+                  style={{ lineHeight: "1.6", paddingTop: "0.05em" }}
+                >
+                  {title(a)}
+                </h3>
+                <p className="text-xs text-muted mt-1">
+                  {a.published_at ? timeAgo(new Date(a.published_at), language) : ""}
+                </p>
               </div>
             </Link>
           ))}
@@ -60,24 +87,50 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
     );
   }
 
+  /* ── Grid layout ── */
   if (layout === "grid") {
     return (
       <section>
         <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {articles.map((a) => (
-            <Link key={a.id} href={`/articles/${a.slug}`} className="card group block">
-              <div className="relative w-full h-44 rounded-t-lg overflow-hidden bg-surface">
+            <Link
+              key={a.id}
+              href={`/articles/${a.slug}`}
+              className="group block rounded-xl border border-border bg-surface overflow-hidden shadow-sm transition-all duration-250 hover:-translate-y-1 hover:shadow-lg hover:border-transparent"
+            >
+              {/* Image */}
+              <div className="relative w-full aspect-[16/9] bg-surface-alt overflow-hidden thumb-zoom">
                 {a.featured_image ? (
-                  <Image src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                  <Image
+                    src={a.featured_image}
+                    alt={title(a)}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center"><span className="text-4xl">📰</span></div>
+                  <PlaceholderImg />
                 )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <div className="p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color }}>{language === "en" && a.category.name_en ? a.category.name_en : a.category.name}</span>
-                <h3 className="mt-1 text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors">{title(a)}</h3>
-                <p className="text-xs text-muted mt-1">{a.published_at ? timeAgo(new Date(a.published_at), language) : ""}</p>
+              {/* Content */}
+              <div className="p-3.5">
+                <span
+                  className="text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color }}
+                >
+                  {catName(a)}
+                </span>
+                <h3
+                  className="mt-1 text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors"
+                  style={{ lineHeight: "1.6", paddingTop: "0.05em" }}
+                >
+                  {title(a)}
+                </h3>
+                <p className="text-xs text-muted mt-1.5">
+                  {a.published_at ? timeAgo(new Date(a.published_at), language) : ""}
+                </p>
               </div>
             </Link>
           ))}
@@ -86,51 +139,95 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
     );
   }
 
-  // "featured" layout: 1 big + smaller list
+  /* ── Featured layout: 1 big + smaller list ── */
   const [main, ...rest] = articles;
   return (
     <section>
       <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-        {/* Main featured */}
-        <Link href={`/articles/${main.slug}`} className="lg:col-span-3 card group block">
-          <div className="relative w-full min-h-[16rem] lg:min-h-[20rem] rounded-t-lg overflow-hidden bg-surface">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+
+        {/* Main featured card */}
+        <Link
+          href={`/articles/${main.slug}`}
+          className="lg:col-span-3 group block relative rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+          style={{ minHeight: "18rem" }}
+        >
+          {/* Image */}
+          <div className="relative w-full min-h-[16rem] lg:min-h-[20rem] bg-surface-alt overflow-hidden thumb-zoom">
             {main.featured_image ? (
-              <Image src={main.featured_image} alt={title(main)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 60vw" priority />
+              <Image
+                src={main.featured_image}
+                alt={title(main)}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 60vw"
+                priority
+              />
             ) : (
-              <div className="w-full h-full flex items-center justify-center" style={{ background: "var(--surface-alt, var(--surface))" }}>
-                <span className="text-6xl">📰</span>
-              </div>
+              <PlaceholderImg />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 p-5 text-white">
-              <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded" style={{ backgroundColor: color }}>
-                {language === "en" && main.category.name_en ? main.category.name_en : main.category.name}
-              </span>
-              <h3 className="mt-2 text-lg font-bold line-clamp-4 group-hover:underline" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title(main)}</h3>
-              {excerpt(main) && <p className="mt-1 text-sm text-white/80 line-clamp-3">{excerpt(main)}</p>}
-              <div className="mt-2 flex items-center gap-3 text-xs text-white/70">
-                {main.author.name && <span>{main.author.name}</span>}
-                {main.published_at && <span>{timeAgo(new Date(main.published_at), language)}</span>}
-              </div>
+          </div>
+
+          {/* Overlay */}
+          <div className="featured-card-overlay absolute inset-0" />
+
+          {/* Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+            <span
+              className="inline-flex rounded-md px-2.5 py-0.5 text-[10px] font-bold tracking-wide"
+              style={{ backgroundColor: color }}
+            >
+              {catName(main)}
+            </span>
+            <h3
+              className="mt-2 text-lg font-bold line-clamp-3 group-hover:opacity-90 transition-opacity"
+              style={{ fontFamily: "var(--font-nepali-serif)", lineHeight: "1.6", paddingTop: "0.1em" }}
+            >
+              {title(main)}
+            </h3>
+            {excerpt(main) && (
+              <p className="mt-1.5 text-sm text-white/75 line-clamp-2">{excerpt(main)}</p>
+            )}
+            <div className="mt-2.5 flex items-center gap-3 text-xs text-white/60">
+              {main.author.name && <span>{main.author.name}</span>}
+              {main.published_at && <span>{timeAgo(new Date(main.published_at), language)}</span>}
             </div>
           </div>
         </Link>
 
         {/* Side list */}
-        <div className="lg:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-2">
           {rest.map((a) => (
-            <Link key={a.id} href={`/articles/${a.slug}`} className="flex gap-3 group">
-              <div className="relative w-24 h-18 shrink-0 rounded-lg overflow-hidden bg-surface">
+            <Link
+              key={a.id}
+              href={`/articles/${a.slug}`}
+              className="side-article-item group"
+            >
+              {/* Thumbnail */}
+              <div className="relative w-[5.5rem] h-[4.25rem] shrink-0 rounded-lg overflow-hidden bg-surface-alt thumb-zoom">
                 {a.featured_image ? (
-                  <Image src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="96px" />
+                  <Image
+                    src={a.featured_image}
+                    alt={title(a)}
+                    fill
+                    className="object-cover"
+                    sizes="88px"
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center"><span className="text-xl">📰</span></div>
+                  <PlaceholderImg />
                 )}
               </div>
+              {/* Text */}
               <div className="flex-1 min-w-0 py-0.5">
-                <h4 className="text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors leading-tight">{title(a)}</h4>
-                <p className="text-xs text-muted mt-1">{a.published_at ? timeAgo(new Date(a.published_at), language) : ""}</p>
+                <h4
+                  className="text-sm font-semibold line-clamp-2 group-hover:text-accent transition-colors"
+                  style={{ lineHeight: "1.6", paddingTop: "0.05em" }}
+                >
+                  {title(a)}
+                </h4>
+                <p className="text-xs text-muted mt-1">
+                  {a.published_at ? timeAgo(new Date(a.published_at), language) : ""}
+                </p>
               </div>
             </Link>
           ))}

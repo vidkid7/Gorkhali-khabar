@@ -181,7 +181,7 @@ export function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50" style={{ background: "var(--header-bg)", borderBottom: "1px solid var(--border)" }}>
+    <header className="sticky top-0 z-50" style={{ background: "var(--header-bg)", borderBottom: "1px solid var(--border)", backdropFilter: "blur(12px) saturate(160%)", WebkitBackdropFilter: "blur(12px) saturate(160%)" }}>
 
       {/* ══════════ TIER 1: Logo Bar — hidden on scroll, hidden on mobile ══════════ */}
       <div
@@ -298,10 +298,11 @@ export function Header() {
               <Link
                 key={item.key}
                 href={item.href}
-                className="px-3 py-2 font-medium text-nav-text/80 hover:text-nav-text hover:bg-white/5 rounded transition-colors whitespace-nowrap"
-                style={{ fontSize: "14px", letterSpacing: "0.01em" }}
+                className="relative px-3 py-2 font-semibold text-nav-text/80 hover:text-nav-text transition-colors whitespace-nowrap group"
+                style={{ fontSize: "14px" }}
               >
                 {t(`nav.${item.key}`)}
+                <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
               </Link>
             ))}
 
@@ -396,8 +397,8 @@ export function Header() {
       <div className="border-b border-border" style={{ background: "var(--surface-alt)" }}>
         <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-3 min-h-[40px] py-1.5">
           {/* Trending label */}
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-accent shrink-0">
-            <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+          <span className="flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold text-white" style={{ background: "var(--accent)" }}>
+            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
             <span className="hidden xs:inline">{t("common.trending")}</span>
           </span>
 
@@ -405,28 +406,29 @@ export function Header() {
           <div className="flex-1 min-w-0 overflow-hidden">
             {trendingTopics.length > 0 ? (
               <div
-                className="flex items-center gap-3 animate-marquee"
+                className="flex items-center gap-4 animate-marquee"
                 style={{ width: "max-content" }}
                 onMouseEnter={e => (e.currentTarget.style.animationPlayState = "paused")}
                 onMouseLeave={e => (e.currentTarget.style.animationPlayState = "running")}
               >
                 {/* Render items twice for seamless loop (marquee moves -50%) */}
                 {[...trendingTopics, ...trendingTopics].map((topic, i) => (
-                  <Link key={i} href={`/articles/${topic.slug}`} className="flex items-center gap-1.5 shrink-0 group">
-                    <div className="relative w-7 h-7 rounded-full overflow-hidden bg-muted shrink-0 ring-2 ring-white dark:ring-gray-700">
+                  <Link key={i} href={`/articles/${topic.slug}`} className="flex items-center gap-2 shrink-0 group">
+                    <div className="relative w-6 h-6 rounded-full overflow-hidden bg-muted shrink-0 ring-1 ring-border">
                       {topic.image ? (
-                        <Image src={topic.image} alt="" fill sizes="28px" className="object-cover" />
+                        <Image src={topic.image} alt="" fill sizes="24px" className="object-cover" />
                       ) : (
-                        <span className="grid h-full w-full place-items-center bg-primary-light text-primary">
-                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <span className="grid h-full w-full place-items-center bg-accent/10 text-accent">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M4 4h14a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-1.5 1.5H5a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2Zm1 13a1 1 0 0 0 1 1h12V6H4v11a1 1 0 0 0 1 1Zm2-9h8v2H7V8Zm0 4h8v2H7v-2Z" />
                           </svg>
                         </span>
                       )}
                     </div>
-                    <span className="text-xs text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[100px] truncate">
+                    <span className="text-xs font-medium text-muted group-hover:text-accent transition-colors whitespace-nowrap max-w-[120px] truncate">
                       {topic.title}
                     </span>
+                    <span className="text-muted/30 text-xs">·</span>
                   </Link>
                 ))}
               </div>
@@ -434,7 +436,7 @@ export function Header() {
               <div className="flex items-center gap-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="flex items-center gap-1.5 shrink-0 animate-pulse">
-                    <div className="w-7 h-7 rounded-full bg-muted" />
+                    <div className="w-6 h-6 rounded-full bg-muted" />
                     <div className="h-3 w-16 bg-muted rounded" />
                   </div>
                 ))}
@@ -450,10 +452,10 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("common.searchKeywords")}
-                className="w-44 lg:w-52 pl-3 pr-8 py-1.5 text-xs border border-border rounded bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/50 transition-colors"
+                className="w-44 lg:w-52 pl-8 pr-3 py-1.5 text-xs border border-border rounded-full bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
               />
-              <button type="submit" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors">
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <button type="submit" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-accent transition-colors">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               </button>
             </div>
           </form>

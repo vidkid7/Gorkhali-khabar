@@ -16,6 +16,7 @@ import { LatestUpdatesPanel } from "@/components/ui/LatestUpdatesPanel";
 import { QuickNewsBanner } from "@/components/ui/QuickNewsBanner";
 import { HeroDeck } from "@/components/home/HeroDeck";
 import { DailyBrief } from "@/components/home/DailyBrief";
+import { ProvincialNews } from "@/components/home/ProvincialNews";
 import {
 
   HeroSkeleton,
@@ -104,6 +105,18 @@ async function getOldArticles() {
     select: articleSelect,
     orderBy: { view_count: "desc" },
     take: 6,
+  });
+}
+
+async function getProvinceArticles(slug: string) {
+  return prisma.article.findMany({
+    where: { status: "PUBLISHED", category: { slug } },
+    select: {
+      id: true, slug: true, title: true, title_en: true, published_at: true,
+      category: { select: { name: true, name_en: true, slug: true, color: true } },
+    },
+    orderBy: { published_at: "desc" },
+    take: 5,
   });
 }
 
@@ -237,6 +250,25 @@ async function EditorsPickSection() {
   return <EditorsPickClient articles={articles} />;
 }
 
+async function ProvincialNewsSection() {
+  const [bagmati, koshi, madhesh, gandaki, lumbini, karnali, sudurpaschim] = await Promise.all([
+    getProvinceArticles("bagmati-pradesh"),
+    getProvinceArticles("koshi-pradesh"),
+    getProvinceArticles("madhesh-pradesh"),
+    getProvinceArticles("gandaki-pradesh"),
+    getProvinceArticles("lumbini-pradesh"),
+    getProvinceArticles("karnali-pradesh"),
+    getProvinceArticles("sudurpaschim-pradesh"),
+  ]);
+  return (
+    <ProvincialNews
+      articlesByProvince={JSON.parse(JSON.stringify({
+        bagmati, koshi, madhesh, gandaki, lumbini, karnali, sudurpaschim,
+      }))}
+    />
+  );
+}
+
 async function DailyBriefSection() {
   const articles = await prisma.article.findMany({
     where: { status: "PUBLISHED" },
@@ -352,7 +384,7 @@ export default async function HomePage() {
         <AdSlot position="HEADER" />
       </div>
 
-      <main className="mx-auto w-full max-w-7xl min-w-0 px-3 sm:px-4 py-4 sm:py-6 space-y-7 sm:space-y-10 pb-4 sm:pb-6">
+      <main className="mx-auto w-full max-w-7xl min-w-0 px-3 sm:px-4 py-5 sm:py-8 space-y-10 sm:space-y-14 pb-6 sm:pb-10">
         {/* Hero */}
         <Suspense fallback={<HeroSkeleton />}>
           <HeroSection />
@@ -388,6 +420,11 @@ export default async function HomePage() {
         {/* Quick Banner: latest politics */}
         <Suspense fallback={null}>
           <QuickNewsBannerSection category="rajniti" />
+        </Suspense>
+
+        {/* Provincial News Widget — ekantipur-style tab switcher */}
+        <Suspense fallback={<div className="h-80 bg-surface rounded-xl animate-pulse" />}>
+          <ProvincialNewsSection />
         </Suspense>
 
         {/* Editor's Pick */}

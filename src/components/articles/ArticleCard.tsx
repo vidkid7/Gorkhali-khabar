@@ -66,7 +66,7 @@ export function ArticleCard({
           <span className="category-badge text-xs" style={{ "--category-color": category.color } as React.CSSProperties}>
             {catName}
           </span>
-          <h3 className="mt-1.5 text-sm font-semibold leading-snug line-clamp-3 group-hover:text-primary transition-colors" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+          <h3 className="mt-1.5 text-sm font-semibold leading-[1.55] line-clamp-3 group-hover:text-primary transition-colors" style={{ fontFamily: "var(--font-nepali-serif)" }}>
             {displayTitle}
           </h3>
           <div className="mt-1.5 flex items-center gap-2 text-xs text-muted">
@@ -105,7 +105,7 @@ export function ArticleCard({
             <span className="category-badge" style={{ "--category-color": category.color } as React.CSSProperties}>
               {catName}
             </span>
-            <h2 className="mt-3 text-xl lg:text-2xl font-bold leading-tight line-clamp-4 group-hover:underline decoration-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+            <h2 className="mt-3 text-xl lg:text-2xl font-bold leading-[1.45] line-clamp-4 group-hover:underline decoration-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               {displayTitle}
             </h2>
             {displayExcerpt && (
@@ -155,7 +155,7 @@ export function ArticleCard({
         <span className="category-badge text-xs" style={{ "--category-color": category.color } as React.CSSProperties}>
           {catName}
         </span>
-        <h3 className="mt-2 text-base font-bold leading-snug line-clamp-3 group-hover:text-primary transition-colors" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+        <h3 className="mt-2 text-base font-bold leading-[1.55] line-clamp-3 group-hover:text-primary transition-colors" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {displayTitle}
         </h3>
         {displayExcerpt && (
