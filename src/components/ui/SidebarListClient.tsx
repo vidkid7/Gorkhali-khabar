@@ -32,7 +32,7 @@ export function SidebarListClient({
 
   return (
     <div className="card p-4">
-      <h3 className="font-bold text-base mb-3 border-b border-border pb-2">
+      <h3 className="font-bold text-base mb-3 border-b border-border pb-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
         {t(titleKey)}
       </h3>
       <ul className="space-y-3">
@@ -49,7 +49,7 @@ export function SidebarListClient({
                   {num}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium line-clamp-2 group-hover:text-accent transition-colors">
+                  <p className="text-sm font-medium line-clamp-2 group-hover:text-accent transition-colors" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                     {title}
                   </p>
                   <span

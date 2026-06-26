@@ -147,7 +147,7 @@ export default function ProfilePage() {
                       .toUpperCase()}
                   </div>
                 )}
-                <h2 className="mt-3 text-lg font-bold">
+                <h2 className="mt-3 text-lg font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                   {session.user.name || t("common.profile")}
                 </h2>
                 <p className="text-sm text-muted">{session.user.email}</p>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
 
           {/* Main content - Bookmarks */}
           <section className="lg:col-span-3">
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               {t("common.bookmarks")}
             </h2>
 

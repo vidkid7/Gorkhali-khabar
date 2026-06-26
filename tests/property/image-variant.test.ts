@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV === "production") {
+  throw new Error("Property tests must not run against production database!");
+}
+
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import fc from "fast-check";
 import { PrismaClient } from "@prisma/client";

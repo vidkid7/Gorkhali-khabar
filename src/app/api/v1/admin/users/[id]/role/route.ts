@@ -14,6 +14,15 @@ export async function PATCH(
     if (error === "forbidden") return forbiddenResponse();
 
     const { id } = await params;
+
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const body = await request.json();
     const { role } = body;
 

@@ -14,7 +14,7 @@ export default async function AdminCategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Categories</h1>
+        <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>Categories</h1>
       </div>
 
       {/* Create Form */}
@@ -53,7 +53,7 @@ export default async function AdminCategoriesPage() {
                   <span
                     className="inline-block px-2 py-0.5 text-xs font-semibold rounded-full"
                     style={{
-                      background: cat.is_active ? "#16a34a" : "#6b7280",
+                      background: cat.is_active ? "var(--success, #16a34a)" : "var(--muted, #6b7280)",
                       color: "#fff",
                     }}
                   >

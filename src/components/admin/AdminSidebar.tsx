@@ -4,28 +4,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FontSizeProvider, useFontSize } from "@/contexts/FontSizeContext";
+import { useAdminRole } from "@/components/admin/AdminRoleProvider";
 
 const navItems = [
-  { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: "📊" },
-  { href: "/admin/articles",    labelNe: "लेखहरू",         labelEn: "Articles",       icon: "📝" },
-  { href: "/admin/categories",  labelNe: "वर्गहरू",        labelEn: "Categories",     icon: "📁" },
-  { href: "/admin/tags",        labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: "🏷️" },
-  { href: "/admin/comments",    labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: "💬" },
-  { href: "/admin/media",       labelNe: "मिडिया",         labelEn: "Media",          icon: "🖼️" },
-  { href: "/admin/ads",         labelNe: "विज्ञापन",       labelEn: "Ads",            icon: "📢" },
-  { href: "/admin/sports",      labelNe: "खेलकुद",         labelEn: "Sports",         icon: "⚽" },
-  { href: "/admin/reels",       labelNe: "रिल्स",          labelEn: "Reels",          icon: "🎬" },
-  { href: "/admin/galleries",   labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: "🖼️" },
-  { href: "/admin/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: "🔴" },
-  { href: "/admin/analytics",   labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: "📈" },
-  { href: "/admin/holidays",    labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: "🏖️" },
-  { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: "🪙" },
-  { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: "💱" },
-  { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: "♈" },
-  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: "✉️" },
-  { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: "👥" },
-  { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: "⚙️" },
-  { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: "📋" },
+  { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: "📊", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/articles",    labelNe: "लेखहरू",         labelEn: "Articles",       icon: "📝", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/categories",  labelNe: "वर्गहरू",        labelEn: "Categories",     icon: "📁", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/tags",        labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: "🏷️", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/comments",    labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: "💬", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/media",       labelNe: "मिडिया",         labelEn: "Media",          icon: "🖼️", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/ads",         labelNe: "विज्ञापन",       labelEn: "Ads",            icon: "📢", roles: ["ADMIN"] },
+  { href: "/admin/sports",      labelNe: "खेलकुद",         labelEn: "Sports",         icon: "⚽", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/reels",       labelNe: "रिल्स",          labelEn: "Reels",          icon: "🎬", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/galleries",   labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: "🖼️", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: "🔴", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/analytics",   labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: "📈", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/holidays",    labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: "🏖️", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: "🪙", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: "💱", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: "♈", roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: "✉️", roles: ["ADMIN"] },
+  { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: "👥", roles: ["ADMIN"] },
+  { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: "⚙️", roles: ["ADMIN"] },
+  { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: "📋", roles: ["ADMIN"] },
 ];
 
 function FontSizerInline() {
@@ -58,6 +59,7 @@ function FontSizerInline() {
 
 function SidebarContent() {
   const pathname = usePathname();
+  const role = useAdminRole();
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [lang, setLang] = useState<"ne" | "en">("ne");
@@ -142,7 +144,7 @@ function SidebarContent() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: "thin" }}>
-          {navItems.map((item) => {
+          {navItems.filter(item => item.roles.includes(role)).map((item) => {
             const active = isActive(item.href);
             return (
               <Link

@@ -40,7 +40,8 @@ function LoginForm() {
         const role = session?.user?.role;
         const adminRoles = ["ADMIN", "EDITOR", "AUTHOR"];
         if (adminRoles.includes(role ?? "") && callbackUrl === "/") {
-          window.location.href = "/admin";
+          const adminSecret = typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_SECRET_PATH || "admin";
+          window.location.href = adminSecret === "admin" ? "/admin" : "/" + adminSecret;
         } else {
           window.location.href = callbackUrl;
         }
@@ -55,7 +56,7 @@ function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="card w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
+        <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {t("auth.loginTitle")}
         </h1>
 

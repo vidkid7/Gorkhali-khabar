@@ -9,6 +9,14 @@ export async function POST(
   try {
     const { id } = await params;
 
+    const contentType = _request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const ad = await prisma.advertisement.findUnique({ where: { id } });
     if (!ad) {
       return NextResponse.json<ApiResponse>(

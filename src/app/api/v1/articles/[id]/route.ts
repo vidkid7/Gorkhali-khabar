@@ -4,6 +4,7 @@ import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
 import { sanitizeArticleHtml } from "@/lib/html";
+import { cacheDel } from "@/lib/redis";
 import type { ApiResponse } from "@/types";
 
 export async function GET(
@@ -61,6 +62,14 @@ export async function PUT(
     // Authors can only edit their own articles
     if (session!.user.role === "AUTHOR" && existing.author_id !== session!.user.id) {
       return forbiddenResponse();
+    }
+
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
     }
 
     const body = await request.json();
@@ -126,6 +135,9 @@ export async function PUT(
       newValue: { title: article.title, status: article.status },
     });
 
+    await cacheDel("home:featured");
+    await cacheDel("home:trending");
+
     return NextResponse.json<ApiResponse>({ success: true, data: article });
   } catch (error) {
     console.error("Article PUT error:", error);
@@ -164,6 +176,9 @@ export async function DELETE(
       entityId: id,
       oldValue: { title: existing.title, slug: existing.slug },
     });
+
+    await cacheDel("home:featured");
+    await cacheDel("home:trending");
 
     return NextResponse.json<ApiResponse>({ success: true, data: { id } });
   } catch (error) {

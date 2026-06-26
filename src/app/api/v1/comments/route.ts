@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { commentSchema } from "@/lib/validations";
 import { requireAuth, unauthorizedResponse } from "@/lib/auth-helpers";
+import { sanitizeCommentHtml } from "@/lib/html";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Comment } from "@prisma/client";
 
@@ -75,6 +76,22 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
+    const contentLength = request.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 1 * 1024 * 1024) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Payload too large" },
+        { status: 413 }
+      );
+    }
+
     const { error, session } = await requireAuth();
     if (error) return unauthorizedResponse();
 
@@ -119,7 +136,7 @@ export async function POST(request: NextRequest) {
 
     const comment = await prisma.comment.create({
       data: {
-        content: parsed.data.content,
+        content: sanitizeCommentHtml(parsed.data.content),
         article_id: parsed.data.article_id,
         user_id: session!.user.id,
         parent_id: parsed.data.parent_id || null,

@@ -10,7 +10,8 @@ export default async function AdminUsersPage() {
 
   // Only ADMIN can access this page
   if (error) {
-    redirect("/admin");
+    const adminSecret = process.env.ADMIN_SECRET_PATH || "admin";
+    redirect(adminSecret === "admin" ? "/admin" : "/" + adminSecret);
   }
 
   const users = await prisma.user.findMany({

@@ -71,3 +71,12 @@ const articleSanitizeConfig: sanitizeHtml.IOptions = {
 export function sanitizeArticleHtml(html: string) {
   return sanitizeHtml(html, articleSanitizeConfig);
 }
+
+const commentSanitizeConfig: sanitizeHtml.IOptions = {
+  allowedTags: [],
+  allowedAttributes: {},
+};
+
+export function sanitizeCommentHtml(html: string) {
+  return sanitizeHtml(html, commentSanitizeConfig).trim();
+}

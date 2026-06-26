@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
+import { rashifalSchema } from "@/lib/validations";
 
 export async function GET() {
   const { error } = await requireRole(["ADMIN", "EDITOR"]);
@@ -16,19 +17,28 @@ export async function POST(req: NextRequest) {
   if (error === "unauthorized") return unauthorizedResponse();
   if (error === "forbidden") return forbiddenResponse();
 
+  const contentType = req.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return NextResponse.json({ success: false, error: "Invalid content type" }, { status: 415 });
+  }
+
   try {
     const body = await req.json();
+    const parsed = rashifalSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
+    }
     const entry = await prisma.rashifal.create({
       data: {
-        sign: body.sign,
-        sign_ne: body.sign_ne || null,
-        bs_year: Number(body.bs_year) || 2082,
-        bs_month: Number(body.bs_month) || 1,
-        bs_day: Number(body.bs_day) || 1,
-        ad_date: new Date(body.ad_date || body.date),
-        prediction: body.prediction,
-        prediction_en: body.prediction_en || null,
-        rating: body.rating ? Number(body.rating) : null,
+        sign: parsed.data.sign,
+        sign_ne: parsed.data.sign_ne || null,
+        bs_year: parsed.data.bs_year,
+        bs_month: parsed.data.bs_month,
+        bs_day: parsed.data.bs_day,
+        ad_date: new Date(parsed.data.ad_date),
+        prediction: parsed.data.prediction,
+        prediction_en: parsed.data.prediction_en || null,
+        rating: parsed.data.rating || null,
       },
     });
     return NextResponse.json({ success: true, data: entry });

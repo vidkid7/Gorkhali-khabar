@@ -111,7 +111,7 @@ export default async function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold">ड्यासबोर्ड</h1>
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>ड्यासबोर्ड</h1>
           <p className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>
             स्वागत छ! साइटको अवस्था हेर्नुहोस्।
           </p>
@@ -156,7 +156,7 @@ export default async function AdminDashboard() {
 
         {/* Today's Activity */}
         <div className="card p-5 lg:col-span-1">
-          <h2 className="text-base font-semibold mb-4">आजको गतिविधि</h2>
+          <h2 className="text-base font-semibold mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>आजको गतिविधि</h2>
           <div className="space-y-3">
             {[
               { label: "प्रकाशित लेख", value: stats.publishedToday, icon: "📰", color: "var(--primary)" },
@@ -200,7 +200,7 @@ export default async function AdminDashboard() {
         {/* Category Breakdown */}
         <div className="card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold">वर्ग अनुसार लेखहरू</h2>
+            <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>वर्ग अनुसार लेखहरू</h2>
             <Link href="/admin/categories" className="text-xs font-medium" style={{ color: "var(--accent)" }}>
               व्यवस्थापन →
             </Link>
@@ -249,7 +249,7 @@ export default async function AdminDashboard() {
       {/* Recent Articles */}
       <div className="card">
         <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
-          <h2 className="text-base font-semibold">हालका लेखहरू</h2>
+          <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>हालका लेखहरू</h2>
           <Link href="/admin/articles" className="text-sm font-medium" style={{ color: "var(--accent)" }}>
             सबै हेर्नुहोस् →
           </Link>

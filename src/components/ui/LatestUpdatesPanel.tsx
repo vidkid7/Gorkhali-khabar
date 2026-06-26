@@ -154,7 +154,7 @@ export function LatestUpdatesPanel() {
                         >
                           {catName}
                         </span>
-                        <h3 className="text-xs font-medium leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors mt-0.5">
+                        <h3 className="text-xs font-medium leading-snug line-clamp-3 text-foreground group-hover:text-primary transition-colors mt-0.5">
                           {displayTitle}
                         </h3>
                         {timeStr && (

@@ -89,7 +89,7 @@ export function MatchCard({
       </div>
 
       {/* Footer: Date + Venue */}
-      <div className="flex items-center justify-between text-xs" style={{ color: "var(--muted)" }}>
+      <div className="flex items-center justify-between gap-2 text-xs truncate" style={{ color: "var(--muted)" }}>
         <span suppressHydrationWarning>{date.toLocaleDateString("ne-NP")} {date.toLocaleTimeString("ne-NP", { hour: "2-digit", minute: "2-digit" })}</span>
         {venue && <span>{venue}</span>}
       </div>

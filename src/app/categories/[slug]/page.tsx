@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: category.name_en
       ? `${category.name} | ${category.name_en}`
       : category.name,
-    description: category.description || `${category.name} - समाचार पोर्टल`,
+    description: category.description || `${category.name} - नमस्ते एक्सप्रेस`,
     openGraph: {
       title: category.name,
       description: category.description || undefined,
@@ -100,13 +100,13 @@ export default async function CategoryArchivePage({
               </Link>
             </li>
             <li>/</li>
-            <li className="font-medium text-foreground">{category.name}</li>
+            <li className="font-medium text-foreground" style={{ fontFamily: "var(--font-nepali-serif)" }}>{category.name}</li>
           </ol>
         </nav>
 
         {/* Category header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>
             {category.name}
             {category.name_en && (
               <span className="text-lg text-muted ml-2 font-normal">

@@ -41,7 +41,7 @@ export function ReelCard({ slug, title, thumbnail, viewCount }: ReelCardProps) {
 
         {/* Bottom gradient + info */}
         <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-          <p className="text-white text-sm font-medium line-clamp-2">{title}</p>
+          <p className="text-white text-sm font-medium line-clamp-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title}</p>
           <p className="text-white/70 text-xs mt-1">
             👁 {viewCount.toLocaleString()} views
           </p>

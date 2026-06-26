@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 export const metadata: Metadata = {
   title: "कुकी नीति | Cookie Policy",
   description:
-    "समाचार पोर्टलको कुकी नीति - News Portal Cookie Policy",
+    "नमस्ते एक्सप्रेसको कुकी नीति - NamasteXpress Cookie Policy",
 };
 
 export default function CookiePolicyPage() {
@@ -30,12 +30,12 @@ export default function CookiePolicyPage() {
         <article className="prose max-w-none">
           {/* Nepali */}
           <section className="mb-12">
-            <h1 className="text-3xl font-bold mb-6">कुकी नीति</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>कुकी नीति</h1>
             <p className="text-sm text-muted mb-4">
               अन्तिम अपडेट: {new Date().getFullYear()}-०१-०१
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               १. कुकी भनेको के हो?
             </h2>
             <p className="text-muted leading-relaxed">
@@ -44,7 +44,7 @@ export default function CookiePolicyPage() {
               मद्दत गर्छ।
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               २. हामीले प्रयोग गर्ने कुकीहरू
             </h2>
             <ul className="list-disc pl-6 text-muted space-y-2">
@@ -65,7 +65,7 @@ export default function CookiePolicyPage() {
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               ३. कुकी व्यवस्थापन
             </h2>
             <p className="text-muted leading-relaxed">
@@ -77,12 +77,12 @@ export default function CookiePolicyPage() {
 
           {/* English */}
           <section className="border-t border-border pt-8">
-            <h1 className="text-3xl font-bold mb-6">Cookie Policy</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>Cookie Policy</h1>
             <p className="text-sm text-muted mb-4">
               Last updated: {new Date().getFullYear()}-01-01
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               1. What Are Cookies?
             </h2>
             <p className="text-muted leading-relaxed">
@@ -90,7 +90,7 @@ export default function CookiePolicyPage() {
               They help us improve your experience.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               2. Types of Cookies We Use
             </h2>
             <ul className="list-disc pl-6 text-muted space-y-2">
@@ -111,7 +111,7 @@ export default function CookiePolicyPage() {
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               3. Managing Cookies
             </h2>
             <p className="text-muted leading-relaxed">

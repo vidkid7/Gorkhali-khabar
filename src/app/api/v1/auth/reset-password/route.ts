@@ -8,6 +8,22 @@ import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
+    const contentLength = request.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 1 * 1024 * 1024) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Payload too large" },
+        { status: 413 }
+      );
+    }
+
     const rateLimit = checkRateLimit(
       `reset-password:${getClientIp(request)}`,
       10,

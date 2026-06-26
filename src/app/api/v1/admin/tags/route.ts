@@ -18,6 +18,14 @@ export async function POST(request: NextRequest) {
     if (error === "unauthorized") return unauthorizedResponse();
     if (error === "forbidden") return forbiddenResponse();
 
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const body = await request.json();
     const { name, name_en } = body;
 

@@ -44,7 +44,7 @@ export default function HolidaysPage() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
             style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}>🏖️</div>
           <div>
-            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)" }}>
+            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("सार्वजनिक बिदाहरू", "Public Holidays")}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
@@ -97,7 +97,7 @@ export default function HolidaysPage() {
                 </div>
                 <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                   {monthHolidays.map(h => (
-                    <div key={h.id} className="flex items-center gap-4 px-4 py-3">
+                    <div key={h.id} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3">
                       <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0"
                         style={{ background: h.is_public ? "rgba(229,57,53,0.1)" : "var(--surface-alt)" }}>
                         <span className="text-lg font-black" style={{ color: h.is_public ? "#c62828" : "var(--foreground)" }}>

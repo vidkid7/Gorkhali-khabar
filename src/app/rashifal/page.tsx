@@ -187,7 +187,7 @@ export default function RashifalPage() {
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #fff 0%, transparent 60%)" }} />
           <div className="mx-auto max-w-7xl px-4 py-10 text-center text-white relative">
             <div className="text-5xl mb-3">🔮</div>
-            <h1 className="text-3xl font-black mb-2">
+            <h1 className="text-3xl font-black mb-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               {language === "ne" ? "दैनिक राशिफल" : "Daily Horoscope"}
             </h1>
             <p className="text-sm opacity-80">{today}</p>
@@ -214,7 +214,7 @@ export default function RashifalPage() {
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-8">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 mb-8">
             {ZODIAC_SIGNS.map((sign) => (
               <button
                 key={sign.id}
@@ -233,7 +233,7 @@ export default function RashifalPage() {
                 <div className="text-xs font-semibold mt-1">
                   {language === "ne" ? sign.ne : sign.en}
                 </div>
-                <div className="text-xs opacity-70 mt-0.5">
+                <div className="text-[10px] sm:text-xs opacity-70 mt-0.5 hidden sm:block truncate">
                   {language === "ne" ? sign.dates_ne : sign.dates_en}
                 </div>
               </button>
@@ -245,13 +245,13 @@ export default function RashifalPage() {
             <div className="rounded-2xl overflow-hidden mb-8 animate-fadeIn"
               style={{ border: `2px solid ${selectedSign.color}40`, background: "var(--surface)" }}>
               <div className="p-6 text-white" style={{ background: `linear-gradient(135deg, ${selectedSign.color}, ${selectedSign.color}cc)` }}>
-                <div className="flex items-center gap-4">
-                  <div className="text-5xl">{selectedSign.emoji}</div>
-                  <div>
-                    <h2 className="text-2xl font-black">
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                  <div className="text-4xl sm:text-5xl">{selectedSign.emoji}</div>
+                  <div className="min-w-0">
+                    <h2 className="text-xl sm:text-2xl font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                       {language === "ne" ? selectedSign.ne : selectedSign.en}
                     </h2>
-                    <div className="flex flex-wrap gap-3 text-sm opacity-80 mt-1">
+                    <div className="flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm opacity-80 mt-1">
                       <span>{language === "ne" ? selectedSign.dates_ne : selectedSign.dates_en}</span>
                       <span>|</span>
                       <span>{language === "ne" ? `तत्व: ${selectedSign.element_ne}` : `Element: ${selectedSign.element_en}`}</span>
@@ -297,7 +297,7 @@ export default function RashifalPage() {
           {/* All signs summary */}
           <div className="rounded-xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <div className="px-6 py-4" style={{ background: "linear-gradient(135deg, #4a148c, #7b1fa2)", color: "#fff" }}>
-              <h2 className="text-lg font-bold">
+              <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                 {language === "ne" ? "सबै राशिको संक्षिप्त दैनिक भाग्य" : "All Signs — Brief Daily Fortune"}
               </h2>
             </div>

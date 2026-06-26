@@ -1,7 +1,7 @@
 import type { SiteConfig } from "@/types";
 
 export const defaultSiteConfig: SiteConfig = {
-  site_name: { ne: "गोर्खाली खबर", en: "Gorkhali Khabar" },
+  site_name: { ne: "नमस्ते एक्सप्रेस", en: "NamasteExpress" },
   site_tagline: { ne: "विश्वसनीय समाचार सेवा", en: "Trusted News Service" },
   site_logo: "/icons/logo.png",
   site_favicon: "/favicon.ico",
@@ -20,5 +20,5 @@ export const defaultSiteConfig: SiteConfig = {
   features_bookmarks: true,
   features_reels: true,
   features_galleries: true,
-  copyright_text: { ne: "© {year} समाचार पोर्टल।", en: "© {year} News Portal." },
+  copyright_text: { ne: "© {year} नमस्ते एक्सप्रेस।", en: "© {year} NamasteExpress." },
 };

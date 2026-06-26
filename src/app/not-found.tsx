@@ -18,7 +18,7 @@ export default function NotFound() {
         </div>
 
         {/* Message */}
-        <h1 className="text-2xl font-bold text-foreground mb-3">
+        <h1 className="text-2xl font-bold text-foreground mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {t("errors.notFound")}
         </h1>
         <p className="text-muted mb-10 leading-relaxed">

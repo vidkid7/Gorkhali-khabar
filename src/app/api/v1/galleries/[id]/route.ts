@@ -55,6 +55,14 @@ export async function PUT(
       );
     }
 
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const body = await request.json();
     const updateData: Record<string, unknown> = {};
 

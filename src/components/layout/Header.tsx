@@ -181,7 +181,7 @@ export function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 shadow-md" style={{ background: "var(--header-bg)", backdropFilter: "blur(28px) saturate(220%)", WebkitBackdropFilter: "blur(28px) saturate(220%)", borderBottom: "1px solid var(--glass-border)" }}>
+    <header className="sticky top-0 z-50" style={{ background: "var(--header-bg)", borderBottom: "1px solid var(--border)" }}>
 
       {/* ══════════ TIER 1: Logo Bar — hidden on scroll, hidden on mobile ══════════ */}
       <div
@@ -210,22 +210,19 @@ export function Header() {
             {/* Site name + date — always visible */}
             <div className="flex flex-col justify-center min-w-0">
               <span
-                className="font-extrabold tracking-tight block"
+                className="font-bold tracking-tight block"
                 style={{
-                  fontSize: "clamp(1.3rem, 5vw, 2.6rem)",
-                  lineHeight: 1.25,
-                  paddingTop: "0.15em",
+                  fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
+                  lineHeight: 1.2,
+                  paddingTop: "0.1em",
                   paddingBottom: "0.05em",
-                  background: "linear-gradient(135deg, #c62828 0%, #1565c0 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  fontFamily: "var(--font-nepali)",
+                  color: "var(--foreground)",
+                  fontFamily: "var(--font-nepali-serif)",
                 }}
               >
                 {siteName}
               </span>
-              <span className="hidden sm:block text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+              <span className="hidden sm:block text-xs mt-0.5" style={{ color: "var(--muted)", fontFamily: "var(--font-latin)" }}>
                 {today
                   ? language === "ne"
                     ? formatNepaliDate(today)
@@ -243,10 +240,10 @@ export function Header() {
           {/* Social Icons */}
           <div className="hidden lg:flex items-center gap-1.5">
             {config.social_facebook && <a href={config.social_facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 transition-colors"><FacebookIcon /></a>}
-            {config.social_twitter && <a href={config.social_twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><XIcon /></a>}
+            {config.social_twitter && <a href={config.social_twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors"><XIcon /></a>}
             {config.social_youtube && <a href={config.social_youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition-colors"><YouTubeIcon /></a>}
             {config.social_instagram && <a href={config.social_instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-1.5 rounded-full hover:bg-pink-50 dark:hover:bg-pink-900/30 text-pink-600 transition-colors"><InstagramIcon /></a>}
-            {config.social_tiktok && <a href={config.social_tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><TikTokIcon /></a>}
+            {config.social_tiktok && <a href={config.social_tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="p-1.5 rounded-full hover:bg-surface-alt transition-colors"><TikTokIcon /></a>}
             <div className="ml-2 hidden xl:block">
               <WeatherWidget />
             </div>
@@ -254,17 +251,14 @@ export function Header() {
         </div>
       </div>
 
-      {/* ══════════ TIER 2: Blue Navigation Bar ══════════ */}
+      {/* ══════════ TIER 2: Premium Navigation Bar ══════════ */}
       <div
         style={{
-          background: "linear-gradient(90deg, #1d4ed8 0%, #2563eb 50%, #1d4ed8 100%)",
-          backdropFilter: "blur(28px) saturate(200%)",
-          WebkitBackdropFilter: "blur(28px) saturate(200%)",
-          borderBottom: "1px solid rgba(147, 197, 253, 0.25)",
-          boxShadow: "0 2px 16px rgba(29, 78, 216, 0.35)",
+          background: "var(--nav-bg)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center justify-between min-h-[44px] py-1">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center justify-between min-h-[48px] py-1.5">
 
           {/* Compact logo — always visible on mobile, scroll-based on md+ */}
           <Link
@@ -304,8 +298,8 @@ export function Header() {
               <Link
                 key={item.key}
                 href={item.href}
-                className="liquid-nav-link px-2.5 py-2 font-medium text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors whitespace-nowrap"
-                style={{ fontSize: "13.5px" }}
+                className="px-3 py-2 font-medium text-nav-text/80 hover:text-nav-text hover:bg-white/5 rounded transition-colors whitespace-nowrap"
+                style={{ fontSize: "14px", letterSpacing: "0.01em" }}
               >
                 {t(`nav.${item.key}`)}
               </Link>
@@ -315,19 +309,19 @@ export function Header() {
             <div className="relative" ref={moreRef}>
               <button
                 onClick={(e) => { e.stopPropagation(); setMoreOpen(!moreOpen); }}
-                className="liquid-nav-link px-2.5 py-2 font-medium text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors whitespace-nowrap flex items-center gap-1"
-                style={{ fontSize: "13.5px" }}
+                className="px-3 py-2 font-medium text-nav-text/80 hover:text-nav-text hover:bg-white/5 rounded transition-colors whitespace-nowrap flex items-center gap-1"
+                style={{ fontSize: "14px" }}
               >
                 {t("nav.more")}
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M19 9l-7 7-7-7" /></svg>
               </button>
               {moreOpen && (
-                <div className="absolute top-full left-0 mt-1 w-52 rounded-xl shadow-xl py-1 z-50 border" style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderColor: "var(--glass-border)", boxShadow: "var(--glass-shadow-hover)" }}>
+                <div className="absolute top-full left-0 mt-1 w-52 rounded-lg shadow-lg py-1 z-50 border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
                   {MORE_NAV.map((item) => (
                     <Link
                       key={item.key}
                       href={item.href}
-                      className="liquid-list-item block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt transition-colors"
+                      className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt transition-colors"
                       onClick={() => setMoreOpen(false)}
                     >
                       {t(`nav.${item.key}`)}
@@ -339,15 +333,15 @@ export function Header() {
           </nav>
 
           {/* Right controls */}
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-2 ml-auto">
             {/* Special nav (desktop) */}
-            <div className="hidden xl:flex items-center gap-1">
+            <div className="hidden xl:flex items-center gap-1.5">
               {SPECIAL_NAV.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
-                  className="flex items-center gap-1 px-2 py-1 font-bold text-white rounded-full transition-all hover:brightness-110 hover:scale-105 whitespace-nowrap"
-                  style={{ background: item.color, fontSize: "11px" }}
+                  className="flex items-center gap-1 px-2.5 py-1 font-semibold text-white rounded transition-all hover:brightness-110 whitespace-nowrap"
+                  style={{ background: item.color, fontSize: "12px" }}
                 >
                   {item.key === "patro" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>}
                   {item.key === "shareMarket" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>}
@@ -357,12 +351,12 @@ export function Header() {
               ))}
             </div>
 
-            <div className="w-px h-5 bg-white/20 hidden lg:block mx-1" />
+            <div className="w-px h-5 bg-border hidden lg:block" />
 
             {/* Language */}
             <button
               onClick={() => setLanguage(language === "ne" ? "en" : "ne")}
-              className="px-2.5 py-1 text-xs font-bold text-white border border-white/40 rounded hover:bg-white/10 transition-colors"
+              className="px-2.5 py-1 text-xs font-semibold text-nav-text border border-nav-text/20 rounded hover:bg-white/10 transition-colors"
               aria-label={t("common.language")}
             >
               {language === "ne" ? "EN" : "NE"}
@@ -371,7 +365,7 @@ export function Header() {
             {/* Theme */}
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded hover:bg-white/10 text-white/80 hover:text-white transition-colors"
+              className="p-1.5 rounded hover:bg-white/10 text-nav-text/70 hover:text-nav-text transition-colors"
               aria-label={theme === "light" ? t("common.darkMode") : t("common.lightMode")}
             >
               {theme === "light" ? (
@@ -381,31 +375,29 @@ export function Header() {
               )}
             </button>
 
-
-
             {/* Font Sizer */}
             <FontSizer variant="light" className="hidden sm:flex" />
 
-            <div className="w-px h-5 bg-white/20 hidden sm:block mx-0.5" />
+            <div className="w-px h-5 bg-border hidden sm:block" />
 
             {/* Hamburger */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-1.5 rounded hover:bg-white/10 text-white/80 hover:text-white transition-colors"
+              className="p-1.5 rounded hover:bg-white/10 text-nav-text/70 hover:text-nav-text transition-colors"
               aria-label="Menu"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
           </div>
         </div>
       </div>
 
       {/* ══════════ TIER 3: Trending Topics + Search ══════════ */}
-      <div className="border-b border-border" style={{ background: "var(--glass-bg)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-2 sm:gap-3 min-h-[36px] sm:min-h-[40px] py-1">
+      <div className="border-b border-border" style={{ background: "var(--surface-alt)" }}>
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 flex items-center gap-3 min-h-[40px] py-1.5">
           {/* Trending label */}
-          <span className="flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-red-500 shrink-0">
-            <svg className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-accent shrink-0">
+            <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
             <span className="hidden xs:inline">{t("common.trending")}</span>
           </span>
 
@@ -458,10 +450,10 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("common.searchKeywords")}
-                className="w-40 lg:w-48 pl-3 pr-8 py-1.5 text-xs border border-border rounded-full bg-background text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                className="w-44 lg:w-52 pl-3 pr-8 py-1.5 text-xs border border-border rounded bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/50 transition-colors"
               />
-              <button type="submit" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-accent transition-colors">
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <button type="submit" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               </button>
             </div>
           </form>
@@ -471,7 +463,7 @@ export function Header() {
       {/* ══════════ SIDEBAR DRAWER ══════════ */}
     </header>
 
-    {/* Sidebar rendered at document.body level to escape backdrop-filter stacking context */}
+    {/* Sidebar rendered at document.body level */}
     {mounted && sidebarOpen && createPortal(
         <div
           className="fixed inset-0 z-[200]"

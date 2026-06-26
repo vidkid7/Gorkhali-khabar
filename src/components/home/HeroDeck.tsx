@@ -40,8 +40,8 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
 
   return (
     <section className="w-full min-w-0">
-      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)] lg:gap-6">
-        <article className="relative min-h-[25rem] overflow-hidden rounded-3xl border border-black/10 bg-slate-900 shadow-xl sm:min-h-[31rem]">
+      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)] lg:gap-5">
+        <article className="relative min-h-[25rem] rounded-xl border border-border bg-foreground sm:min-h-[31rem]">
           {active.featured_image ? (
             <Image
               src={active.featured_image}
@@ -52,15 +52,15 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               priority
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-slate-900 to-red-900" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-foreground to-accent/20" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
           <div className="absolute left-0 right-0 top-0 flex items-center justify-between gap-3 p-4">
-            <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-extrabold text-red-700 shadow-sm">
+            <span className="rounded bg-accent px-2.5 py-1 text-[11px] font-semibold text-white">
               {language === "ne" ? "मुख्य समाचार" : "Top story"}
             </span>
-            <span className="rounded-full bg-black/35 px-3 py-1 text-[11px] font-bold text-white backdrop-blur">
+            <span className="rounded bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white/90">
               {active.published_at ? timeAgo(new Date(active.published_at), language) : ""}
             </span>
           </div>
@@ -72,15 +72,15 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
             >
               {category(active)}
             </span>
-            <h1 className="mt-3 max-w-3xl text-2xl font-black leading-tight sm:text-4xl">
+            <h1 className="mt-3 max-w-3xl text-2xl font-black leading-tight sm:text-4xl" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               {title(active)}
             </h1>
             {excerpt(active) && (
-              <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-white/82 sm:text-base">
+              <p className="mt-3 max-w-2xl text-sm font-normal leading-relaxed text-white/80 sm:text-base">
                 {excerpt(active)}
               </p>
             )}
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-white/75">
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-medium text-white/70">
               {active.author.name && <span>{active.author.name}</span>}
               <span>{displayNumber(active.comment_count, language)} {language === "ne" ? "प्रतिक्रिया" : "comments"}</span>
               <span>{displayNumber(active.view_count, language)} {language === "ne" ? "पढाइ" : "reads"}</span>
@@ -92,7 +92,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               <button
                 key={article.id}
                 onClick={() => setActiveIndex(index)}
-                className={`h-2 rounded-full transition-all ${index === activeIndex ? "w-8 bg-white" : "w-2 bg-white/45"}`}
+                className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"}`}
                 aria-label={`${language === "ne" ? "समाचार" : "Story"} ${index + 1}`}
               />
             ))}
@@ -105,7 +105,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               key={article.id}
               type="button"
               onClick={() => setActiveIndex(articles.findIndex((candidate) => candidate.id === article.id))}
-              className="group grid min-w-0 grid-cols-[7.5rem_minmax(0,1fr)] overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="group grid min-w-0 grid-cols-[7.5rem_minmax(0,1fr)] overflow-hidden rounded-lg border border-border bg-surface text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="relative min-h-[7.25rem] bg-surface-alt">
                 {article.featured_image ? (
@@ -114,12 +114,12 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               </div>
               <div className="min-w-0 p-3">
                 <span
-                  className="inline-flex rounded px-2 py-0.5 text-[10px] font-extrabold text-white"
+                  className="inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold text-white"
                   style={{ backgroundColor: article.category.color }}
                 >
                   {category(article)}
                 </span>
-                <h2 className="mt-2 line-clamp-3 text-sm font-extrabold leading-snug text-foreground group-hover:text-primary">
+                <h2 className="mt-2 line-clamp-4 text-sm font-bold leading-snug text-foreground group-hover:text-primary" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                   {title(article)}
                 </h2>
                 <p className="mt-2 text-[11px] font-medium text-muted">

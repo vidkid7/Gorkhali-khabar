@@ -1,7 +1,7 @@
 "use client";
 
-import { useLanguage } from "@/contexts/LanguageContext";
 import { ArticleCard } from "@/components/articles/ArticleCard";
+import { SectionHeader } from "./SectionHeader";
 
 type Article = {
   id: string;
@@ -20,14 +20,9 @@ type Article = {
 };
 
 export function EditorsPickClient({ articles }: { articles: Article[] }) {
-  const { t } = useLanguage();
-
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="h-8 w-1 rounded-full bg-accent" />
-        <h2 className="text-xl font-black text-foreground sm:text-2xl">{t("sections.editorsPick")}</h2>
-      </div>
+      <SectionHeader titleKey="sections.editorsPick" color="#c62828" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard

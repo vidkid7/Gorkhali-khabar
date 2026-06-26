@@ -104,9 +104,9 @@ export default function ShareMarketPage() {
         <div className="mx-auto max-w-6xl px-4 py-8">
 
           {/* Header Row */}
-          <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--foreground)" }}>
+              <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
                 📊 {ne("सेयर बजार (NEPSE)", "Share Market (NEPSE)")}
               </h1>
               <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
@@ -165,7 +165,7 @@ export default function ShareMarketPage() {
           <div className="rounded-xl overflow-hidden shadow-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <div className="px-5 py-3 flex items-center justify-between"
               style={{ background: "var(--primary)", color: "#fff" }}>
-              <h2 className="font-bold">{ne("शीर्ष कारोबार शेयरहरू", "Top Traded Stocks")}</h2>
+              <h2 className="font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>{ne("शीर्ष कारोबार शेयरहरू", "Top Traded Stocks")}</h2>
               {lastUpdate && (
                 <span className="text-xs opacity-80">
                   {ne("अन्तिम अपडेट:", "Last updated:")} {lastUpdate.toLocaleTimeString()}

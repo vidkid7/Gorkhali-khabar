@@ -44,7 +44,7 @@ type FooterColumnProps = {
 function FooterColumn({ title, items, translate }: FooterColumnProps) {
   return (
     <div className="min-w-0">
-      <h3 className="mb-3 border-b border-footer-border pb-2 text-xs font-black uppercase text-footer-heading">
+      <h3 className="mb-3 border-b border-footer-border pb-2 text-xs font-semibold uppercase tracking-wider text-footer-heading">
         {title}
       </h3>
       <ul className="grid gap-2">
@@ -52,9 +52,9 @@ function FooterColumn({ title, items, translate }: FooterColumnProps) {
           <li key={item.key}>
             <Link
               href={item.href}
-              className="inline-flex max-w-full items-center gap-2 text-sm font-medium text-footer-text transition-colors hover:text-footer-heading"
+              className="inline-flex max-w-full items-center gap-2 text-sm text-footer-text transition-colors hover:text-footer-heading"
             >
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
+              <span className="h-1 w-1 shrink-0 rounded-full bg-accent/60" />
               <span className="truncate">{translate(`nav.${item.key}`)}</span>
             </Link>
           </li>
@@ -160,13 +160,13 @@ export function Footer() {
   return (
     <footer className="mt-2 bg-footer-bg text-footer-text">
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10">
-        <section className="rounded-2xl border border-footer-border bg-footer-input-bg p-4 shadow-sm sm:p-6">
+        <section className="rounded-xl border border-footer-border bg-footer-input-bg p-4 sm:p-6">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.7fr)] lg:items-center">
             <div className="min-w-0">
-              <p className="mb-2 text-xs font-black uppercase text-accent">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-accent">
                 {language === "ne" ? "समाचार अलर्ट" : "News alerts"}
               </p>
-              <h2 className="text-2xl font-black leading-tight text-footer-heading sm:text-3xl">
+              <h2 className="text-2xl font-bold leading-tight text-footer-heading sm:text-3xl" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                 {language === "ne" ? "ताजा समाचार इमेलमा पाउनुहोस्" : "Get the latest news by email"}
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-footer-text">
@@ -186,20 +186,20 @@ export function Footer() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={language === "ne" ? "आफ्नो इमेल प्रविष्ट गर्नुहोस्" : "Enter your email"}
-                className="min-w-0 rounded-xl border border-footer-border bg-background px-4 py-3 text-sm font-semibold text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="min-w-0 rounded border border-footer-border bg-footer-input-bg px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent/40"
                 required
               />
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="rounded-xl bg-accent px-5 py-3 text-sm font-black text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-70"
+                className="rounded bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-70"
               >
                 {status === "submitting"
                   ? language === "ne" ? "पठाउँदै..." : "Saving..."
                   : language === "ne" ? "सदस्यता लिनुहोस्" : "Subscribe"}
               </button>
               {message && (
-                <p className={`text-xs font-semibold sm:col-span-2 ${status === "success" ? "text-success" : "text-error"}`}>
+                <p className={`text-xs font-medium sm:col-span-2 ${status === "success" ? "text-success" : "text-error"}`}>
                   {message}
                 </p>
               )}
@@ -227,9 +227,9 @@ export function Footer() {
                 </span>
               )}
               <span className="min-w-0">
-                <span className="block truncate text-2xl font-black text-footer-heading">{siteName}</span>
+                <span className="block truncate text-2xl font-bold text-footer-heading" style={{ fontFamily: "var(--font-nepali-serif)" }}>{siteName}</span>
                 {config.registration_number && (
-                  <span className="block truncate text-xs font-semibold text-footer-text">
+                  <span className="block truncate text-xs text-footer-text">
                     {language === "ne" ? "दर्ता नं:" : "Reg:"} {config.registration_number}
                   </span>
                 )}

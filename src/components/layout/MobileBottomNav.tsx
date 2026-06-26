@@ -148,17 +148,7 @@ export function MobileBottomNav() {
       )}
 
       {/* Bottom nav bar */}
-      <nav
-        className="fixed bottom-0 left-0 right-0 z-[100] flex md:hidden"
-        style={{
-          background: "var(--glass-bg)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          borderTop: "1px solid var(--glass-border)",
-          paddingBottom: "env(safe-area-inset-bottom)",
-          boxShadow: "0 -4px 24px rgba(0,0,0,0.12)",
-        }}
-      >
+      <nav className="mobile-bottom-nav">
         {navItems.map((item, idx) => {
           const active = item.href ? isActive(item.href) : false;
           const content = (
@@ -186,7 +176,7 @@ export function MobileBottomNav() {
       </nav>
 
       {/* Spacer so content isn't hidden behind the nav */}
-      <div className="h-[calc(4rem+env(safe-area-inset-bottom))] md:hidden" />
+      <div className="mobile-bottom-nav-spacer" />
     </>
   );
 }

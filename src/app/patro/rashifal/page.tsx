@@ -41,7 +41,7 @@ export default function RashifalPage() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
             style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)" }}>♈</div>
           <div>
-            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)" }}>
+            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("आजको राशिफल", "Today's Horoscope")}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
@@ -76,7 +76,7 @@ export default function RashifalPage() {
               style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)", color: "#fff" }}>
               <span className="text-3xl">{RASHI_EMOJIS[selected.sign] ?? "⭐"}</span>
               <div>
-                <h2 className="text-lg font-black">{language === "ne" ? selected.sign_ne : selected.sign}</h2>
+                <h2 className="text-lg font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>{language === "ne" ? selected.sign_ne : selected.sign}</h2>
                 {selected.rating && (
                   <div className="flex items-center gap-0.5 mt-0.5">
                     {Array.from({ length: 5 }, (_, i) => (

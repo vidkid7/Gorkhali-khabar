@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
+
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BreakingNewsTicker } from "@/components/ui/BreakingNewsTicker";
@@ -112,7 +113,7 @@ async function getEditorsPick() {
     select: articleSelect,
     orderBy: { published_at: "desc" },
     take: 3,
-    skip: 5, // Skip the first 5 featured articles used in hero
+    skip: 5,
   });
 }
 
@@ -339,11 +340,9 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-      <div className="hidden md:block">
-        <Suspense fallback={null}>
-          <BreakingNewsSection />
-        </Suspense>
-      </div>
+      <Suspense fallback={null}>
+        <BreakingNewsSection />
+      </Suspense>
 
       {/* Latest Updates floating panel */}
       <LatestUpdatesPanel />

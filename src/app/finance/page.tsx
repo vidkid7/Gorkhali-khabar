@@ -67,7 +67,7 @@ export default function FinancePage() {
           <div className="mx-auto max-w-7xl px-4 py-8 text-white relative">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-3xl">💹</span>
-              <h1 className="text-2xl font-black">
+              <h1 className="text-xl sm:text-2xl font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                 {language === "ne" ? "वित्तीय बजार" : "Financial Market"}
               </h1>
             </div>
@@ -102,7 +102,7 @@ export default function FinancePage() {
               <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
                 <div className="px-6 py-4 text-white"
                   style={{ background: "linear-gradient(135deg, #1565c0, #0d47a1)" }}>
-                  <h2 className="text-lg font-bold flex items-center gap-2">
+                  <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                     <span>💱</span>
                     {language === "ne" ? "नेपाल राष्ट्र बैंक — विदेशी विनिमय दर" : "Nepal Rastra Bank — Foreign Exchange Rates"}
                   </h2>
@@ -175,7 +175,7 @@ export default function FinancePage() {
                   <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
                     <div className="px-6 py-4 text-white"
                       style={{ background: "linear-gradient(135deg, #f9a825, #e65100)" }}>
-                      <h2 className="text-lg font-bold flex items-center gap-2">
+                      <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                         <span>🥇</span>
                         {language === "ne" ? "सुनको दर" : "Gold Rate"}
                       </h2>
@@ -205,7 +205,7 @@ export default function FinancePage() {
                   <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
                     <div className="px-6 py-4 text-white"
                       style={{ background: "linear-gradient(135deg, #90a4ae, #546e7a)" }}>
-                      <h2 className="text-lg font-bold flex items-center gap-2">
+                      <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                         <span>🥈</span>
                         {language === "ne" ? "चाँदीको दर" : "Silver Rate"}
                       </h2>

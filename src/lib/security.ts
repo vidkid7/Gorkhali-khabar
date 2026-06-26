@@ -81,7 +81,24 @@ export function hasControlCharacters(value: string) {
 }
 
 export function isKnownSeedPassword(password: string) {
-  return password === "Admin@12345" || password === "Editor@12345" || password === "Author@12345";
+  const seedPasswords = [
+    process.env.SEED_ADMIN_PASSWORD,
+    process.env.SEED_EDITOR_PASSWORD,
+    process.env.SEED_AUTHOR_PASSWORD,
+  ].filter(Boolean);
+
+  let result = 0;
+  for (const seed of seedPasswords) {
+    if (seed && seed.length === password.length) {
+      for (let i = 0; i < seed.length; i++) {
+        result |= seed.charCodeAt(i) ^ password.charCodeAt(i);
+      }
+    } else {
+      result |= 1;
+    }
+  }
+  if (seedPasswords.length === 0) result |= 1;
+  return result === 0;
 }
 
 export function isPrivateHostname(hostname: string) {

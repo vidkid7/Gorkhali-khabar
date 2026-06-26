@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Devanagari, Inter } from "next/font/google";
+import { Noto_Serif_Devanagari, Noto_Sans_Devanagari, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
+
+const notoSerifDevanagari = Noto_Serif_Devanagari({
+  variable: "--font-nepali-serif",
+  subsets: ["devanagari", "latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
 
 const notoSansDevanagari = Noto_Sans_Devanagari({
   variable: "--font-nepali",
@@ -9,19 +16,51 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
   display: "swap",
 });
 
-const inter = Inter({
+const dmSans = DM_Sans({
   variable: "--font-latin",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "समाचार पोर्टल - विश्वसनीय समाचार सेवा",
-    template: "%s | समाचार पोर्टल",
+    default: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+    template: "%s | नमस्ते एक्सप्रेस",
   },
-  description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
-  keywords: ["news", "nepal", "nepali news", "समाचार", "नेपाल"],
+  description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल — ताजा समाचार, राजनीति, खेलकुद, व्यापार, मनोरञ्जन",
+  keywords: ["news", "nepal", "nepali news", "समाचार", "नेपाल", "ताजा समाचार", "namaste express", "namastexpress"],
+  authors: [{ name: "नमस्ते एक्सप्रेस" }],
+  creator: "नमस्ते एक्सप्रेस",
+  openGraph: {
+    type: "website",
+    locale: "ne_NP",
+    siteName: "नमस्ते एक्सप्रेस",
+    title: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+    description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "नमस्ते एक्सप्रेस - विश्वसनीय समाचार सेवा",
+    description: "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/icons/logo.png",
+    apple: "/icons/logo.png",
+    shortcut: "/icons/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -54,26 +93,19 @@ export default function RootLayout({
     <html
       lang="ne"
       data-scroll-behavior="smooth"
-      className={`${notoSansDevanagari.variable} ${inter.variable} h-full antialiased`}
+      className={`${notoSerifDevanagari.variable} ${notoSansDevanagari.variable} ${dmSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#c62828" />
+        <meta name="theme-color" content="#b71c1c" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
       </head>
       <body className="min-h-full flex flex-col">
-        {/* Animated liquid background blobs */}
-        <div className="liquid-bg" aria-hidden="true">
-          <div className="liquid-blob liquid-blob-1" />
-          <div className="liquid-blob liquid-blob-2" />
-          <div className="liquid-blob liquid-blob-3" />
-          <div className="liquid-blob liquid-blob-4" />
-        </div>
         <Providers>{children}</Providers>
       </body>
     </html>

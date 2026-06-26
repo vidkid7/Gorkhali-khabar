@@ -36,7 +36,7 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Comments</h1>
+      <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>Comments</h1>
 
       {/* Filter */}
       <div className="card p-4">
@@ -136,10 +136,10 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
 
 function CommentStatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; color: string }> = {
-    PENDING: { bg: "#ca8a04", color: "#fff" },
-    APPROVED: { bg: "#16a34a", color: "#fff" },
-    REJECTED: { bg: "#dc2626", color: "#fff" },
-    SPAM: { bg: "#6b7280", color: "#fff" },
+    PENDING: { bg: "var(--warning, #ca8a04)", color: "#fff" },
+    APPROVED: { bg: "var(--success, #16a34a)", color: "#fff" },
+    REJECTED: { bg: "var(--error, #dc2626)", color: "#fff" },
+    SPAM: { bg: "var(--muted, #6b7280)", color: "#fff" },
   };
   const s = styles[status] ?? styles.PENDING;
   return (

@@ -73,6 +73,21 @@ export async function POST(request: NextRequest) {
 
     const contentType = request.headers.get("content-type") ?? "";
 
+    if (!contentType.includes("application/json") && !contentType.includes("multipart/form-data")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
+    const contentLength = request.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Payload too large" },
+        { status: 413 }
+      );
+    }
+
     // ── URL-based registration ──────────────────────────────────
     if (contentType.includes("application/json")) {
       const body = await request.json() as { url?: string; alt_text?: string };

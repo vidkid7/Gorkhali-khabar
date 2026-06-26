@@ -61,3 +61,45 @@ export const passwordResetSchema = z.object({
     .regex(/[^A-Za-z0-9]/, "कम्तीमा एउटा विशेष चिन्ह चाहिन्छ"),
   token: z.string().regex(/^[a-f0-9]{64}$/i, "अमान्य टोकन"),
 });
+
+export const rashifalSchema = z.object({
+  sign: z.string().min(1, "राशि आवश्यक छ"),
+  sign_ne: z.string().optional(),
+  bs_year: z.number().int().min(2000).max(2100),
+  bs_month: z.number().int().min(1).max(12),
+  bs_day: z.number().int().min(1).max(32),
+  ad_date: z.string().min(1, "मिति आवश्यक छ"),
+  prediction: z.string().min(1, "भविष्यवाणी आवश्यक छ"),
+  prediction_en: z.string().optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+});
+
+export const holidaySchema = z.object({
+  title: z.string().min(1, "शीर्षक आवश्यक छ"),
+  title_en: z.string().optional(),
+  bs_year: z.number().int().min(2000).max(2100),
+  bs_month: z.number().int().min(1).max(12),
+  bs_day: z.number().int().min(1).max(32),
+  ad_date: z.string().min(1, "मिति आवश्यक छ"),
+  type: z.string().default("public"),
+  is_public: z.boolean().default(true),
+  description: z.string().optional(),
+  description_en: z.string().optional(),
+});
+
+export const goldSilverSchema = z.object({
+  date: z.string().min(1, "मिति आवश्यक छ"),
+  fine_gold: z.number().positive().optional().nullable(),
+  tejabi_gold: z.number().positive().optional().nullable(),
+  silver: z.number().positive().optional().nullable(),
+  source: z.string().optional(),
+});
+
+export const forexSchema = z.object({
+  date: z.string().min(1, "मिति आवश्यक छ"),
+  currency: z.string().min(1, "मुद्रा आवश्यक छ"),
+  currency_name: z.string().optional(),
+  unit: z.number().int().positive().default(1),
+  buy: z.number().optional().nullable(),
+  sell: z.number().optional().nullable(),
+});

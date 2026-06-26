@@ -72,15 +72,16 @@ export function ArticleContent({
         </Link>
         <span>/</span>
         <Link
-          href={`/category/${category.slug}`}
+          href={`/categories/${category.slug}`}
           className="hover:text-accent"
+          style={{ fontFamily: "var(--font-nepali-serif)" }}
         >
           {catName}
         </Link>
       </nav>
 
       {/* Title */}
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>
         {displayTitle}
       </h1>
 
@@ -136,7 +137,7 @@ export function ArticleContent({
       {/* AI Summary */}
       {ai_summary && (
         <div className="card p-4 mb-6 border-l-4 border-accent">
-          <h2 className="text-sm font-bold text-accent mb-2">
+          <h2 className="text-sm font-bold text-accent mb-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
             {t("article.aiSummary")}
           </h2>
           <p className="text-sm text-muted leading-relaxed">{ai_summary}</p>
@@ -195,7 +196,7 @@ export function ArticleContent({
 
       {/* Comments placeholder */}
       <section>
-        <h2 className="text-xl font-bold mb-4">{t("article.comments")}</h2>
+        <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>{t("article.comments")}</h2>
         <div className="card p-6 text-center text-muted text-sm">
           {t("article.writeComment")}
         </div>

@@ -115,10 +115,10 @@ export default function NewArticlePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">New Article</h1>
+      <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>New Article</h1>
 
       {error && (
-        <div className="p-3 rounded-md text-sm" style={{ background: "#fecaca", color: "#991b1b" }}>
+        <div className="p-3 rounded-md text-sm" style={{ background: "var(--error-light, #fecaca)", color: "var(--error, #991b1b)" }}>
           {error}
         </div>
       )}
@@ -252,15 +252,39 @@ export default function NewArticlePage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Featured Image URL</label>
-                <input
-                  type="text"
-                  value={form.featured_image}
-                  onChange={(e) => updateField("featured_image", e.target.value)}
-                  className="w-full px-3 py-2 rounded-md text-sm"
-                  style={inputStyle}
-                  placeholder="https://..."
-                />
+                <label className="block text-sm font-medium mb-1">Featured Image</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={form.featured_image}
+                    onChange={(e) => updateField("featured_image", e.target.value)}
+                    className="flex-1 px-3 py-2 rounded-md text-sm"
+                    style={inputStyle}
+                    placeholder="https://..."
+                  />
+                  <label className="btn-secondary !py-2 !px-3 text-xs cursor-pointer whitespace-nowrap">
+                    Upload
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("alt_text", "featured image");
+                        try {
+                          const res = await fetch("/api/v1/media", { method: "POST", body: formData });
+                          const data = await res.json();
+                          if (data.success && data.data?.url) {
+                            updateField("featured_image", data.data.url);
+                          }
+                        } catch {}
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="flex items-center gap-2 cursor-pointer">

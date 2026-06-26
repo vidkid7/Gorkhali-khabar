@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
+import { forexSchema } from "@/lib/validations";
 
 export async function GET() {
   const { error } = await requireRole(["ADMIN", "EDITOR"]);
@@ -16,16 +17,25 @@ export async function POST(req: NextRequest) {
   if (error === "unauthorized") return unauthorizedResponse();
   if (error === "forbidden") return forbiddenResponse();
 
+  const contentType = req.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return NextResponse.json({ success: false, error: "Invalid content type" }, { status: 415 });
+  }
+
   try {
     const body = await req.json();
+    const parsed = forexSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
+    }
     const rate = await prisma.forexRate.create({
       data: {
-        date: new Date(body.date),
-        currency: String(body.currency).toUpperCase(),
-        currency_name: body.currency_name || null,
-        unit: Number(body.unit) || 1,
-        buy: body.buy ? Number(body.buy) : null,
-        sell: body.sell ? Number(body.sell) : null,
+        date: new Date(parsed.data.date),
+        currency: parsed.data.currency.toUpperCase(),
+        currency_name: parsed.data.currency_name || null,
+        unit: parsed.data.unit,
+        buy: parsed.data.buy || null,
+        sell: parsed.data.sell || null,
       },
     });
     return NextResponse.json({ success: true, data: rate });

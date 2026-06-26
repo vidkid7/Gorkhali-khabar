@@ -60,7 +60,7 @@ export default function DateConverterPage() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
             style={{ background: "linear-gradient(135deg,#8b5cf6,#7c3aed)" }}>🔄</div>
           <div>
-            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)" }}>
+            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("मिति परिवर्तन", "Date Converter")}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
@@ -76,10 +76,10 @@ export default function DateConverterPage() {
           <div className="rounded-2xl overflow-hidden"
             style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #c62828, #b71c1c)", color: "#fff" }}>
-              <h2 className="text-sm font-bold">{mn("बि.सं. → ई.सं.", "BS → AD")}</h2>
+              <h2 className="text-sm font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("बि.सं. → ई.सं.", "BS → AD")}</h2>
             </div>
             <div className="p-5 space-y-4">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div>
                   <label className="text-xs font-semibold mb-1 block" style={{ color: "var(--muted)" }}>{mn("वर्ष", "Year")}</label>
                   <select value={bsYear} onChange={e => setBsYear(+e.target.value)}
@@ -126,10 +126,10 @@ export default function DateConverterPage() {
           <div className="rounded-2xl overflow-hidden"
             style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#fff" }}>
-              <h2 className="text-sm font-bold">{mn("ई.सं. → बि.सं.", "AD → BS")}</h2>
+              <h2 className="text-sm font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("ई.सं. → बि.सं.", "AD → BS")}</h2>
             </div>
             <div className="p-5 space-y-4">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div>
                   <label className="text-xs font-semibold mb-1 block" style={{ color: "var(--muted)" }}>{mn("वर्ष", "Year")}</label>
                   <select value={adYear} onChange={e => setAdYear(+e.target.value)}

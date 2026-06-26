@@ -111,6 +111,30 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <Header />
       <main className="mx-auto max-w-4xl px-3 sm:px-4 py-4 sm:py-6 pb-safe">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsArticle",
+              headline: article.title,
+              description: article.excerpt,
+              image: article.featured_image,
+              datePublished: article.published_at?.toISOString(),
+              dateModified: article.updated_at?.toISOString(),
+              author: { "@type": "Person", name: article.author.name },
+      publisher: {
+        "@type": "Organization",
+        name: "नमस्ते एक्सप्रेस",
+                logo: { "@type": "ImageObject", url: "/logo.png" },
+              },
+              mainEntityOfPage: { "@type": "WebPage", "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/articles/${article.slug}` },
+              articleSection: article.category.name,
+              wordCount: article.word_count,
+              timeRequired: `PT${article.reading_time}M`,
+            }),
+          }}
+        />
         <ArticleContent
           title={article.title}
           title_en={article.title_en}

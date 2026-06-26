@@ -137,7 +137,7 @@ function SearchContent() {
               </Link>
             </li>
             <li>/</li>
-            <li className="font-medium text-foreground">{t("common.search")}</li>
+            <li className="font-medium text-foreground" style={{ fontFamily: "var(--font-nepali-serif)" }}>{t("common.search")}</li>
           </ol>
         </nav>
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
+import { goldSilverSchema } from "@/lib/validations";
 
 export async function GET() {
   const { error } = await requireRole(["ADMIN", "EDITOR"]);
@@ -16,15 +17,24 @@ export async function POST(req: NextRequest) {
   if (error === "unauthorized") return unauthorizedResponse();
   if (error === "forbidden") return forbiddenResponse();
 
+  const contentType = req.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return NextResponse.json({ success: false, error: "Invalid content type" }, { status: 415 });
+  }
+
   try {
     const body = await req.json();
+    const parsed = goldSilverSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
+    }
     const price = await prisma.goldSilverPrice.create({
       data: {
-        date: new Date(body.date),
-        fine_gold: body.fine_gold ? Number(body.fine_gold) : null,
-        tejabi_gold: body.tejabi_gold ? Number(body.tejabi_gold) : null,
-        silver: body.silver ? Number(body.silver) : null,
-        source: body.source || null,
+        date: new Date(parsed.data.date),
+        fine_gold: parsed.data.fine_gold || null,
+        tejabi_gold: parsed.data.tejabi_gold || null,
+        silver: parsed.data.silver || null,
+        source: parsed.data.source || null,
       },
     });
     return NextResponse.json({ success: true, data: price });

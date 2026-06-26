@@ -27,6 +27,14 @@ export async function POST(request: NextRequest) {
     if (error === "unauthorized") return unauthorizedResponse();
     if (error === "forbidden") return forbiddenResponse();
 
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const body = await request.json();
     const { name, type, width, height } = body;
 
@@ -58,17 +66,11 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    if (msg.includes("Unique constraint")) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, error: "Position name already exists" },
-        { status: 409 }
-      );
-    }
     console.error("Ad position POST error:", error);
+    const isUniqueViolation = error instanceof Error && "code" in error && (error as { code: string }).code === "P2002";
     return NextResponse.json<ApiResponse>(
-      { success: false, error: "Failed to create position" },
-      { status: 500 }
+      { success: false, error: isUniqueViolation ? "Position name already exists" : "Failed to create position" },
+      { status: isUniqueViolation ? 409 : 500 }
     );
   }
 }

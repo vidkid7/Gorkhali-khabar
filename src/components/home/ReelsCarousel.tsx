@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
 
 interface Reel {
   id: string;
@@ -26,13 +27,13 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
   };
 
   return (
-    <section className="rounded-3xl bg-slate-950 px-4 py-5 text-white shadow-xl sm:px-5">
+    <section className="rounded-3xl px-4 py-5 text-white shadow-xl sm:px-5" style={{ backgroundColor: "var(--nav-bg)" }}>
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-extrabold uppercase tracking-widest text-red-300">
+          <p className="text-[11px] font-extrabold uppercase tracking-widest text-accent">
             {language === "ne" ? "हेर्नुहोस्" : "Watch"}
           </p>
-          <h2 className="mt-1 text-xl font-black">{language === "ne" ? "OK रिल्स" : "OK Reels"}</h2>
+          <h2 className="mt-1 text-xl font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>{language === "ne" ? "OK रिल्स" : "OK Reels"}</h2>
         </div>
         <Link href="/reels" className="rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-slate-950">
           {language === "ne" ? "सबै" : "All"}
@@ -55,9 +56,9 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
                 href={`/reels/${reel.slug}`}
                 className="group/reel w-40 shrink-0 snap-start sm:w-48"
               >
-                <div className="relative h-72 w-40 overflow-hidden rounded-2xl border border-white/10 bg-slate-800 shadow-lg sm:h-80 sm:w-48">
+                <div className="relative h-72 w-40 overflow-hidden rounded-2xl border border-border shadow-lg sm:h-80 sm:w-48" style={{ backgroundColor: "var(--surface)" }}>
                   {reel.thumbnail ? (
-                    <img src={reel.thumbnail} alt={title} className="w-full h-full object-cover" />
+                    <Image src={reel.thumbnail} alt={title} fill className="object-cover" sizes="192px" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-red-600 to-red-900">
                       <svg className="h-12 w-12 text-white/80" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -68,8 +69,8 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
                     <svg className="h-5 w-5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   </div>
                   <div className="absolute bottom-0 p-3 text-white">
-                    <p className="line-clamp-3 text-sm font-extrabold leading-tight">{title}</p>
-                    <p className="text-[10px] mt-1 opacity-70">▶ {reel.view_count.toLocaleString()}</p>
+                    <p className="line-clamp-3 text-sm font-extrabold leading-tight" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title}</p>
+                    <p className="text-[10px] mt-1 opacity-70">▶ {toNepaliDigits(reel.view_count)}</p>
                   </div>
                 </div>
               </Link>

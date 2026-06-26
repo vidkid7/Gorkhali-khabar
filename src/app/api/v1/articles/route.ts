@@ -4,6 +4,7 @@ import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
 import { sanitizeArticleHtml } from "@/lib/html";
+import { cacheDel } from "@/lib/redis";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Article } from "@prisma/client";
 
@@ -72,6 +73,22 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
+    const contentLength = request.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Payload too large" },
+        { status: 413 }
+      );
+    }
+
     const { error, session } = await requireRole(["AUTHOR", "EDITOR", "ADMIN"]);
     if (error === "unauthorized") return unauthorizedResponse();
     if (error === "forbidden") return forbiddenResponse();
@@ -127,6 +144,9 @@ export async function POST(request: NextRequest) {
       entityId: article.id,
       newValue: { title: article.title, slug: article.slug, status: article.status },
     });
+
+    await cacheDel("home:featured");
+    await cacheDel("home:trending");
 
     return NextResponse.json<ApiResponse>(
       { success: true, data: article },

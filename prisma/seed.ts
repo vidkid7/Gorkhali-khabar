@@ -410,7 +410,7 @@ async function main() {
 
   // ─── Site Settings ─────────────────────────────────
   const settings: Record<string,unknown> = {
-    site_name: { ne: "गोर्खाली खबर", en: "Gorkhali Khabar" },
+    site_name: { ne: "नमस्ते एक्सप्रेस", en: "NamasteExpress" },
     site_tagline: { ne: "नेपालको विश्वसनीय अनलाइन समाचार सेवा", en: "Nepal's Trusted Online News Service" },
     site_logo: "/icons/logo.png",
     site_favicon: "/favicon.ico",
@@ -419,17 +419,17 @@ async function main() {
     contact_email: "info@gorkhali.com",
     contact_address: { ne: "काठमाडौं, बागमती प्रदेश, नेपाल", en: "Kathmandu, Bagmati Province, Nepal" },
     registration_number: "१२३-४५६-७८९०",
-    social_facebook:  "https://facebook.com/gorkhalikhabar",
-    social_twitter:   "https://twitter.com/gorkhalikhabar",
-    social_youtube:   "https://youtube.com/@gorkhalikhabar",
-    social_instagram: "https://instagram.com/gorkhalikhabar",
-    social_tiktok:    "https://tiktok.com/@gorkhalikhabar",
+    social_facebook:  "https://facebook.com/namasteexpress",
+    social_twitter:   "https://twitter.com/namasteexpress",
+    social_youtube:   "https://youtube.com/@namasteexpress",
+    social_instagram: "https://instagram.com/namasteexpress",
+    social_tiktok:    "https://tiktok.com/@namasteexpress",
     homepage_section_order: ["breaking","hero","samachar","reels","feature","cover-story","saptaahanta","prabidhi","antarvaarta","khelkud","sahitya","antarrashtriya","video","bichitra","photo-gallery"],
     features_comments: true,
     features_bookmarks: true,
     features_reels: true,
     features_galleries: true,
-    copyright_text: { ne: "© {year} गोर्खाली खबर। सर्वाधिकार सुरक्षित।", en: "© {year} Gorkhali Khabar. All rights reserved." },
+    copyright_text: { ne: "© {year} नमस्ते एक्सप्रेस। सर्वाधिकार सुरक्षित।", en: "© {year} NamasteExpress. All rights reserved." },
   };
   for (const [k, v] of Object.entries(settings)) {
     await prisma.siteSettings.upsert({ where: { key: k }, update: { value: v as object }, create: { key: k, value: v as object } });

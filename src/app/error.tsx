@@ -26,7 +26,7 @@ export default function Error({
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-foreground mb-3">
+        <h1 className="text-2xl font-bold text-foreground mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {t("errors.serverError")}
         </h1>
         <p className="text-muted mb-3 leading-relaxed">

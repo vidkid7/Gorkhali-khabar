@@ -13,7 +13,7 @@ function getTransporter() {
 
   const port = parseInt(process.env.SMTP_PORT || "587", 10);
   transporter = nodemailer.createTransport({
-    name: "gorkhali-khabar",
+    name: "namaste-express",
     host: safeHeaderValue(process.env.SMTP_HOST, "smtp.gmail.com"),
     port,
     secure: port === 465,

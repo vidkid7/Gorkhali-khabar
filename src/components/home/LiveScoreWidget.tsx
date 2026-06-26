@@ -45,13 +45,13 @@ export function LiveScoreWidget({ matches }: { matches: MatchData[] }) {
                 {language === "en" && m.tournament.name_en ? m.tournament.name_en : m.tournament.name}
               </span>
               {m.status === "LIVE" && (
-                <span className="text-[10px] font-bold text-red-500 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-error flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
                   LIVE
                 </span>
               )}
               {m.status === "COMPLETED" && (
-                <span className="text-[10px] font-bold text-green-600">FT</span>
+                <span className="text-[10px] font-bold text-success">FT</span>
               )}
               {m.status === "UPCOMING" && (
                 <span suppressHydrationWarning className="text-[10px] text-muted">

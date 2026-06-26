@@ -170,14 +170,52 @@ export default function AdminSettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Logo URL</label>
-            <input
-              type="text"
-              value={(settings.site_logo as string) ?? ""}
-              onChange={(e) => updateSetting("site_logo", e.target.value)}
-              className="w-full px-3 py-2 rounded-md text-sm"
-              style={inputStyle}
-            />
+            <label className="block text-sm font-medium mb-1">Logo</label>
+            <div className="flex items-center gap-3">
+              {(settings.site_logo as string) ? (
+                <img
+                  src={settings.site_logo as string}
+                  alt="Current logo"
+                  className="w-12 h-12 rounded-lg object-contain border border-border"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center text-lg font-bold border border-border">
+                  स
+                </div>
+              )}
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  value={(settings.site_logo as string) ?? ""}
+                  onChange={(e) => updateSetting("site_logo", e.target.value)}
+                  placeholder="Logo URL or upload below"
+                  className="flex-1 px-3 py-2 rounded-md text-sm"
+                  style={inputStyle}
+                />
+                <label className="btn-secondary !py-2 !px-3 text-xs cursor-pointer whitespace-nowrap">
+                  Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      formData.append("alt_text", "site logo");
+                      try {
+                        const res = await fetch("/api/v1/media", { method: "POST", body: formData });
+                        const data = await res.json();
+                        if (data.success && data.data?.url) {
+                          updateSetting("site_logo", data.data.url);
+                        }
+                      } catch {}
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Primary Color</label>

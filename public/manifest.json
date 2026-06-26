@@ -1,11 +1,22 @@
 {
-  "name": "समाचार पोर्टल - News Portal",
-  "short_name": "News Portal",
+  "name": "नमस्ते एक्सप्रेस - NamasteExpress",
+  "short_name": "NamasteExpress",
   "description": "नेपालको विश्वसनीय अनलाइन समाचार पोर्टल",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#c62828",
+  "theme_color": "#b71c1c",
   "orientation": "portrait-primary",
-  "icons": []
+  "icons": [
+    {
+      "src": "/icons/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

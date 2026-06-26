@@ -63,7 +63,7 @@ export default function SportsPage() {
     <>
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-6 space-y-8">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
           ⚽ खेलकुद
         </h1>
 
@@ -82,7 +82,7 @@ export default function SportsPage() {
             {/* Live Matches */}
             {liveMatches.length > 0 && (
               <section className="space-y-3">
-                <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--foreground)" }}>
+                <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
                   लाइभ खेलहरू
                 </h2>
@@ -108,7 +108,7 @@ export default function SportsPage() {
             {/* Upcoming Matches */}
             {upcomingMatches.length > 0 && (
               <section className="space-y-3">
-                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
                   📅 आगामी खेलहरू
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -133,7 +133,7 @@ export default function SportsPage() {
             {/* Completed Matches */}
             {completedMatches.length > 0 && (
               <section className="space-y-3">
-                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
                   ✅ सकिएका खेलहरू
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

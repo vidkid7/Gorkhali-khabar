@@ -1,4 +1,4 @@
-# Gorkhali Khabar (गोर्खाली खबर)
+# NamasteExpress (नमस्ते एक्सप्रेस)
 
 A full-featured Nepali news portal built with Next.js 16, Prisma, and PostgreSQL.
 

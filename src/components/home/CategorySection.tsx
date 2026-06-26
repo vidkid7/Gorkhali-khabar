@@ -94,7 +94,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
         {/* Main featured */}
         <Link href={`/articles/${main.slug}`} className="lg:col-span-3 card group block">
-          <div className="relative w-full h-64 lg:h-80 rounded-t-lg overflow-hidden bg-surface">
+          <div className="relative w-full min-h-[16rem] lg:min-h-[20rem] rounded-t-lg overflow-hidden bg-surface">
             {main.featured_image ? (
               <Image src={main.featured_image} alt={title(main)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 60vw" priority />
             ) : (
@@ -102,13 +102,13 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
                 <span className="text-6xl">📰</span>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 p-5 text-white">
               <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded" style={{ backgroundColor: color }}>
                 {language === "en" && main.category.name_en ? main.category.name_en : main.category.name}
               </span>
-              <h3 className="mt-2 text-lg font-bold line-clamp-3 group-hover:underline">{title(main)}</h3>
-              {excerpt(main) && <p className="mt-1 text-sm text-white/80 line-clamp-2">{excerpt(main)}</p>}
+              <h3 className="mt-2 text-lg font-bold line-clamp-4 group-hover:underline" style={{ fontFamily: "var(--font-nepali-serif)" }}>{title(main)}</h3>
+              {excerpt(main) && <p className="mt-1 text-sm text-white/80 line-clamp-3">{excerpt(main)}</p>}
               <div className="mt-2 flex items-center gap-3 text-xs text-white/70">
                 {main.author.name && <span>{main.author.name}</span>}
                 {main.published_at && <span>{timeAgo(new Date(main.published_at), language)}</span>}

@@ -219,7 +219,6 @@ model Article {
   @@index([author_id])
   @@index([published_at])
   @@index([status])
-  @@index([slug])
   @@index([is_featured])
   @@index([status, published_at])
   @@map("articles")
@@ -309,6 +308,8 @@ model MediaFile {
 
   uploader User @relation(fields: [uploaded_by], references: [id])
 
+  @@index([uploaded_by])
+  @@index([created_at])
   @@map("media_files")
 }
 
@@ -445,6 +446,9 @@ model Advertisement {
 
   position AdPosition @relation(fields: [position_id], references: [id])
 
+  @@index([position_id])
+  @@index([is_active])
+  @@index([start_date, end_date])
   @@map("advertisements")
 }
 
@@ -544,6 +548,9 @@ model AuditLog {
 
   admin User @relation(fields: [admin_id], references: [id])
 
+  @@index([admin_id])
+  @@index([entity])
+  @@index([created_at])
   @@map("audit_logs")
 }
 

@@ -35,7 +35,7 @@ export default async function ReelsPage({ searchParams }: PageProps) {
     <>
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-6 space-y-6">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
           🎬 OK Reels
         </h1>
 

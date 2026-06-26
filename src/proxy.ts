@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const adminPaths = ["/admin", "/api/v1/admin"];
+const ADMIN_SECRET = process.env.ADMIN_SECRET_PATH || "admin";
+const adminPaths = ["/" + ADMIN_SECRET, "/api/v1/admin"];
 
-// Simple in-memory rate limiter for API routes
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 100; // max write requests per endpoint/window
-const RATE_LIMIT_READ_MAX = 300; // public pages can fan out to several read APIs
-const RATE_LIMIT_AUTH_MAX = 10; // stricter for auth endpoints
-const RATE_LIMIT_LOGIN_MAX = 5; // credentials callback brute-force protection
+const RATE_LIMIT_WINDOW = 60_000;
+const RATE_LIMIT_MAX = 100;
+const RATE_LIMIT_READ_MAX = 300;
+const RATE_LIMIT_AUTH_MAX = 10;
+const RATE_LIMIT_LOGIN_MAX = 5;
 const UNSAFE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function isRateLimited(key: string, maxRequests: number): boolean {
@@ -25,7 +25,6 @@ function isRateLimited(key: string, maxRequests: number): boolean {
   return entry.count > maxRequests;
 }
 
-// Periodically clean up expired entries (every 5 min)
 if (typeof globalThis !== "undefined") {
   const cleanupKey = "__rateLimitCleanup";
   if (!(globalThis as Record<string, unknown>)[cleanupKey]) {
@@ -45,7 +44,11 @@ export function proxy(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const isAdminPath = adminPaths.some((p) => pathname.startsWith(p));
 
-  // ─── CSRF origin guard for state-changing API requests ───
+  // Block direct access to /admin — must use custom secret path
+  if ((pathname === "/admin" || pathname.startsWith("/admin/")) && ADMIN_SECRET !== "admin") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   if (
     pathname.startsWith("/api/") &&
     !pathname.startsWith("/api/auth/") &&
@@ -65,15 +68,11 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // ─── Rate limiting for API routes ───
   if (pathname.startsWith("/api/")) {
     const isCredentialsLogin =
       pathname === "/api/auth/callback/credentials" && request.method === "POST";
-    // Skip rate limiting for NextAuth internal routes (/api/auth/*) — they
-    // call csrf, callback, and session endpoints on every login/page load,
-    // which would instantly exhaust the strict 10 req/min cap.
     if (pathname.startsWith("/api/auth/") && !isCredentialsLogin) {
-      // Let NextAuth handle its own security (CSRF tokens, etc.)
+      // Let NextAuth handle its own security
     } else {
       const isCustomAuthPath = pathname.startsWith("/api/v1/auth/");
       const limit = isCredentialsLogin
@@ -94,7 +93,6 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // ─── Security headers ───
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-XSS-Protection", "1; mode=block");
@@ -102,12 +100,13 @@ export function proxy(request: NextRequest) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  response.headers.set("X-Permitted-Cross-Domain-Policies", "none");
+  response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
   response.headers.set(
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=(), payment=()"
   );
 
-  // Content-Security-Policy - Updated for Railway deployment
   const scriptSrc = ["'self'", "'unsafe-inline'", "https://accounts.google.com"];
   if (process.env.NODE_ENV !== "production") {
     scriptSrc.push("'unsafe-eval'");
@@ -143,7 +142,6 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  // ─── Admin route protection ───
   if (isAdminPath) {
     const adminIpWhitelist = (process.env.ADMIN_IP_WHITELIST || "")
       .split(",")
@@ -155,13 +153,12 @@ export function proxy(request: NextRequest) {
         : NextResponse.redirect(new URL("/", request.url));
     }
 
-    // Check for NextAuth session token (both secure and non-secure variants)
     const token =
       request.cookies.get("next-auth.session-token")?.value ||
       request.cookies.get("__Secure-next-auth.session-token")?.value ||
       request.cookies.get("authjs.session-token")?.value ||
       request.cookies.get("__Secure-authjs.session-token")?.value;
-    
+
     if (!token) {
       if (pathname.startsWith("/api/")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -170,6 +167,14 @@ export function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
+  }
+
+  // Rewrite secret admin path to internal /admin routes (after auth check)
+  if (ADMIN_SECRET !== "admin" && pathname.startsWith("/" + ADMIN_SECRET)) {
+    const rewritten = pathname.replace("/" + ADMIN_SECRET, "/admin") || "/admin";
+    const newUrl = request.nextUrl.clone();
+    newUrl.pathname = rewritten;
+    return NextResponse.rewrite(newUrl);
   }
 
   return response;

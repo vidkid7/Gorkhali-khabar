@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "सेवा सर्तहरू | Terms of Service",
   description:
-    "समाचार पोर्टलको सेवा सर्तहरू - News Portal Terms of Service",
+    "नमस्ते एक्सप्रेसको सेवा सर्तहरू - NamasteXpress Terms of Service",
 };
 
 export default async function TermsOfServicePage() {
@@ -37,12 +37,12 @@ export default async function TermsOfServicePage() {
         <article className="prose max-w-none">
           {/* Nepali */}
           <section className="mb-12">
-            <h1 className="text-3xl font-bold mb-6">सेवा सर्तहरू</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>सेवा सर्तहरू</h1>
             <p className="text-sm text-muted mb-4">
               अन्तिम अपडेट: {new Date().getFullYear()}-०१-०१
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               १. सेवाको स्वीकृति
             </h2>
             <p className="text-muted leading-relaxed">
@@ -51,7 +51,7 @@ export default async function TermsOfServicePage() {
               कृपया हाम्रो सेवा प्रयोग नगर्नुहोस्।
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               २. प्रयोगकर्ताको दायित्व
             </h2>
             <ul className="list-disc pl-6 text-muted space-y-1">
@@ -61,7 +61,7 @@ export default async function TermsOfServicePage() {
               <li>स्प्याम वा हानिकारक सामग्री पोस्ट नगर्ने</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               ३. बौद्धिक सम्पत्ति
             </h2>
             <p className="text-muted leading-relaxed">
@@ -69,7 +69,7 @@ export default async function TermsOfServicePage() {
               लिखित अनुमति बिना पुनः प्रकाशन गर्न निषेध छ।
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               ४. दायित्वको सीमा
             </h2>
             <p className="text-muted leading-relaxed">
@@ -77,7 +77,7 @@ export default async function TermsOfServicePage() {
               क्षतिको लागि जिम्मेवार हुने छैन।
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               ५. सम्पर्क
             </h2>
             {config.contact_email && (
@@ -87,12 +87,12 @@ export default async function TermsOfServicePage() {
 
           {/* English */}
           <section className="border-t border-border pt-8">
-            <h1 className="text-3xl font-bold mb-6">Terms of Service</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>Terms of Service</h1>
             <p className="text-sm text-muted mb-4">
               Last updated: {new Date().getFullYear()}-01-01
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               1. Acceptance of Terms
             </h2>
             <p className="text-muted leading-relaxed">
@@ -100,7 +100,7 @@ export default async function TermsOfServicePage() {
               do not agree with these terms, please do not use our service.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               2. User Responsibilities
             </h2>
             <ul className="list-disc pl-6 text-muted space-y-1">
@@ -110,7 +110,7 @@ export default async function TermsOfServicePage() {
               <li>Do not post spam or harmful content</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               3. Intellectual Property
             </h2>
             <p className="text-muted leading-relaxed">
@@ -118,7 +118,7 @@ export default async function TermsOfServicePage() {
               Republication without written permission is prohibited.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               4. Limitation of Liability
             </h2>
             <p className="text-muted leading-relaxed">
@@ -126,7 +126,7 @@ export default async function TermsOfServicePage() {
               the use of the service.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-3">5. Contact</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>5. Contact</h2>
             {config.contact_email && (
               <p className="text-muted">For terms of service inquiries: {config.contact_email}</p>
             )}

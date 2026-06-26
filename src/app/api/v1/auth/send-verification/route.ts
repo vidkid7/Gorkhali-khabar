@@ -8,6 +8,14 @@ import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const rateLimit = checkRateLimit(
       `send-verification:${getClientIp(request)}`,
       3,

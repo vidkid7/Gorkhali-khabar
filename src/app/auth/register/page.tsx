@@ -49,7 +49,7 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card w-full max-w-md p-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("common.success")}</h1>
+          <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>{t("common.success")}</h1>
           <p className="text-muted mb-6">{t("auth.verifyEmail")}</p>
           <Link href="/auth/login" className="btn-primary">
             {t("common.login")}
@@ -62,7 +62,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="card w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
+        <h1 className="text-2xl font-bold text-center mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>
           {t("auth.registerTitle")}
         </h1>
 

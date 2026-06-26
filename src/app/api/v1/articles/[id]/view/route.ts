@@ -10,6 +10,14 @@ export async function POST(
   try {
     const { id } = await params;
 
+    const contentType = _request.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "Invalid content type" },
+        { status: 415 }
+      );
+    }
+
     const article = await prisma.article.findUnique({ where: { id } });
     if (!article) {
       return NextResponse.json<ApiResponse>(

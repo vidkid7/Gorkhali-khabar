@@ -34,7 +34,7 @@ export default function ForexPage() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
             style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)" }}>💱</div>
           <div>
-            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)" }}>
+            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("विदेशी विनिमय दर", "Foreign Exchange Rates")}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>

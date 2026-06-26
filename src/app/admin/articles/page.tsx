@@ -45,7 +45,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold">Articles</h1>
+        <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>Articles</h1>
         <Link href="/admin/articles/new" className="btn-primary">
           + New Article
         </Link>
@@ -156,9 +156,9 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; color: string }> = {
-    DRAFT: { bg: "#6b7280", color: "#fff" },
-    PUBLISHED: { bg: "#16a34a", color: "#fff" },
-    ARCHIVED: { bg: "#ca8a04", color: "#fff" },
+    DRAFT: { bg: "var(--muted)", color: "#fff" },
+    PUBLISHED: { bg: "var(--success, #16a34a)", color: "#fff" },
+    ARCHIVED: { bg: "var(--warning, #ca8a04)", color: "#fff" },
   };
   const s = styles[status] ?? styles.DRAFT;
   return (

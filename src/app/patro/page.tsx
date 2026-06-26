@@ -122,7 +122,7 @@ export default function PatroPage() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
             style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}>📅</div>
           <div>
-            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)" }}>
+            <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("नेपाली पात्रो", "Nepali Calendar (Patro)")}
             </h1>
             <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
@@ -146,7 +146,7 @@ export default function PatroPage() {
                 <p className="text-sm opacity-75 mb-1">
                   {language === "ne" ? DAYS_FULL_NE[todayBSDate.dayOfWeek] : DAYS_FULL_EN[todayBSDate.dayOfWeek]}
                 </p>
-                <p className="text-4xl sm:text-5xl font-black tracking-tight">
+                <p className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">
                   {language === "ne"
                     ? `${toNepaliNums(todayBSDate.day)} ${BS_MONTHS_NE[todayBSDate.month - 1]}, ${toNepaliNums(todayBSDate.year)}`
                     : `${todayBSDate.day} ${BS_MONTHS_EN[todayBSDate.month - 1]}, ${todayBSDate.year}`}
@@ -247,7 +247,7 @@ export default function PatroPage() {
                 return (
                   <button key={day}
                     onClick={() => setSelectedDay(isSelected ? null : day)}
-                    className="relative flex flex-col items-center p-1.5 min-h-[62px] transition-all active:scale-95"
+                    className="relative flex flex-col items-center p-1 sm:p-1.5 min-h-[56px] sm:min-h-[62px] transition-all active:scale-95"
                     style={{
                       background: isT ? "#c62828" : isSelected ? "var(--accent-light)" : "var(--surface)",
                       color: isT ? "#fff" : isSelected ? "var(--accent)" : hasPublicHoliday || isSun ? "#e53935" : isSat ? "#1565c0" : "var(--foreground)",
