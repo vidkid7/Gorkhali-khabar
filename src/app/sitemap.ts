@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticPages: MetadataRoute.Sitemap = [
@@ -20,29 +22,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/cookie-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.1 },
   ];
 
-  const articles = await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    select: { slug: true, updated_at: true },
-    orderBy: { published_at: "desc" },
-    take: 5000,
-  });
-  const articlePages: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${BASE_URL}/articles/${a.slug}`,
-    lastModified: a.updated_at,
-    changeFrequency: "daily" as const,
-    priority: 0.8,
-  }));
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, updated_at: true },
+      orderBy: { published_at: "desc" },
+      take: 5000,
+    });
+    const articlePages: MetadataRoute.Sitemap = articles.map((a) => ({
+      url: `${BASE_URL}/articles/${a.slug}`,
+      lastModified: a.updated_at,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    }));
 
-  const categories = await prisma.category.findMany({
-    where: { is_active: true },
-    select: { slug: true, updated_at: true },
-  });
-  const categoryPages: MetadataRoute.Sitemap = categories.map((c) => ({
-    url: `${BASE_URL}/categories/${c.slug}`,
-    lastModified: c.updated_at,
-    changeFrequency: "daily" as const,
-    priority: 0.6,
-  }));
+    const categories = await prisma.category.findMany({
+      where: { is_active: true },
+      select: { slug: true, updated_at: true },
+    });
+    const categoryPages: MetadataRoute.Sitemap = categories.map((c) => ({
+      url: `${BASE_URL}/categories/${c.slug}`,
+      lastModified: c.updated_at,
+      changeFrequency: "daily" as const,
+      priority: 0.6,
+    }));
 
-  return [...staticPages, ...articlePages, ...categoryPages];
+    return [...staticPages, ...articlePages, ...categoryPages];
+  } catch (error) {
+    console.error("Sitemap database lookup failed:", error);
+    return staticPages;
+  }
 }
