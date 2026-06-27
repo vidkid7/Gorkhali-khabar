@@ -12,6 +12,36 @@ const RATE_LIMIT_AUTH_MAX = 10;
 const RATE_LIMIT_LOGIN_MAX = 5;
 const UNSAFE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
+function normalizeHost(value: string | null | undefined) {
+  return value?.trim().toLowerCase().replace(/\.$/, "") || "";
+}
+
+function addUrlHost(hosts: Set<string>, value: string | null | undefined) {
+  if (!value) return;
+  try {
+    hosts.add(normalizeHost(new URL(value).host));
+  } catch {
+    // Environment values may be unset or non-URL placeholders locally.
+  }
+}
+
+function allowedOriginHosts(request: NextRequest) {
+  const hosts = new Set<string>();
+
+  hosts.add(normalizeHost(request.nextUrl.host));
+  hosts.add(normalizeHost(request.headers.get("host")));
+  for (const host of (request.headers.get("x-forwarded-host") || "").split(",")) {
+    hosts.add(normalizeHost(host));
+  }
+
+  addUrlHost(hosts, process.env.NEXT_PUBLIC_SITE_URL);
+  addUrlHost(hosts, process.env.NEXTAUTH_URL);
+  addUrlHost(hosts, process.env.AUTH_URL);
+
+  hosts.delete("");
+  return hosts;
+}
+
 function isRateLimited(key: string, maxRequests: number): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(key);
@@ -62,7 +92,7 @@ export function proxy(request: NextRequest) {
       } catch {
         return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
       }
-      if (originHost !== request.nextUrl.host) {
+      if (!allowedOriginHosts(request).has(normalizeHost(originHost))) {
         return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
       }
     }
