@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface LatestArticle {
   id: string;
@@ -133,7 +133,7 @@ export function LatestUpdatesPanel() {
                     >
                       {article.featured_image ? (
                         <div className="relative w-16 h-12 shrink-0 rounded overflow-hidden">
-                          <Image
+                          <ImageWithFallback
                             src={article.featured_image}
                             alt={displayTitle}
                             fill

@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   bsToAD, daysInBSMonth, firstDayOfBSMonth, todayBS,
   BS_MONTHS_NE, BS_MONTHS_EN, DAYS_NE, DAYS_EN, DAYS_FULL_NE, DAYS_FULL_EN,
-  BS_FESTIVALS, toNepaliNums,
+  BS_FESTIVALS, formatADDate, toNepaliNums,
 } from "@/lib/nepali-date";
 
 const TITHIS_NE = [
@@ -156,7 +156,7 @@ export default function PatroPage() {
               <div className="text-center bg-white/10 rounded-xl px-6 py-4 backdrop-blur-sm">
                 <p className="text-xs opacity-70 mb-1">{mn("आजको सम्वत् मिति", "Today in AD")}</p>
                 <p className="text-xl font-bold">
-                  {todayAD.toLocaleDateString(language === "ne" ? "ne-NP" : "en-US", { year: "numeric", month: "long", day: "numeric" })}
+                  {formatADDate(todayAD, language)}
                 </p>
                 <p className="text-xs mt-1 opacity-70">
                   {mn(`तिथि: ${TITHIS_NE[todayBSDate.day % 15]}`, `Tithi: ${TITHIS_NE[todayBSDate.day % 15]}`)}
@@ -312,7 +312,7 @@ export default function PatroPage() {
                   <div className="flex items-center justify-between">
                     <span style={{ color: "var(--muted)" }}>{mn("सन् मिति", "AD Date")}</span>
                     <span className="font-semibold" style={{ color: "var(--foreground)" }}>
-                      {selectedAD.toLocaleDateString(language === "ne" ? "ne-NP" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
+                      {formatADDate(selectedAD, language)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">

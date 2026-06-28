@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
 import { timeAgo as sharedTimeAgo, getInitials } from "@/lib/utils";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface ArticleCardProps {
   slug: string;
@@ -54,7 +54,7 @@ export function ArticleCard({
       <Link href={`/articles/${slug}`} className="card flex w-full min-w-0 flex-row group">
         <div className="relative w-36 h-28 shrink-0">
           {featured_image ? (
-            <Image src={featured_image} alt={displayTitle} fill
+            <ImageWithFallback src={featured_image} alt={displayTitle} fill
               className="object-cover rounded-l-lg group-hover:scale-105 transition-transform duration-300" sizes="144px" />
           ) : (
             <div className="w-full h-full bg-surface-alt flex items-center justify-center rounded-l-lg">
@@ -93,7 +93,7 @@ export function ArticleCard({
       <Link href={`/articles/${slug}`} className="card group block w-full min-w-0 relative overflow-hidden">
         <div className="relative w-full h-72 lg:h-96">
           {featured_image ? (
-            <Image src={featured_image} alt={displayTitle} fill
+            <ImageWithFallback src={featured_image} alt={displayTitle} fill
               className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" sizes="(max-width: 768px) 100vw, 50vw" priority />
           ) : (
             <div className="w-full h-full bg-surface-alt flex items-center justify-center">
@@ -142,7 +142,7 @@ export function ArticleCard({
     <Link href={`/articles/${slug}`} className="card-news group block">
       <div className="relative w-full h-48 card-news-img overflow-hidden">
         {featured_image ? (
-          <Image src={featured_image} alt={displayTitle} fill
+          <ImageWithFallback src={featured_image} alt={displayTitle} fill
             className="object-cover transition-transform duration-600 group-hover:scale-[1.05]"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         ) : (

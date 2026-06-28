@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +31,7 @@ export default function AdminMediaPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pageSize = 20;
 
-  useEffect(() => {
-    loadFiles();
-  }, [page, search]);
-
-  async function loadFiles() {
+  const loadFiles = useCallback(async () => {
     const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
     if (search) params.set("search", search);
     const res = await fetch(`/api/v1/media?${params}`);
@@ -43,7 +40,11 @@ export default function AdminMediaPage() {
       setFiles(json.data.data || []);
       setTotal(json.data.total || 0);
     }
-  }
+  }, [page, search]);
+
+  useEffect(() => {
+    loadFiles();
+  }, [loadFiles]);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -217,7 +218,14 @@ export default function AdminMediaPage() {
             <div key={file.id} className="rounded-lg overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
               <div className="aspect-square relative" style={{ background: "var(--border)" }}>
                 {file.mime_type.startsWith("image/") ? (
-                  <img src={file.url} alt={file.alt_text || file.original_name} className="w-full h-full object-cover" />
+                  <ImageWithFallback
+                    src={file.url}
+                    alt={file.alt_text || file.original_name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 20vw"
+                    unoptimized
+                  />
                 ) : file.mime_type.startsWith("video/") ? (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-4xl">🎬</span>

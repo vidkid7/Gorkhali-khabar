@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface HeroArticle {
   id: string;
@@ -48,7 +48,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
           style={{ boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
         >
           {active.featured_image ? (
-            <Image
+            <ImageWithFallback
               src={active.featured_image}
               alt={title(active)}
               fill
@@ -148,7 +148,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
               {/* Thumbnail */}
               <div className="relative min-h-[7rem] bg-surface-alt overflow-hidden">
                 {article.featured_image ? (
-                  <Image
+                  <ImageWithFallback
                     src={article.featured_image}
                     alt={title(article)}
                     fill

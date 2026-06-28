@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface ArticleContentProps {
   title: string;
@@ -123,7 +124,7 @@ export function ArticleContent({
       {/* Featured image */}
       {featured_image && (
         <div className="relative w-full h-64 md:h-96 mb-6 rounded-lg overflow-hidden">
-          <Image
+          <ImageWithFallback
             src={featured_image}
             alt={displayTitle}
             fill

@@ -108,6 +108,11 @@ const BS_START_YEAR = 2000;
 // Reference: BS 2000/01/01 = AD 1943/04/13 (some implementations differ by 1 day; this is widely used)
 const AD_REF = new Date(1943, 3, 14); // April 14, 1943
 
+const BS_YEAR_AD_START_OVERRIDES: Record<number, Date> = {
+  2083: new Date(2026, 3, 14),
+  2084: new Date(2027, 3, 14),
+};
+
 export interface BSDate {
   year: number;
   month: number; // 1-based
@@ -124,6 +129,35 @@ function daysDiff(d1: Date, d2: Date): number {
 
 /** Convert AD date → BS date */
 export function adToBS(adDate: Date): BSDate {
+  const overrideYears = Object.keys(BS_YEAR_AD_START_OVERRIDES)
+    .map(Number)
+    .sort((a, b) => a - b);
+
+  for (const bsYear of overrideYears) {
+    const start = BS_YEAR_AD_START_OVERRIDES[bsYear];
+    const yearData = BS_YEAR_DATA[bsYear];
+    const nextStart = BS_YEAR_AD_START_OVERRIDES[bsYear + 1] ?? (() => {
+      const end = new Date(start);
+      end.setDate(end.getDate() + yearData.reduce((sum, days) => sum + days, 0));
+      return end;
+    })();
+
+    if (daysDiff(start, adDate) >= 0 && daysDiff(adDate, nextStart) > 0) {
+      let remaining = daysDiff(start, adDate);
+      for (let m = 0; m < 12; m++) {
+        if (remaining < yearData[m]) {
+          return {
+            year: bsYear,
+            month: m + 1,
+            day: remaining + 1,
+            dayOfWeek: adDate.getDay(),
+          };
+        }
+        remaining -= yearData[m];
+      }
+    }
+  }
+
   const totalDays = daysDiff(AD_REF, adDate);
   if (totalDays < 0) throw new Error("Date before BS 2000");
 
@@ -165,6 +199,22 @@ export function adToBS(adDate: Date): BSDate {
 
 /** Convert BS date → AD date */
 export function bsToAD(bsYear: number, bsMonth: number, bsDay: number): Date {
+  const overrideStart = BS_YEAR_AD_START_OVERRIDES[bsYear];
+  if (overrideStart) {
+    let totalDays = bsDay - 1;
+    const yearData = BS_YEAR_DATA[bsYear];
+    if (!yearData || bsMonth < 1 || bsMonth > 12 || bsDay < 1 || bsDay > yearData[bsMonth - 1]) {
+      throw new Error("Invalid BS date");
+    }
+    for (let m = 0; m < bsMonth - 1; m++) {
+      totalDays += yearData[m];
+    }
+
+    const result = new Date(overrideStart);
+    result.setDate(result.getDate() + totalDays);
+    return result;
+  }
+
   let totalDays = 0;
 
   for (let y = BS_START_YEAR; y < bsYear; y++) {
@@ -256,7 +306,8 @@ export function formatBSDate(year: number, month: number, day: number, lang: "ne
 
 /** Format AD date in locale string */
 export function formatADDate(date: Date, lang: "ne" | "en" = "ne"): string {
-  return date.toLocaleDateString(lang === "ne" ? "ne-NP" : "en-US", {
+  void lang;
+  return date.toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
   });
 }

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
 import { SectionHeader } from "./SectionHeader";
+import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface CategoryArticle {
   id: string;
@@ -57,7 +57,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
               {/* Thumbnail */}
               <div className="relative w-24 h-[4.5rem] shrink-0 rounded-lg overflow-hidden bg-surface-alt thumb-zoom">
                 {a.featured_image ? (
-                  <Image src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="96px" />
+                  <ImageWithFallback src={a.featured_image} alt={title(a)} fill className="object-cover" sizes="96px" />
                 ) : (
                   <PlaceholderImg />
                 )}
@@ -102,7 +102,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
               {/* Image */}
               <div className="relative w-full aspect-[16/9] bg-surface-alt overflow-hidden thumb-zoom">
                 {a.featured_image ? (
-                  <Image
+                  <ImageWithFallback
                     src={a.featured_image}
                     alt={title(a)}
                     fill
@@ -155,7 +155,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
           {/* Image */}
           <div className="relative w-full min-h-[16rem] lg:min-h-[20rem] bg-surface-alt overflow-hidden thumb-zoom">
             {main.featured_image ? (
-              <Image
+              <ImageWithFallback
                 src={main.featured_image}
                 alt={title(main)}
                 fill
@@ -206,7 +206,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
               {/* Thumbnail */}
               <div className="relative w-[5.5rem] h-[4.25rem] shrink-0 rounded-lg overflow-hidden bg-surface-alt thumb-zoom">
                 {a.featured_image ? (
-                  <Image
+                  <ImageWithFallback
                     src={a.featured_image}
                     alt={title(a)}
                     fill

@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   bsToAD, adToBS,
   BS_MONTHS_NE, BS_MONTHS_EN, DAYS_FULL_NE, DAYS_FULL_EN,
-  toNepaliNums,
+  formatADDate, toNepaliNums,
 } from "@/lib/nepali-date";
 
 export default function DateConverterPage() {
@@ -28,7 +28,7 @@ export default function DateConverterPage() {
     try {
       const ad = bsToAD(bsYear, bsMonth, bsDay);
       const dow = language === "ne" ? DAYS_FULL_NE[ad.getDay()] : DAYS_FULL_EN[ad.getDay()];
-      setResultAD(`${dow}, ${ad.toLocaleDateString(language === "ne" ? "ne-NP" : "en-US", { year: "numeric", month: "long", day: "numeric" })}`);
+      setResultAD(`${dow}, ${formatADDate(ad, language)}`);
     } catch {
       setResultAD(mn("अमान्य मिति", "Invalid date"));
     }
