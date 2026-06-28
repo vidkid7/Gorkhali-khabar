@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, signOut } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import Image from "next/image";
@@ -20,6 +20,13 @@ function LoginForm() {
   const { config } = useSiteConfig();
   const searchParams = useSearchParams();
   const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
+  const adminSecret =
+    (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_SECRET_PATH) || "admin";
+  const isStaffLogin =
+    callbackUrl === "/admin" ||
+    callbackUrl.startsWith("/admin/") ||
+    callbackUrl === `/${adminSecret}` ||
+    callbackUrl.startsWith(`/${adminSecret}/`);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -42,8 +49,12 @@ function LoginForm() {
         const session = await getSession();
         const role = session?.user?.role;
         const adminRoles = ["ADMIN", "EDITOR", "AUTHOR"];
+        if (isStaffLogin && !adminRoles.includes(role ?? "")) {
+          await signOut({ redirect: false });
+          setError(language === "ne" ? "यो खातालाई स्टाफ प्यानल पहुँच छैन" : "This account cannot access the staff panel");
+          return;
+        }
         if (adminRoles.includes(role ?? "") && callbackUrl === "/") {
-          const adminSecret = typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_SECRET_PATH || "admin";
           window.location.href = adminSecret === "admin" ? "/admin" : "/" + adminSecret;
         } else {
           window.location.href = callbackUrl;
@@ -70,10 +81,12 @@ function LoginForm() {
             </div>
           )}
           <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>
-            {t("auth.loginTitle")}
+            {isStaffLogin ? (language === "ne" ? "स्टाफ लगइन" : "Staff login") : t("auth.loginTitle")}
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            {language === "ne" ? "नमस्ते एक्सप्रेसमा स्वागत छ" : "Welcome to Namaste Express"}
+            {isStaffLogin
+              ? (language === "ne" ? "अधिकृत स्टाफका लागि मात्र" : "Authorized staff only")
+              : (language === "ne" ? "नमस्ते एक्सप्रेसमा स्वागत छ" : "Welcome to Namaste Express")}
           </p>
         </div>
 
@@ -139,6 +152,7 @@ function LoginForm() {
           </button>
         </form>
 
+        {!isStaffLogin && (
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -176,13 +190,16 @@ function LoginForm() {
             {t("auth.loginWithGoogle")}
           </button>
         </div>
+        )}
 
+        {!isStaffLogin && (
         <p className="mt-6 text-center text-sm text-muted">
           {t("auth.noAccount")}{" "}
           <Link href="/auth/register" className="text-accent hover:underline font-medium">
             {t("common.register")}
           </Link>
         </p>
+        )}
       </div>
     </div>
   );
