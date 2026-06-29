@@ -78,6 +78,7 @@ export function proxy(request: NextRequest) {
     const canonicalUrl = request.nextUrl.clone();
     canonicalUrl.hostname = "www.namastexpress.org";
     canonicalUrl.protocol = "https";
+    canonicalUrl.port = "";
     return NextResponse.redirect(canonicalUrl);
   }
 

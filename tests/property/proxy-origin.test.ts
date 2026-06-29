@@ -6,7 +6,7 @@ describe("Proxy origin validation", () => {
   it("redirects apex production host to www before auth cookies are created", () => {
     vi.stubEnv("NODE_ENV", "production");
     const request = new NextRequest(
-      new Request("https://namastexpress.org/auth/login?callbackUrl=%2Fprofile", {
+      new Request("https://namastexpress.org:8080/auth/login?callbackUrl=%2Fprofile", {
         headers: {
           host: "namastexpress.org",
           "x-forwarded-host": "namastexpress.org",
