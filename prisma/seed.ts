@@ -28,20 +28,20 @@ async function main() {
   const editorPw = await pw(editorSeedPassword);
   const authorPw = await pw(authorSeedPassword);
 
-  const admin = await prisma.user.upsert({ where: { email: "admin@gorkhali.com" }, update: {}, create: { name: "राजेश शर्मा", email: "admin@gorkhali.com", password_hash: adminPw, role: UserRole.ADMIN, email_verified: new Date() } });
-  const editor = await prisma.user.upsert({ where: { email: "editor@gorkhali.com" }, update: {}, create: { name: "सुनिता पौडेल", email: "editor@gorkhali.com", password_hash: editorPw, role: UserRole.EDITOR, email_verified: new Date() } });
-  const a1 = await prisma.user.upsert({ where: { email: "author@gorkhali.com" }, update: {}, create: { name: "कमल अधिकारी", email: "author@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a2 = await prisma.user.upsert({ where: { email: "author2@gorkhali.com" }, update: {}, create: { name: "प्रतिभा गुरुङ", email: "author2@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a3 = await prisma.user.upsert({ where: { email: "author3@gorkhali.com" }, update: {}, create: { name: "विनोद थापा", email: "author3@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a4 = await prisma.user.upsert({ where: { email: "author4@gorkhali.com" }, update: {}, create: { name: "आस्था श्रेष्ठ", email: "author4@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
-  const a5 = await prisma.user.upsert({ where: { email: "author5@gorkhali.com" }, update: {}, create: { name: "रबिन्द्र बुढाथोकी", email: "author5@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, email_verified: new Date() } });
+  const admin = await prisma.user.upsert({ where: { email: "admin@gorkhali.com" }, update: {}, create: { name: "राजेश शर्मा", email: "admin@gorkhali.com", password_hash: adminPw, role: UserRole.ADMIN, emailVerified: new Date() } });
+  const editor = await prisma.user.upsert({ where: { email: "editor@gorkhali.com" }, update: {}, create: { name: "सुनिता पौडेल", email: "editor@gorkhali.com", password_hash: editorPw, role: UserRole.EDITOR, emailVerified: new Date() } });
+  const a1 = await prisma.user.upsert({ where: { email: "author@gorkhali.com" }, update: {}, create: { name: "कमल अधिकारी", email: "author@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, emailVerified: new Date() } });
+  const a2 = await prisma.user.upsert({ where: { email: "author2@gorkhali.com" }, update: {}, create: { name: "प्रतिभा गुरुङ", email: "author2@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, emailVerified: new Date() } });
+  const a3 = await prisma.user.upsert({ where: { email: "author3@gorkhali.com" }, update: {}, create: { name: "विनोद थापा", email: "author3@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, emailVerified: new Date() } });
+  const a4 = await prisma.user.upsert({ where: { email: "author4@gorkhali.com" }, update: {}, create: { name: "आस्था श्रेष्ठ", email: "author4@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, emailVerified: new Date() } });
+  const a5 = await prisma.user.upsert({ where: { email: "author5@gorkhali.com" }, update: {}, create: { name: "रबिन्द्र बुढाथोकी", email: "author5@gorkhali.com", password_hash: authorPw, role: UserRole.AUTHOR, emailVerified: new Date() } });
   const authors = [admin, editor, a1, a2, a3, a4, a5];
 
   // Reader accounts for comments
-  const r1 = await prisma.user.upsert({ where: { email: "reader1@gorkhali.com" }, update: {}, create: { name: "सुरेश केसी", email: "reader1@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r2 = await prisma.user.upsert({ where: { email: "reader2@gorkhali.com" }, update: {}, create: { name: "मीना राई", email: "reader2@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r3 = await prisma.user.upsert({ where: { email: "reader3@gorkhali.com" }, update: {}, create: { name: "दिपेन्द्र खड्का", email: "reader3@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
-  const r4 = await prisma.user.upsert({ where: { email: "reader4@gorkhali.com" }, update: {}, create: { name: "अनिता लामा", email: "reader4@gorkhali.com", password_hash: authorPw, role: UserRole.READER, email_verified: new Date() } });
+  const r1 = await prisma.user.upsert({ where: { email: "reader1@gorkhali.com" }, update: {}, create: { name: "सुरेश केसी", email: "reader1@gorkhali.com", password_hash: authorPw, role: UserRole.READER, emailVerified: new Date() } });
+  const r2 = await prisma.user.upsert({ where: { email: "reader2@gorkhali.com" }, update: {}, create: { name: "मीना राई", email: "reader2@gorkhali.com", password_hash: authorPw, role: UserRole.READER, emailVerified: new Date() } });
+  const r3 = await prisma.user.upsert({ where: { email: "reader3@gorkhali.com" }, update: {}, create: { name: "दिपेन्द्र खड्का", email: "reader3@gorkhali.com", password_hash: authorPw, role: UserRole.READER, emailVerified: new Date() } });
+  const r4 = await prisma.user.upsert({ where: { email: "reader4@gorkhali.com" }, update: {}, create: { name: "अनिता लामा", email: "reader4@gorkhali.com", password_hash: authorPw, role: UserRole.READER, emailVerified: new Date() } });
   const readers = [r1, r2, r3, r4];
   console.log("   ✅ Users seeded");
 

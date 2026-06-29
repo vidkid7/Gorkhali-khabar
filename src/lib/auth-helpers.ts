@@ -19,7 +19,7 @@ export async function requireAuth() {
     select: {
       id: true,
       role: true,
-      email_verified: true,
+      emailVerified: true,
       is_active: true,
       session_version: true,
     },
@@ -34,7 +34,7 @@ export async function requireAuth() {
   }
 
   session.user.role = user.role;
-  session.user.email_verified = user.email_verified;
+  session.user.email_verified = user.emailVerified;
   session.user.session_version = user.session_version;
 
   return { error: null, session };

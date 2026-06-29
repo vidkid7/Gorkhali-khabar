@@ -32,7 +32,7 @@ declare module "next-auth" {
   }
   interface User {
     role: UserRole;
-    email_verified: Date | null;
+    emailVerified: Date | null;
     session_version: number;
   }
 }
@@ -144,7 +144,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: user.email,
             image: user.image,
             role: user.role,
-            email_verified: user.email_verified,
+            emailVerified: user.emailVerified,
             session_version: user.session_version,
           };
         } catch (error) {
@@ -159,7 +159,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id as string;
         token.role = (user as { role: UserRole }).role;
-        token.email_verified = (user as { email_verified: Date | null }).email_verified;
+        token.email_verified =
+          (user as { emailVerified?: Date | null; email_verified?: Date | null }).emailVerified ??
+          (user as { email_verified?: Date | null }).email_verified ??
+          null;
         token.session_version = (user as { session_version: number }).session_version;
       }
       return token;
@@ -182,7 +185,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (existingUser) {
             await prisma.user.update({
               where: { id: existingUser.id },
-              data: { email_verified: new Date() },
+              data: { emailVerified: new Date() },
             });
           }
         }

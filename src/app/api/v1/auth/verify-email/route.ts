@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: verificationToken.userId },
-        data: { email_verified: new Date() },
+        data: { emailVerified: new Date() },
       }),
       prisma.emailVerificationToken.update({
         where: { id: verificationToken.id },

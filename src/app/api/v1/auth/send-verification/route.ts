@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (user.email_verified) {
+    if (user.emailVerified) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "इमेल पहिले नै प्रमाणित भइसकेको छ" },
         { status: 400 }
