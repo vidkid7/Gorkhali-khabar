@@ -70,6 +70,17 @@ if (typeof globalThis !== "undefined") {
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = normalizeHost(
+    request.headers.get("x-forwarded-host")?.split(",")[0] || request.headers.get("host")
+  );
+
+  if (process.env.NODE_ENV === "production" && host === "namastexpress.org") {
+    const canonicalUrl = request.nextUrl.clone();
+    canonicalUrl.hostname = "www.namastexpress.org";
+    canonicalUrl.protocol = "https";
+    return NextResponse.redirect(canonicalUrl);
+  }
+
   const response = NextResponse.next();
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const isAdminPath = adminPaths.some((p) => pathname.startsWith(p));

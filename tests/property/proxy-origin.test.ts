@@ -1,8 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { proxy } from "@/proxy";
 
 describe("Proxy origin validation", () => {
+  it("redirects apex production host to www before auth cookies are created", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const request = new NextRequest(
+      new Request("https://namastexpress.org/auth/login?callbackUrl=%2Fprofile", {
+        headers: {
+          host: "namastexpress.org",
+          "x-forwarded-host": "namastexpress.org",
+        },
+      })
+    );
+
+    const response = proxy(request);
+    vi.unstubAllEnvs();
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "https://www.namastexpress.org/auth/login?callbackUrl=%2Fprofile"
+    );
+  });
+
   it("allows same public origin when Railway forwards the custom host", () => {
     const request = new NextRequest(
       new Request("https://namaste-express-production.up.railway.app/api/v1/articles", {
