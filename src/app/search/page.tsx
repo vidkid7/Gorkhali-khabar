@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface SearchArticle {
@@ -218,7 +219,7 @@ function SearchContent() {
                 href={`/search?q=${encodeURIComponent(query)}&page=${page - 1}`}
                 className="btn-secondary text-sm"
               >
-                ← {t("common.previous")}
+                <ArrowLeft className="inline h-3.5 w-3.5" /> {t("common.previous")}
               </Link>
             )}
             <span className="text-sm text-muted px-4">
@@ -229,7 +230,7 @@ function SearchContent() {
                 href={`/search?q=${encodeURIComponent(query)}&page=${page + 1}`}
                 className="btn-secondary text-sm"
               >
-                {t("common.next")} →
+                {t("common.next")} <ArrowRight className="inline h-3.5 w-3.5" />
               </Link>
             )}
           </div>

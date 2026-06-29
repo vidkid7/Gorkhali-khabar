@@ -19,6 +19,39 @@ export interface StorageProvider {
   getPublicUrl(url: string): string;
 }
 
+type StorageEnvironment = Record<string, string | undefined>;
+
+export function hasCloudinaryConfig(env: StorageEnvironment = process.env): boolean {
+  return Boolean(
+    env.CLOUDINARY_CLOUD_NAME &&
+    env.CLOUDINARY_API_KEY &&
+    env.CLOUDINARY_API_SECRET
+  );
+}
+
+export function resolveStorageProviderType(env: StorageEnvironment = process.env): StorageProviderType {
+  const configured = env.STORAGE_PROVIDER?.trim().toLowerCase();
+  if (configured === "cloudinary" || configured === "local" || configured === "aws" || configured === "azure") {
+    return configured;
+  }
+  return hasCloudinaryConfig(env) ? "cloudinary" : "local";
+}
+
+export function getLocalUploadRoot(cwd = process.cwd()): string {
+  return path.resolve(cwd, "public", "uploads");
+}
+
+export function resolveLocalUploadPath(filename: string, cwd = process.cwd()): string | null {
+  if (!filename || filename === "." || filename === ".." || /[\\/]/.test(filename) || filename.includes("\0")) {
+    return null;
+  }
+
+  const uploadRoot = getLocalUploadRoot(cwd);
+  const filePath = path.resolve(uploadRoot, filename);
+  if (!filePath.startsWith(`${uploadRoot}${path.sep}`)) return null;
+  return filePath;
+}
+
 // ─── Cloudinary Provider ──────────────────────────────────
 
 class CloudinaryProvider implements StorageProvider {
@@ -81,20 +114,22 @@ class LocalProvider implements StorageProvider {
   private uploadDir: string;
 
   constructor() {
-    this.uploadDir = path.join(process.cwd(), "public", "uploads");
+    this.uploadDir = getLocalUploadRoot();
   }
 
   async upload(buffer: Buffer, filename: string): Promise<UploadResult> {
     await mkdir(this.uploadDir, { recursive: true });
-    await writeFile(path.join(this.uploadDir, filename), buffer);
+    const filePath = resolveLocalUploadPath(filename);
+    if (!filePath) throw new Error("Invalid upload filename");
+    await writeFile(filePath, buffer);
     return { url: `/uploads/${filename}` };
   }
 
   async delete(url: string): Promise<void> {
     try {
-      const uploadRoot = path.resolve(process.cwd(), "public", "uploads");
-      const filePath = path.resolve(process.cwd(), "public", url.replace(/^\/+/, ""));
-      if (!filePath.startsWith(`${uploadRoot}${path.sep}`)) return;
+      const filename = path.basename(url);
+      const filePath = resolveLocalUploadPath(filename);
+      if (!filePath) return;
       await unlink(filePath);
     } catch {
       // File may already be deleted
@@ -160,11 +195,11 @@ let _storageInstance: StorageProvider | null = null;
 export function getStorageProvider(): StorageProvider {
   if (_storageInstance) return _storageInstance;
 
-  const provider = (process.env.STORAGE_PROVIDER || "local") as StorageProviderType;
+  const provider = resolveStorageProviderType();
 
   switch (provider) {
     case "cloudinary":
-      if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      if (!hasCloudinaryConfig()) {
         console.warn("Cloudinary credentials missing, falling back to local storage");
         _storageInstance = new LocalProvider();
       } else {

@@ -9,6 +9,7 @@ import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Bookmark } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -202,7 +203,7 @@ export default function ProfilePage() {
               </div>
             ) : bookmarks.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-4xl mb-3">🔖</p>
+                <Bookmark className="h-10 w-10 mx-auto mb-3" />
                 <p className="text-muted">{t("common.noResults")}</p>
                 <Link href="/" className="btn-primary mt-4 inline-block">
                   {t("common.home")}

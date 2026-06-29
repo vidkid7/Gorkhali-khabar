@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { getSiteConfig } from "@/lib/site-config";
@@ -76,9 +77,9 @@ export default async function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>सम्पर्क</h2>
             <ul className="list-none pl-0 text-muted space-y-1">
-              {addressNe && <li>📍 {addressNe}</li>}
-              {config.contact_phone && <li>📞 {config.contact_phone}</li>}
-              {config.contact_email && <li>✉️ {config.contact_email}</li>}
+              {addressNe && <li className="flex items-center gap-2"><MapPin className="h-4 w-4" />{addressNe}</li>}
+              {config.contact_phone && <li className="flex items-center gap-2"><Phone className="h-4 w-4" />{config.contact_phone}</li>}
+              {config.contact_email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" />{config.contact_email}</li>}
             </ul>
           </section>
 
@@ -107,9 +108,9 @@ export default async function AboutPage() {
 
             <h2 className="text-xl font-semibold mt-6 mb-3" style={{ fontFamily: "var(--font-nepali-serif)" }}>Contact</h2>
             <ul className="list-none pl-0 text-muted space-y-1">
-              {addressEn && <li>📍 {addressEn}</li>}
-              {config.contact_phone && <li>📞 {config.contact_phone}</li>}
-              {config.contact_email && <li>✉️ {config.contact_email}</li>}
+              {addressEn && <li className="flex items-center gap-2"><MapPin className="h-4 w-4" />{addressEn}</li>}
+              {config.contact_phone && <li className="flex items-center gap-2"><Phone className="h-4 w-4" />{config.contact_phone}</li>}
+              {config.contact_email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" />{config.contact_email}</li>}
             </ul>
           </section>
         </article>

@@ -5,17 +5,13 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PatroTabs } from "@/components/patro/PatroTabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ZodiacIcon } from "@/lib/decorative-icons";
+import { Star } from "lucide-react";
 
 type RashifalEntry = {
   sign: string; sign_ne?: string | null;
   prediction: string; prediction_en?: string | null;
   rating?: number | null;
-};
-
-const RASHI_EMOJIS: Record<string, string> = {
-  mesh: "♈", brish: "♉", mithun: "♊", karkat: "♋",
-  simha: "♌", kanya: "♍", tula: "♎", brishchik: "♏",
-  dhanu: "♐", makar: "♑", kumbha: "♒", meen: "♓",
 };
 
 export default function RashifalPage() {
@@ -39,7 +35,7 @@ export default function RashifalPage() {
       <div className="mx-auto max-w-6xl px-4 py-8" style={{ minHeight: "100vh" }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
-            style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)" }}>♈</div>
+            style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)" }}><Star className="h-5 w-5" /></div>
           <div>
             <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("आजको राशिफल", "Today's Horoscope")}
@@ -62,7 +58,7 @@ export default function RashifalPage() {
                 color: selectedSign === e.sign ? "#fff" : "var(--foreground)",
                 border: `1px solid ${selectedSign === e.sign ? "#7c3aed" : "var(--border)"}`,
               }}>
-              <span className="text-2xl">{RASHI_EMOJIS[e.sign] ?? "⭐"}</span>
+              <span className="text-2xl"><ZodiacIcon sign={e.sign} className="h-7 w-7" /></span>
               <span className="text-xs font-semibold">{language === "ne" ? e.sign_ne : e.sign}</span>
             </button>
           ))}
@@ -74,13 +70,13 @@ export default function RashifalPage() {
             style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="px-5 py-4 flex items-center gap-3"
               style={{ background: "linear-gradient(135deg,#7c3aed,#6d28d9)", color: "#fff" }}>
-              <span className="text-3xl">{RASHI_EMOJIS[selected.sign] ?? "⭐"}</span>
+              <span className="text-3xl"><ZodiacIcon sign={selected.sign} className="h-8 w-8" /></span>
               <div>
                 <h2 className="text-lg font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>{language === "ne" ? selected.sign_ne : selected.sign}</h2>
                 {selected.rating && (
                   <div className="flex items-center gap-0.5 mt-0.5">
                     {Array.from({ length: 5 }, (_, i) => (
-                      <span key={i} className={`text-sm ${i < selected.rating! ? "opacity-100" : "opacity-30"}`}>⭐</span>
+                      <Star key={i} className={`h-4 w-4 ${i < selected.rating! ? "opacity-100 fill-current" : "opacity-30"}`} />
                     ))}
                   </div>
                 )}

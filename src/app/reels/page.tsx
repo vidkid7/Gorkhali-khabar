@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ReelCard } from "@/components/reels/ReelCard";
+import { Clapperboard, ArrowLeft, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
@@ -36,7 +37,7 @@ export default async function ReelsPage({ searchParams }: PageProps) {
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-6 space-y-6">
         <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-          🎬 OK Reels
+          <span className="inline-flex items-center gap-2"><Clapperboard className="h-6 w-6" />OK Reels</span>
         </h1>
 
         {reels.length > 0 ? (
@@ -61,7 +62,7 @@ export default async function ReelsPage({ searchParams }: PageProps) {
           <div className="flex items-center justify-center gap-2">
             {page > 1 && (
               <a href={`/reels?page=${page - 1}`} className="btn-secondary text-sm">
-                ← अघिल्लो
+                <ArrowLeft className="inline h-3.5 w-3.5" /> अघिल्लो
               </a>
             )}
             <span className="text-sm px-3" style={{ color: "var(--muted)" }}>
@@ -69,7 +70,7 @@ export default async function ReelsPage({ searchParams }: PageProps) {
             </span>
             {page < totalPages && (
               <a href={`/reels?page=${page + 1}`} className="btn-secondary text-sm">
-                अर्को →
+                अर्को <ArrowRight className="inline h-3.5 w-3.5" />
               </a>
             )}
           </div>

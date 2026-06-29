@@ -1,5 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import {
+  FileText,
+  Eye,
+  Users,
+  MessageSquare,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -161,7 +171,7 @@ function TrendBadge({ current, previous }: { current: number; previous: number }
         color: up ? "var(--success)" : "var(--error)",
       }}
     >
-      {up ? "↑" : "↓"} {Math.abs(pct)}%
+      {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />} {Math.abs(pct)}%
     </span>
   );
 }
@@ -184,7 +194,7 @@ export default async function AdminAnalyticsPage() {
             साइटको प्रदर्शन र तथ्याङ्कहरू
           </p>
         </div>
-        <Link href="/admin" className="btn-secondary btn-sm">← ड्यासबोर्ड</Link>
+        <Link href="/admin" className="btn-secondary btn-sm"><span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />ड्यासबोर्ड</span></Link>
       </div>
 
       {/* Key Metrics Grid */}
@@ -194,7 +204,7 @@ export default async function AdminAnalyticsPage() {
             label: "कुल लेखहरू", labelEn: "Total Articles",
             value: data.articles.total.toLocaleString(),
             sub: `${data.articles.published} प्रकाशित · ${data.articles.draft} ड्राफ्ट`,
-            icon: "📝", color: "var(--primary)",
+            icon: <FileText className="h-6 w-6" />, color: "var(--primary)",
             trend: <TrendBadge current={data.articles.thisMonth} previous={data.articles.lastMonth} />,
             href: "/admin/articles",
           },
@@ -202,7 +212,7 @@ export default async function AdminAnalyticsPage() {
             label: "कुल हेराइ", labelEn: "Total Views",
             value: data.views.total.toLocaleString(),
             sub: `आज: ${data.views.today.toLocaleString()}`,
-            icon: "👁️", color: "var(--accent)",
+            icon: <Eye className="h-6 w-6" />, color: "var(--accent)",
             trend: <TrendBadge current={data.views.thisMonth} previous={data.views.lastMonth} />,
             href: "#",
           },
@@ -210,7 +220,7 @@ export default async function AdminAnalyticsPage() {
             label: "प्रयोगकर्ताहरू", labelEn: "Users",
             value: data.users.total.toLocaleString(),
             sub: `यो हप्ता: +${data.users.thisWeek}`,
-            icon: "👥", color: "var(--success)",
+            icon: <Users className="h-6 w-6" />, color: "var(--success)",
             trend: <TrendBadge current={data.users.thisMonth} previous={data.users.thisMonth > 0 ? Math.max(1, data.users.thisMonth - data.users.thisWeek) : 1} />,
             href: "/admin/users",
           },
@@ -218,7 +228,7 @@ export default async function AdminAnalyticsPage() {
             label: "टिप्पणीहरू", labelEn: "Comments",
             value: data.comments.total.toLocaleString(),
             sub: `${data.comments.pending} पेन्डिङ`,
-            icon: "💬", color: "var(--warning)",
+            icon: <MessageSquare className="h-6 w-6" />, color: "var(--warning)",
             trend: <TrendBadge current={data.comments.today} previous={0} />,
             href: "/admin/comments",
           },
@@ -314,7 +324,7 @@ export default async function AdminAnalyticsPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold">वर्ग अनुसार लेखहरू</h2>
             <Link href="/admin/categories" className="text-xs" style={{ color: "var(--accent)" }}>
-              हेर्नुहोस् →
+              हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="space-y-2.5">
@@ -389,7 +399,7 @@ export default async function AdminAnalyticsPage() {
         <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-base font-semibold">सबैभन्दा धेरै हेरिएका लेखहरू</h2>
           <Link href="/admin/articles" className="text-xs" style={{ color: "var(--accent)" }}>
-            सबै हेर्नुहोस् →
+            सबै हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
           </Link>
         </div>
         <div className="overflow-x-auto">

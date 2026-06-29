@@ -5,6 +5,15 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PatroTabs } from "@/components/patro/PatroTabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { FestivalIcon } from "@/lib/decorative-icons";
+import {
+  Calendar,
+  Clock,
+  PartyPopper,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+} from "lucide-react";
 import {
   bsToAD, daysInBSMonth, firstDayOfBSMonth, todayBS,
   BS_MONTHS_NE, BS_MONTHS_EN, DAYS_NE, DAYS_EN, DAYS_FULL_NE, DAYS_FULL_EN,
@@ -53,18 +62,18 @@ export default function PatroPage() {
 
   // Merge DB holidays + static festivals into one map
   const festivalMap = useMemo(() => {
-    const map: Record<number, { name: string; emoji: string; isPublic: boolean }[]> = {};
+    const map: Record<number, { name: string; icon?: string; isPublic: boolean }[]> = {};
     // Static festivals
     BS_FESTIVALS.filter(f => f.bsMonth === viewMonth).forEach(f => {
       if (f.bsDay <= daysInMonth) {
-        const entry = { name: language === "ne" ? f.ne : f.en, emoji: f.emoji, isPublic: false };
+        const entry = { name: language === "ne" ? f.ne : f.en, icon: f.icon, isPublic: false };
         map[f.bsDay] = map[f.bsDay] ? [...map[f.bsDay], entry] : [entry];
       }
     });
     // DB holidays (override or add)
     holidays.forEach(h => {
       const name = language === "en" && h.title_en ? h.title_en : h.title;
-      const entry = { name, emoji: h.is_public ? "🔴" : "🟡", isPublic: h.is_public };
+      const entry = { name, icon: undefined as string | undefined, isPublic: h.is_public };
       // Avoid duplicates
       if (!map[h.bs_day]?.some(e => e.name === name)) {
         map[h.bs_day] = map[h.bs_day] ? [...map[h.bs_day], entry] : [entry];
@@ -76,15 +85,15 @@ export default function PatroPage() {
   // Upcoming events (next 30 days from today)
   const upcomingEvents = useMemo(() => {
     if (!todayBSDate) return [];
-    const events: { name: string; bsDay: number; bsMonth: number; daysUntil: number; emoji: string }[] = [];
+    const events: { name: string; bsDay: number; bsMonth: number; daysUntil: number; icon?: string }[] = [];
     // Current month festivals after today
     BS_FESTIVALS.filter(f => f.bsMonth === todayBSDate.month && f.bsDay > todayBSDate.day && f.bsDay <= daysInBSMonth(todayBSDate.year, todayBSDate.month))
-      .forEach(f => events.push({ name: language === "ne" ? f.ne : f.en, bsDay: f.bsDay, bsMonth: f.bsMonth, daysUntil: f.bsDay - todayBSDate.day, emoji: f.emoji }));
+      .forEach(f => events.push({ name: language === "ne" ? f.ne : f.en, bsDay: f.bsDay, bsMonth: f.bsMonth, daysUntil: f.bsDay - todayBSDate.day, icon: f.icon }));
     // Next month festivals
     const nextMonth = todayBSDate.month === 12 ? 1 : todayBSDate.month + 1;
     const daysLeftThisMonth = daysInBSMonth(todayBSDate.year, todayBSDate.month) - todayBSDate.day;
     BS_FESTIVALS.filter(f => f.bsMonth === nextMonth && f.bsDay <= 30)
-      .forEach(f => events.push({ name: language === "ne" ? f.ne : f.en, bsDay: f.bsDay, bsMonth: f.bsMonth, daysUntil: daysLeftThisMonth + f.bsDay, emoji: f.emoji }));
+      .forEach(f => events.push({ name: language === "ne" ? f.ne : f.en, bsDay: f.bsDay, bsMonth: f.bsMonth, daysUntil: daysLeftThisMonth + f.bsDay, icon: f.icon }));
     return events.sort((a, b) => a.daysUntil - b.daysUntil).slice(0, 8);
   }, [todayBSDate, language]);
 
@@ -120,7 +129,7 @@ export default function PatroPage() {
         {/* Page title */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
-            style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}>📅</div>
+            style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}><Calendar className="h-5 w-5" /></div>
           <div>
             <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("नेपाली पात्रो", "Nepali Calendar (Patro)")}
@@ -175,8 +184,9 @@ export default function PatroPage() {
             <div className="flex items-center justify-between px-4 py-3"
               style={{ background: "linear-gradient(135deg, #c62828, #b71c1c)", color: "#fff" }}>
               <button onClick={prevMonth}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/20 active:scale-95">
-                ‹
+                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/20 active:scale-95"
+                aria-label={mn("अघिल्लो महिना", "Previous month")}>
+                <ChevronLeft className="h-5 w-5" />
               </button>
               <div className="text-center">
                 <p className="text-lg font-black">
@@ -186,8 +196,9 @@ export default function PatroPage() {
                 </p>
               </div>
               <button onClick={nextMonth}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/20 active:scale-95">
-                ›
+                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:bg-white/20 active:scale-95"
+                aria-label={mn("अर्को महिना", "Next month")}>
+                <ChevronRight className="h-5 w-5" />
               </button>
             </div>
 
@@ -291,7 +302,7 @@ export default function PatroPage() {
                 <span className="w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} /> {mn("पर्व/उत्सव", "Festival")}
               </span>
               <span className="flex items-center gap-1">
-                <span className="text-red-500 text-sm">●</span> {mn("आइतबार", "Sunday")}
+                <Circle className="h-3 w-3 fill-current text-red-500" /> {mn("आइतबार", "Sunday")}
               </span>
             </div>
           </div>
@@ -330,7 +341,7 @@ export default function PatroPage() {
                   {festivalMap[selectedDay]?.map((f, i) => (
                     <div key={i} className="flex items-center gap-2 p-2 rounded-lg"
                       style={{ background: f.isPublic ? "rgba(229,57,53,0.1)" : "var(--accent-light)" }}>
-                      <span className="text-base">{f.emoji}</span>
+                      <FestivalIcon name={f.icon} className="h-4 w-4 shrink-0" />
                       <span className="text-sm font-semibold" style={{ color: f.isPublic ? "#c62828" : "var(--accent)" }}>
                         {f.name}
                       </span>
@@ -346,15 +357,15 @@ export default function PatroPage() {
                 style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
                 <div className="px-4 py-3 text-sm font-bold flex items-center gap-2"
                   style={{ background: "var(--surface-alt)", color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
-                  ⏰ {mn("आगामी पर्वहरू", "Upcoming Events")}
+                  <Clock className="h-4 w-4" /> {mn("आगामी पर्वहरू", "Upcoming Events")}
                 </div>
                 <div className="p-3 space-y-2">
                   {upcomingEvents.map((e, i) => (
                     <div key={i} className="flex items-center gap-3 p-2 rounded-lg"
                       style={{ background: "var(--surface-alt)" }}>
-                      <span className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: "var(--accent-light)" }}>
-                        {e.emoji}
+                        <FestivalIcon name={e.icon} className="h-4 w-4" />
                       </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold truncate" style={{ color: "var(--foreground)" }}>{e.name}</p>
@@ -373,7 +384,7 @@ export default function PatroPage() {
               style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
               <div className="px-4 py-3 text-sm font-bold flex items-center gap-2"
                 style={{ background: "var(--surface-alt)", color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
-                🎉 {mn("यस महिनाका पर्वहरू", "This Month's Festivals")}
+                <PartyPopper className="h-4 w-4" /> {mn("यस महिनाका पर्वहरू", "This Month's Festivals")}
               </div>
               <div className="p-3 space-y-2">
                 {Object.entries(festivalMap).length === 0 ? (
@@ -384,9 +395,9 @@ export default function PatroPage() {
                   events.map((f, i) => (
                     <button key={`${dayStr}-${i}`} onClick={() => setSelectedDay(+dayStr)}
                       className="w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors hover:bg-[var(--surface-alt)]">
-                      <span className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: f.isPublic ? "rgba(229,57,53,0.1)" : "var(--accent-light)" }}>
-                        {f.emoji}
+                        <FestivalIcon name={f.icon} className="h-4 w-4" />
                       </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold truncate" style={{ color: "var(--foreground)" }}>{f.name}</p>

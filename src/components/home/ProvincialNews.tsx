@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
 
@@ -63,10 +64,11 @@ export function ProvincialNews({ articlesByProvince }: ProvincialNewsProps) {
         </h2>
         <Link
           href={`/categories/${active.slug}`}
-          className="ml-auto text-[11px] font-semibold px-2.5 py-1 rounded-full text-white transition-opacity hover:opacity-80"
+          className="ml-auto text-[11px] font-semibold px-2.5 py-1 rounded-full text-white transition-opacity hover:opacity-80 inline-flex items-center gap-1"
           style={{ background: active.color }}
         >
-          {language === "ne" ? "सबै →" : "All →"}
+          {language === "ne" ? "सबै" : "All"}
+          <ArrowRight className="inline h-3.5 w-3.5" />
         </Link>
       </div>
 

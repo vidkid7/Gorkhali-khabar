@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Trophy, Calendar, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MatchCard } from "@/components/sports/MatchCard";
@@ -64,7 +65,7 @@ export default function SportsPage() {
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-6 space-y-8">
         <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-          ⚽ खेलकुद
+          <span className="inline-flex items-center gap-2"><Trophy className="h-6 w-6" />खेलकुद</span>
         </h1>
 
         <TournamentTabs
@@ -108,8 +109,9 @@ export default function SportsPage() {
             {/* Upcoming Matches */}
             {upcomingMatches.length > 0 && (
               <section className="space-y-3">
-                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-                  📅 आगामी खेलहरू
+                <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
+                  <Calendar className="h-5 w-5" />
+                  आगामी खेलहरू
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {upcomingMatches.map((m) => (
@@ -133,8 +135,9 @@ export default function SportsPage() {
             {/* Completed Matches */}
             {completedMatches.length > 0 && (
               <section className="space-y-3">
-                <h2 className="text-lg font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-                  ✅ सकिएका खेलहरू
+                <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
+                  <CheckCircle2 className="h-5 w-5" />
+                  सकिएका खेलहरू
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {completedMatches.map((m) => (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { ArticleStatus } from "@prisma/client";
+import { Plus, ArrowLeft, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>Articles</h1>
         <Link href="/admin/articles/new" className="btn-primary">
-          + New Article
+          <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />New Article</span>
         </Link>
       </div>
 
@@ -134,7 +135,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
               href={`/admin/articles?page=${page - 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`}
               className="btn-secondary text-sm"
             >
-              ← Previous
+              <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Previous</span>
             </Link>
           )}
           <span className="text-sm px-3" style={{ color: "var(--muted)" }}>
@@ -145,7 +146,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
               href={`/admin/articles?page=${page + 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`}
               className="btn-secondary text-sm"
             >
-              Next →
+              <span className="inline-flex items-center gap-1">Next<ArrowRight className="h-4 w-4" /></span>
             </Link>
           )}
         </div>

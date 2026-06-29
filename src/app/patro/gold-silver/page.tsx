@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Coins } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PatroTabs } from "@/components/patro/PatroTabs";
@@ -33,7 +34,7 @@ export default function GoldSilverPage() {
       <div className="mx-auto max-w-6xl px-4 py-8" style={{ minHeight: "100vh" }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
-            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>🪙</div>
+            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}><Coins className="h-5 w-5" /></div>
           <div>
             <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("सुन-चाँदी दर", "Gold & Silver Rates")}
@@ -52,7 +53,7 @@ export default function GoldSilverPage() {
             <div className="rounded-2xl overflow-hidden"
               style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
               <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#fff" }}>
-                <h2 className="text-lg font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>🥇 {mn("सुन", "Gold")}</h2>
+                <h2 className="text-lg font-black flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}><Coins className="h-5 w-5" />{mn("सुन", "Gold")}</h2>
               </div>
               <div className="p-5 space-y-4">
                 <div className="flex justify-between items-center">
@@ -74,7 +75,7 @@ export default function GoldSilverPage() {
             <div className="rounded-2xl overflow-hidden"
               style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
               <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #94a3b8, #64748b)", color: "#fff" }}>
-                <h2 className="text-lg font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>🥈 {mn("चाँदी", "Silver")}</h2>
+                <h2 className="text-lg font-black flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}><Coins className="h-5 w-5" />{mn("चाँदी", "Silver")}</h2>
               </div>
               <div className="p-5 space-y-4">
                 <div className="flex justify-between items-center">

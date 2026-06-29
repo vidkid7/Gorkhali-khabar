@@ -1,13 +1,23 @@
 import { prisma } from "@/lib/prisma";
-import { AdminForexActions } from "./AdminForexActions";
+import { AdminForexActions, AdminForexRow } from "./AdminForexActions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminForexPage() {
-  const rates = await prisma.forexRate.findMany({
+  const ratesRaw = await prisma.forexRate.findMany({
     orderBy: [{ date: "desc" }, { currency: "asc" }],
     take: 50,
   });
+
+  const rates = ratesRaw.map((r) => ({
+    id: r.id,
+    date: r.date.toISOString(),
+    currency: r.currency,
+    currency_name: r.currency_name,
+    unit: r.unit,
+    buy: r.buy,
+    sell: r.sell,
+  }));
 
   const grouped = rates.reduce<Record<string, typeof rates>>((acc, r) => {
     const key = new Date(r.date).toLocaleDateString();
@@ -33,19 +43,12 @@ export default async function AdminForexPage() {
                 <th className="text-center p-3 font-medium" style={{ color: "var(--muted)" }}>Unit</th>
                 <th className="text-right p-3 font-medium" style={{ color: "var(--muted)" }}>Buy (NPR)</th>
                 <th className="text-right p-3 font-medium" style={{ color: "var(--muted)" }}>Sell (NPR)</th>
+                <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {dateRates.map((r) => (
-                <tr key={r.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                  <td className="p-3">
-                    <span className="font-semibold">{r.currency}</span>
-                    {r.currency_name && <span className="text-xs ml-2" style={{ color: "var(--muted)" }}>{r.currency_name}</span>}
-                  </td>
-                  <td className="p-3 text-center" style={{ color: "var(--muted)" }}>{r.unit}</td>
-                  <td className="p-3 text-right font-medium">{r.buy?.toFixed(2) ?? "—"}</td>
-                  <td className="p-3 text-right font-medium">{r.sell?.toFixed(2) ?? "—"}</td>
-                </tr>
+                <AdminForexRow key={r.id} rate={r} />
               ))}
             </tbody>
           </table>

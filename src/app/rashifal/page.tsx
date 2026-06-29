@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ZodiacIcon } from "@/lib/decorative-icons";
+import { Sparkles, AlertTriangle } from "lucide-react";
 
 const ZODIAC_SIGNS = [
   {
     id: "mesh", ne: "मेष", en: "Aries",
     symbol: "♈", dates_ne: "चैत १४ - बैशाख १३", dates_en: "Mar 21 – Apr 20",
     element_ne: "अग्नि", element_en: "Fire", ruling_ne: "मंगल", ruling_en: "Mars",
-    emoji: "🐏", color: "#e53935",
+    color: "#e53935",
     daily_ne: "आज तपाईंको दिन सकारात्मक रहनेछ। नयाँ अवसरहरू आउँदैछन्। आर्थिक क्षेत्रमा लाभ हुनेछ। परिवारसँग समय बिताउनुस्।",
     daily_en: "Today looks positive for you. New opportunities are approaching. Financial gains are indicated. Spend time with family.",
     lucky_ne: "सोमबार", lucky_en: "Monday", lucky_num: "3, 7, 21", lucky_color_ne: "रातो", lucky_color_en: "Red",
@@ -19,7 +21,7 @@ const ZODIAC_SIGNS = [
     id: "brish", ne: "वृष", en: "Taurus",
     symbol: "♉", dates_ne: "बैशाख १४ - जेठ १४", dates_en: "Apr 21 – May 21",
     element_ne: "पृथ्वी", element_en: "Earth", ruling_ne: "शुक्र", ruling_en: "Venus",
-    emoji: "🐂", color: "#8d6e63",
+    color: "#8d6e63",
     daily_ne: "काम-व्यवसायमा प्रगति हुनेछ। प्रेम सम्बन्धमा मिठास आउनेछ। स्वास्थ्यतर्फ सावधान रहनुस्।",
     daily_en: "Progress in work and business. Romance blossoms. Take care of health matters.",
     lucky_ne: "शुक्रबार", lucky_en: "Friday", lucky_num: "6, 14, 24", lucky_color_ne: "हरियो", lucky_color_en: "Green",
@@ -28,7 +30,7 @@ const ZODIAC_SIGNS = [
     id: "mithun", ne: "मिथुन", en: "Gemini",
     symbol: "♊", dates_ne: "जेठ १५ - असार १४", dates_en: "May 22 – Jun 21",
     element_ne: "वायु", element_en: "Air", ruling_ne: "बुध", ruling_en: "Mercury",
-    emoji: "👥", color: "#f9a825",
+    color: "#f9a825",
     daily_ne: "बौद्धिक कार्यमा सफलता मिल्नेछ। यात्राको योग छ। नयाँ सम्बन्धहरू बन्नेछन्।",
     daily_en: "Success in intellectual pursuits. Travel is indicated. New connections will be made.",
     lucky_ne: "बुधबार", lucky_en: "Wednesday", lucky_num: "5, 14, 23", lucky_color_ne: "पहेँलो", lucky_color_en: "Yellow",
@@ -37,7 +39,7 @@ const ZODIAC_SIGNS = [
     id: "karkat", ne: "कर्कट", en: "Cancer",
     symbol: "♋", dates_ne: "असार १५ - श्रावण १५", dates_en: "Jun 22 – Jul 22",
     element_ne: "जल", element_en: "Water", ruling_ne: "चन्द्र", ruling_en: "Moon",
-    emoji: "🦀", color: "#1565c0",
+    color: "#1565c0",
     daily_ne: "गृहस्थ जीवनमा खुशी आउनेछ। आमाबुबासँग राम्रो समय बित्नेछ। आर्थिक स्थिति स्थिर छ।",
     daily_en: "Joy in domestic life. Good time with parents. Financial situation is stable.",
     lucky_ne: "आइतबार", lucky_en: "Sunday", lucky_num: "2, 7, 11", lucky_color_ne: "सेतो", lucky_color_en: "White",
@@ -46,7 +48,7 @@ const ZODIAC_SIGNS = [
     id: "singh", ne: "सिंह", en: "Leo",
     symbol: "♌", dates_ne: "श्रावण १६ - भदौ १५", dates_en: "Jul 23 – Aug 23",
     element_ne: "अग्नि", element_en: "Fire", ruling_ne: "सूर्य", ruling_en: "Sun",
-    emoji: "🦁", color: "#e65100",
+    color: "#e65100",
     daily_ne: "नेतृत्व क्षमता उजागर हुनेछ। सामाजिक प्रतिष्ठा बढ्नेछ। रचनात्मक कार्यमा सफलता।",
     daily_en: "Leadership qualities shine. Social prestige increases. Success in creative work.",
     lucky_ne: "आइतबार", lucky_en: "Sunday", lucky_num: "1, 5, 9", lucky_color_ne: "सुनौलो", lucky_color_en: "Gold",
@@ -55,7 +57,7 @@ const ZODIAC_SIGNS = [
     id: "kanya", ne: "कन्या", en: "Virgo",
     symbol: "♍", dates_ne: "भदौ १६ - असोज १५", dates_en: "Aug 24 – Sep 23",
     element_ne: "पृथ्वी", element_en: "Earth", ruling_ne: "बुध", ruling_en: "Mercury",
-    emoji: "👧", color: "#2e7d32",
+    color: "#2e7d32",
     daily_ne: "विश्लेषण क्षमता उत्कृष्ट रहनेछ। स्वास्थ्य सुधार हुनेछ। काममा सटीकता देखाउनुस्।",
     daily_en: "Analytical abilities are at peak. Health improves. Show precision in work.",
     lucky_ne: "बुधबार", lucky_en: "Wednesday", lucky_num: "6, 15, 24", lucky_color_ne: "हरियो", lucky_color_en: "Green",
@@ -64,7 +66,7 @@ const ZODIAC_SIGNS = [
     id: "tula", ne: "तुला", en: "Libra",
     symbol: "♎", dates_ne: "असोज १६ - कार्तिक १५", dates_en: "Sep 24 – Oct 23",
     element_ne: "वायु", element_en: "Air", ruling_ne: "शुक्र", ruling_en: "Venus",
-    emoji: "⚖️", color: "#7b1fa2",
+    color: "#7b1fa2",
     daily_ne: "सम्बन्धमा सुमधुरता आउनेछ। न्यायिक मामिलामा जित हुनेछ। साझेदारीमा लाभ।",
     daily_en: "Harmony in relationships. Victory in legal matters. Partnership brings profit.",
     lucky_ne: "शुक्रबार", lucky_en: "Friday", lucky_num: "6, 15, 24", lucky_color_ne: "नीलो", lucky_color_en: "Blue",
@@ -73,7 +75,7 @@ const ZODIAC_SIGNS = [
     id: "brischik", ne: "वृश्चिक", en: "Scorpio",
     symbol: "♏", dates_ne: "कार्तिक १६ - मंसिर १५", dates_en: "Oct 24 – Nov 22",
     element_ne: "जल", element_en: "Water", ruling_ne: "मंगल", ruling_en: "Mars",
-    emoji: "🦂", color: "#b71c1c",
+    color: "#b71c1c",
     daily_ne: "गोप्य कुरा उजागर हुनेछन्। परिवर्तनको समय आएको छ। अनुसन्धानात्मक कार्यमा सफलता।",
     daily_en: "Secrets may be revealed. Time for transformation. Success in investigative work.",
     lucky_ne: "मंगलबार", lucky_en: "Tuesday", lucky_num: "9, 18, 27", lucky_color_ne: "गाढा रातो", lucky_color_en: "Dark Red",
@@ -82,7 +84,7 @@ const ZODIAC_SIGNS = [
     id: "dhanu", ne: "धनु", en: "Sagittarius",
     symbol: "♐", dates_ne: "मंसिर १६ - पुष १५", dates_en: "Nov 23 – Dec 21",
     element_ne: "अग्नि", element_en: "Fire", ruling_ne: "बृहस्पति", ruling_en: "Jupiter",
-    emoji: "🏹", color: "#f57f17",
+    color: "#f57f17",
     daily_ne: "ज्ञान र विद्यामा वृद्धि हुनेछ। विदेश यात्राको योग छ। दर्शन र धर्ममा रुचि बढ्नेछ।",
     daily_en: "Growth in knowledge and learning. Foreign travel indicated. Interest in philosophy grows.",
     lucky_ne: "बिहीबार", lucky_en: "Thursday", lucky_num: "3, 12, 21", lucky_color_ne: "बैजनी", lucky_color_en: "Purple",
@@ -91,7 +93,7 @@ const ZODIAC_SIGNS = [
     id: "makar", ne: "मकर", en: "Capricorn",
     symbol: "♑", dates_ne: "पुष १६ - माघ १४", dates_en: "Dec 22 – Jan 20",
     element_ne: "पृथ्वी", element_en: "Earth", ruling_ne: "शनि", ruling_en: "Saturn",
-    emoji: "🐐", color: "#37474f",
+    color: "#37474f",
     daily_ne: "कठोर परिश्रमको फल मिल्नेछ। व्यवसायमा दीर्घकालीन योजना बनाउनुस्। अनुशासन मुख्य हतियार हो।",
     daily_en: "Hard work pays off. Make long-term plans for business. Discipline is your main weapon.",
     lucky_ne: "शनिबार", lucky_en: "Saturday", lucky_num: "8, 17, 26", lucky_color_ne: "खैरो", lucky_color_en: "Brown",
@@ -100,7 +102,7 @@ const ZODIAC_SIGNS = [
     id: "kumbha", ne: "कुम्भ", en: "Aquarius",
     symbol: "♒", dates_ne: "माघ १५ - फागुन १३", dates_en: "Jan 21 – Feb 19",
     element_ne: "वायु", element_en: "Air", ruling_ne: "शनि", ruling_en: "Saturn",
-    emoji: "🏺", color: "#0097a7",
+    color: "#0097a7",
     daily_ne: "नवाचार र प्रविधिमा सफलता। मानवसेवामा रुचि बढ्नेछ। सामाजिक सञ्जालमा सक्रिय रहनुस्।",
     daily_en: "Success in innovation and technology. Interest in humanitarian service. Stay active socially.",
     lucky_ne: "शनिबार", lucky_en: "Saturday", lucky_num: "4, 13, 22", lucky_color_ne: "आसमानी", lucky_color_en: "Sky Blue",
@@ -109,7 +111,7 @@ const ZODIAC_SIGNS = [
     id: "meen", ne: "मीन", en: "Pisces",
     symbol: "♓", dates_ne: "फागुन १४ - चैत १३", dates_en: "Feb 20 – Mar 20",
     element_ne: "जल", element_en: "Water", ruling_ne: "बृहस्पति", ruling_en: "Jupiter",
-    emoji: "🐟", color: "#1565c0",
+    color: "#1565c0",
     daily_ne: "कलात्मक कार्यमा प्रेरणा मिल्नेछ। आध्यात्मिक शान्ति अनुभव हुनेछ। सपनाहरू साकार हुँदैछन्।",
     daily_en: "Inspiration in artistic work. Experience spiritual peace. Dreams are coming true.",
     lucky_ne: "बिहीबार", lucky_en: "Thursday", lucky_num: "3, 7, 12", lucky_color_ne: "समुद्री", lucky_color_en: "Sea Green",
@@ -186,7 +188,7 @@ export default function RashifalPage() {
         <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #4a148c, #7b1fa2, #9c27b0)" }}>
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #fff 0%, transparent 60%)" }} />
           <div className="mx-auto max-w-7xl px-4 py-10 text-center text-white relative">
-            <div className="text-5xl mb-3">🔮</div>
+            <div className="flex justify-center mb-3"><Sparkles className="h-12 w-12" /></div>
             <h1 className="text-3xl font-black mb-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
               {language === "ne" ? "दैनिक राशिफल" : "Daily Horoscope"}
             </h1>
@@ -228,7 +230,7 @@ export default function RashifalPage() {
                   boxShadow: selected === sign.id ? `0 4px 16px ${sign.color}40` : "none",
                 }}
               >
-                <div className="text-2xl mb-1">{sign.emoji}</div>
+                <div className="flex justify-center mb-1"><ZodiacIcon sign={sign.id} className="h-7 w-7" /></div>
                 <div className="text-lg font-bold">{sign.symbol}</div>
                 <div className="text-xs font-semibold mt-1">
                   {language === "ne" ? sign.ne : sign.en}
@@ -246,7 +248,7 @@ export default function RashifalPage() {
               style={{ border: `2px solid ${selectedSign.color}40`, background: "var(--surface)" }}>
               <div className="p-6 text-white" style={{ background: `linear-gradient(135deg, ${selectedSign.color}, ${selectedSign.color}cc)` }}>
                 <div className="flex flex-col sm:flex-row items-start gap-4">
-                  <div className="text-4xl sm:text-5xl">{selectedSign.emoji}</div>
+                  <div className="flex items-center"><ZodiacIcon sign={selectedSign.id} className="h-12 w-12 sm:h-14 sm:w-14" /></div>
                   <div className="min-w-0">
                     <h2 className="text-xl sm:text-2xl font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                       {language === "ne" ? selectedSign.ne : selectedSign.en}
@@ -264,7 +266,7 @@ export default function RashifalPage() {
 
               <div className="p-6">
                 <h3 className="text-base font-bold mb-3 flex items-center gap-2" style={{ color: selectedSign.color }}>
-                  <span>✨</span>
+                  <Sparkles className="h-4 w-4" />
                   {language === "ne"
                     ? (tab === "daily" ? "आजको राशिफल" : tab === "weekly" ? "साप्ताहिक राशिफल" : "मासिक राशिफल")
                     : (tab === "daily" ? "Today's Horoscope" : tab === "weekly" ? "Weekly Horoscope" : "Monthly Horoscope")}
@@ -333,11 +335,12 @@ export default function RashifalPage() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-xl p-4 text-center text-sm"
+          <div className="mt-6 rounded-xl p-4 flex items-center justify-center gap-2 text-center text-sm"
             style={{ background: "var(--surface-alt)", color: "var(--muted)", border: "1px solid var(--border)" }}>
+            <AlertTriangle className="h-4 w-4 shrink-0" />
             {language === "ne"
-              ? "⚠️ यो राशिफल ज्योतिषशास्त्रमा आधारित छ। यसलाई मनोरञ्जन मात्रका रूपमा लिनुहोस्।"
-              : "⚠️ This horoscope is based on astrology and is for entertainment purposes only."}
+              ? "यो राशिफल ज्योतिषशास्त्रमा आधारित छ। यसलाई मनोरञ्जन मात्रका रूपमा लिनुहोस्।"
+              : "This horoscope is based on astrology and is for entertainment purposes only."}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+import { Image as ImageIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,8 @@ interface GalleryData {
 export default function AdminGalleriesPage() {
   const [galleries, setGalleries] = useState<GalleryData[]>([]);
   const [message, setMessage] = useState("");
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   // Create form
   const [title, setTitle] = useState("");
@@ -92,6 +95,33 @@ export default function AdminGalleriesPage() {
     }
   }
 
+  async function uploadCoverImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    setMessage("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("alt_text", title || "gallery cover");
+
+    try {
+      const res = await fetch("/api/v1/media", { method: "POST", body: formData });
+      const json = await res.json();
+      if (json.success) {
+        setCoverImage(json.data.url);
+        setMessage("Cover image uploaded!");
+      } else {
+        setMessage(json.error || "Upload failed");
+      }
+    } catch {
+      setMessage("Upload error");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  }
+
   const inputStyle = {
     background: "var(--surface)",
     border: "1px solid var(--border)",
@@ -100,7 +130,7 @@ export default function AdminGalleriesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">🖼️ Galleries Management</h1>
+      <h1 className="text-2xl font-bold"><span className="inline-flex items-center gap-2"><ImageIcon className="h-6 w-6" />Galleries Management</span></h1>
 
       {message && (
         <div className="p-3 rounded-md text-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
@@ -118,8 +148,15 @@ export default function AdminGalleriesPage() {
             className="px-3 py-2 rounded-md text-sm" style={inputStyle} required />
           <input type="text" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)}
             className="px-3 py-2 rounded-md text-sm" style={inputStyle} />
-          <input type="url" placeholder="Cover Image URL (optional)" value={coverImage} onChange={(e) => setCoverImage(e.target.value)}
-            className="px-3 py-2 rounded-md text-sm" style={inputStyle} />
+          <div className="flex gap-2">
+            <input type="url" placeholder="Cover Image URL (optional)" value={coverImage} onChange={(e) => setCoverImage(e.target.value)}
+              className="min-w-0 flex-1 px-3 py-2 rounded-md text-sm" style={inputStyle} />
+            <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={uploadCoverImage} />
+            <button type="button" onClick={() => coverInputRef.current?.click()} disabled={uploadingCover}
+              className="px-3 py-2 rounded-md text-sm font-medium" style={{ background: "var(--accent)", color: "#fff", opacity: uploadingCover ? 0.6 : 1 }}>
+              {uploadingCover ? "..." : "Upload"}
+            </button>
+          </div>
           <button type="submit" className="px-4 py-2 rounded-md text-sm font-medium"
             style={{ background: "var(--accent)", color: "#fff" }}>
             Create Gallery

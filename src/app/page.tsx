@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, type ComponentProps } from "react";
 import prisma from "@/lib/prisma";
 import type { Metadata } from "next";
 import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
@@ -279,6 +279,17 @@ async function ProvincialNewsSection() {
     "sudurpaschim-pradesh": "sudurpaschim",
   };
 
+  const emptyGrouped: ComponentProps<typeof ProvincialNews>["articlesByProvince"] = {
+    bagmati: [],
+    koshi: [],
+    madhesh: [],
+    gandaki: [],
+    lumbini: [],
+    karnali: [],
+    sudurpaschim: [],
+  };
+  let groupedForView = emptyGrouped;
+
   try {
     const articles = await prisma.article.findMany({
       where: {
@@ -305,11 +316,13 @@ async function ProvincialNewsSection() {
       if (key) grouped[key].push(article);
     }
 
-    return <ProvincialNews articlesByProvince={JSON.parse(JSON.stringify(grouped))} />;
+    groupedForView = JSON.parse(JSON.stringify(grouped));
   } catch (error) {
     console.error("ProvincialNewsSection failed to load:", error);
     return null;
   }
+
+  return <ProvincialNews articlesByProvince={groupedForView} />;
 }
 
 async function DailyBriefSection() {
@@ -366,6 +379,15 @@ async function EducationSectionServer() {
 }
 
 async function QuickNewsBannerSection({ category }: { category: string }) {
+  let banner: {
+    title: string;
+    title_en: string | null;
+    slug: string;
+    categoryName: string;
+    categoryColor: string;
+    publishedAt: Date | null;
+  } | null = null;
+
   try {
     const articles = await prisma.article.findMany({
       where: { status: "PUBLISHED", category: { slug: category } },
@@ -378,20 +400,29 @@ async function QuickNewsBannerSection({ category }: { category: string }) {
     });
     if (!articles[0]) return null;
     const a = articles[0];
-    return (
-      <QuickNewsBanner
-        title={a.title}
-        title_en={a.title_en}
-        slug={a.slug}
-        categoryName={a.category.name}
-        categoryColor={a.category.color}
-        publishedAt={a.published_at}
-      />
-    );
+    banner = {
+      title: a.title,
+      title_en: a.title_en,
+      slug: a.slug,
+      categoryName: a.category.name,
+      categoryColor: a.category.color,
+      publishedAt: a.published_at,
+    };
   } catch (error) {
     console.error(`QuickNewsBannerSection (${category}) failed to load:`, error);
     return null;
   }
+
+  return (
+    <QuickNewsBanner
+      title={banner.title}
+      title_en={banner.title_en}
+      slug={banner.slug}
+      categoryName={banner.categoryName}
+      categoryColor={banner.categoryColor}
+      publishedAt={banner.publishedAt}
+    />
+  );
 }
 
 

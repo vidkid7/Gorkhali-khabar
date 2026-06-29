@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
 
@@ -46,9 +47,10 @@ export function DailyBrief({ articles }: { articles: BriefArticle[] }) {
         </div>
         <Link
           href="/categories/samachar"
-          className="text-[11px] font-bold text-accent hover:underline shrink-0"
+          className="text-[11px] font-bold text-accent hover:underline shrink-0 inline-flex items-center gap-1"
         >
-          {language === "ne" ? "सबै →" : "See all →"}
+          {language === "ne" ? "सबै" : "See all"}
+          <ArrowRight className="inline h-3.5 w-3.5" />
         </Link>
       </div>
 

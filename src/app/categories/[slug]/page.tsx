@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
 
@@ -172,7 +173,7 @@ export default async function CategoryArchivePage({
                 href={`/categories/${slug}?page=${page - 1}`}
                 className="btn-secondary text-sm"
               >
-                ← अघिल्लो
+                <ArrowLeft className="inline h-3.5 w-3.5" /> अघिल्लो
               </Link>
             )}
             <span className="text-sm text-muted px-4">
@@ -183,7 +184,7 @@ export default async function CategoryArchivePage({
                 href={`/categories/${slug}?page=${page + 1}`}
                 className="btn-secondary text-sm"
               >
-                अर्को →
+                अर्को <ArrowRight className="inline h-3.5 w-3.5" />
               </Link>
             )}
           </div>

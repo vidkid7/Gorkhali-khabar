@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Image as ImageIcon, Camera } from "lucide-react";
 
 interface GalleryCardProps {
   slug: string;
@@ -28,13 +29,13 @@ export function GalleryCard({ slug, title, coverImage, imageCount }: GalleryCard
             className="w-full h-full flex items-center justify-center"
             style={{ background: "var(--border)" }}
           >
-            <span className="text-4xl">🖼️</span>
+            <ImageIcon className="h-10 w-10" />
           </div>
         )}
 
         {/* Image count badge */}
-        <div className="absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-bold bg-black/60 text-white">
-          📷 {imageCount}
+        <div className="absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-bold bg-black/60 text-white inline-flex items-center gap-1">
+          <Camera className="h-3.5 w-3.5" /> {imageCount}
         </div>
 
         {/* Bottom gradient + title */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface GalleryImage {
   id: string;
@@ -54,7 +55,7 @@ export function LightboxViewer({ images, initialIndex = 0, onClose }: LightboxVi
         className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 text-white text-xl flex items-center justify-center hover:bg-white/30 transition-colors"
         aria-label="Close"
       >
-        ✕
+        <X className="h-5 w-5" />
       </button>
 
       {/* Counter */}
@@ -69,7 +70,7 @@ export function LightboxViewer({ images, initialIndex = 0, onClose }: LightboxVi
           className="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/20 text-white text-2xl flex items-center justify-center hover:bg-white/30 transition-colors"
           aria-label="Previous image"
         >
-          ←
+          <ChevronLeft className="h-6 w-6" />
         </button>
       )}
 
@@ -94,7 +95,7 @@ export function LightboxViewer({ images, initialIndex = 0, onClose }: LightboxVi
           className="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/20 text-white text-2xl flex items-center justify-center hover:bg-white/30 transition-colors"
           aria-label="Next image"
         >
-          →
+          <ChevronRight className="h-6 w-6" />
         </button>
       )}
     </div>

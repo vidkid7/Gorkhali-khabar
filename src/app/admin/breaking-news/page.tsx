@@ -61,7 +61,13 @@ export default async function AdminBreakingNewsPage() {
                     {item.created_at.toLocaleDateString()}
                   </td>
                   <td className="p-3">
-                    <AdminBreakingNewsToggle id={item.id} isActive={item.is_active} />
+                    <AdminBreakingNewsToggle
+                      id={item.id}
+                      isActive={item.is_active}
+                      title={item.title}
+                      articleId={item.article_id}
+                      expiresAt={item.expires_at?.toISOString() ?? null}
+                    />
                   </td>
                 </tr>
               );

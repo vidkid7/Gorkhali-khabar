@@ -1,8 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  ArrowLeft,
+  Trash2,
+  Eye,
+  MessageSquare,
+  Calendar,
+  Bookmark,
+  Save,
+  Globe,
+} from "lucide-react";
 
 interface Category {
   id: string;
@@ -56,8 +66,10 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     title: article.title,
@@ -136,6 +148,35 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
     }
   }
 
+  async function handleFeaturedImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setError("");
+    setSuccess("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("alt_text", article.title);
+
+    try {
+      const res = await fetch("/api/v1/media", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success) {
+        updateField("featured_image", data.data.url);
+        setSuccess("फोटो अपलोड भयो। परिवर्तन सेभ गर्नुहोस्।");
+      } else {
+        setError(data.error || "फोटो अपलोड गर्न सकिएन");
+      }
+    } catch {
+      setError("फोटो अपलोड गर्दा नेटवर्क त्रुटि भयो");
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = "";
+    }
+  }
+
   const inputStyle = {
     background: "var(--surface)",
     border: "1px solid var(--border)",
@@ -155,7 +196,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Link href="/admin/articles" className="text-sm" style={{ color: "var(--muted)" }}>
-              ← लेखहरू
+              <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />लेखहरू</span>
             </Link>
             <span style={{ color: "var(--muted)" }}>/</span>
             <span className="text-sm font-medium">सम्पादन</span>
@@ -170,20 +211,20 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
           disabled={deleting}
           className="btn-danger btn-sm shrink-0"
         >
-          {deleting ? "मेटाउँदै..." : "🗑 लेख मेट्नुहोस्"}
+          {deleting ? "मेटाउँदै..." : <span className="inline-flex items-center gap-2"><Trash2 className="h-4 w-4" />लेख मेट्नुहोस्</span>}
         </button>
       </div>
 
       {/* Article Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "भ्युज", value: article.view_count.toLocaleString(), icon: "👁️" },
-          { label: "टिप्पणी", value: article.comment_count.toString(), icon: "💬" },
-          { label: "सिर्जना", value: new Date(article.created_at).toLocaleDateString("ne-NP"), icon: "📅" },
+          { label: "भ्युज", value: article.view_count.toLocaleString(), icon: <Eye className="h-5 w-5" /> },
+          { label: "टिप्पणी", value: article.comment_count.toString(), icon: <MessageSquare className="h-5 w-5" /> },
+          { label: "सिर्जना", value: new Date(article.created_at).toLocaleDateString("ne-NP"), icon: <Calendar className="h-5 w-5" /> },
           {
             label: "स्थिति",
             value: article.status,
-            icon: "🔖",
+            icon: <Bookmark className="h-5 w-5" />,
             color: statusColors[article.status],
           },
         ].map((stat) => (
@@ -386,14 +427,32 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
               {/* Featured image */}
               <div>
                 <label className="block text-sm font-medium mb-1">मुख्य फोटो URL</label>
-                <input
-                  type="text"
-                  value={form.featured_image}
-                  onChange={(e) => updateField("featured_image", e.target.value)}
-                  className="w-full px-3 py-2 rounded-md text-sm"
-                  style={inputStyle}
-                  placeholder="https://..."
-                />
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    type="text"
+                    value={form.featured_image}
+                    onChange={(e) => updateField("featured_image", e.target.value)}
+                    className="min-w-0 flex-1 px-3 py-2 rounded-md text-sm"
+                    style={inputStyle}
+                    placeholder="https://..."
+                  />
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFeaturedImageUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="btn-secondary btn-sm shrink-0"
+                    style={{ opacity: uploadingImage ? 0.6 : 1 }}
+                  >
+                    {uploadingImage ? "Uploading..." : "Upload"}
+                  </button>
+                </div>
                 {form.featured_image && (
                   <img
                     src={form.featured_image}
@@ -423,7 +482,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
               className="btn-primary w-full"
               style={{ opacity: saving ? 0.6 : 1 }}
             >
-              {saving ? "सेभ गर्दै..." : "💾 परिवर्तन सेभ गर्नुहोस्"}
+              {saving ? "सेभ गर्दै..." : <span className="inline-flex items-center justify-center gap-2"><Save className="h-4 w-4" />परिवर्तन सेभ गर्नुहोस्</span>}
             </button>
 
             {/* View on site */}
@@ -434,7 +493,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
                 rel="noopener noreferrer"
                 className="btn-secondary w-full text-center block"
               >
-                🌐 साइटमा हेर्नुहोस्
+                <span className="inline-flex items-center justify-center gap-2"><Globe className="h-4 w-4" />साइटमा हेर्नुहोस्</span>
               </a>
             )}
 

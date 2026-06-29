@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { Clapperboard, ChevronLeft, ChevronRight } from "lucide-react";
 import { ReelCard } from "./ReelCard";
 
 interface Reel {
@@ -32,8 +33,8 @@ export function ReelCarousel({ reels, title = "OK Reels" }: ReelCarouselProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
-          🎬 {title}
+        <h2 className="text-lg font-bold inline-flex items-center gap-2" style={{ color: "var(--foreground)" }}>
+          <Clapperboard className="h-5 w-5" /> {title}
         </h2>
         <div className="flex gap-1">
           <button
@@ -42,7 +43,7 @@ export function ReelCarousel({ reels, title = "OK Reels" }: ReelCarouselProps) {
             style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}
             aria-label="Scroll left"
           >
-            ←
+            <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={() => scroll("right")}
@@ -50,7 +51,7 @@ export function ReelCarousel({ reels, title = "OK Reels" }: ReelCarouselProps) {
             style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}
             aria-label="Scroll right"
           >
-            →
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>

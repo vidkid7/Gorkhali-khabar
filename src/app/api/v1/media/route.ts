@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     const contentLength = request.headers.get("content-length");
-    if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
+    if (contentLength && parseInt(contentLength) > 100 * 1024 * 1024) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "Payload too large" },
         { status: 413 }
@@ -163,18 +163,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, error: "फाइल साइज १० MB भन्दा बढी हुनु हुँदैन" },
-        { status: 400 }
-      );
-    }
-
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/avif", "video/mp4", "video/webm", "application/pdf"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "यो फाइल प्रकार समर्थित छैन" },
+        { status: 400 }
+      );
+    }
+
+    // Videos are allowed a larger limit than images/PDFs.
+    const isVideoFile = file.type.startsWith("video/");
+    const maxSize = isVideoFile ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB video, 10MB other
+    const maxSizeLabel = isVideoFile ? "१०० MB" : "१० MB";
+    if (file.size > maxSize) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: `फाइल साइज ${maxSizeLabel} भन्दा बढी हुनु हुँदैन` },
         { status: 400 }
       );
     }

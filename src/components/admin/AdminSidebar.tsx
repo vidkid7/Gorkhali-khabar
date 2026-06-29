@@ -8,28 +8,51 @@ import { FontSizeProvider, useFontSize } from "@/contexts/FontSizeContext";
 import { useAdminRole } from "@/components/admin/AdminRoleProvider";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import { signOut } from "next-auth/react";
+import {
+  BarChart3,
+  FileText,
+  Folder,
+  Tag,
+  MessageSquare,
+  Image as ImageIcon,
+  Megaphone,
+  Trophy,
+  Clapperboard,
+  Radio,
+  TrendingUp,
+  Palmtree,
+  Coins,
+  ArrowLeftRight,
+  Sparkles,
+  Mail,
+  Users,
+  Settings,
+  ClipboardList,
+  Moon,
+  Sun,
+} from "lucide-react";
 
 const navItems = [
-  { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: "📊", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/articles",    labelNe: "लेखहरू",         labelEn: "Articles",       icon: "📝", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/categories",  labelNe: "वर्गहरू",        labelEn: "Categories",     icon: "📁", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/tags",        labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: "🏷️", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/comments",    labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: "💬", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/media",       labelNe: "मिडिया",         labelEn: "Media",          icon: "🖼️", roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/ads",         labelNe: "विज्ञापन",       labelEn: "Ads",            icon: "📢", roles: ["ADMIN"] },
-  { href: "/admin/sports",      labelNe: "खेलकुद",         labelEn: "Sports",         icon: "⚽", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/reels",       labelNe: "रिल्स",          labelEn: "Reels",          icon: "🎬", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/galleries",   labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: "🖼️", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: "🔴", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/analytics",   labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: "📈", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/holidays",    labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: "🏖️", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: "🪙", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: "💱", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: "♈", roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: "✉️", roles: ["ADMIN"] },
-  { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: "👥", roles: ["ADMIN"] },
-  { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: "⚙️", roles: ["ADMIN"] },
-  { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: "📋", roles: ["ADMIN"] },
+  { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: <BarChart3 className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/articles",    labelNe: "लेखहरू",         labelEn: "Articles",       icon: <FileText className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/categories",  labelNe: "वर्गहरू",        labelEn: "Categories",     icon: <Folder className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/tags",        labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: <Tag className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/comments",    labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: <MessageSquare className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/media",       labelNe: "मिडिया",         labelEn: "Media",          icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { href: "/admin/ads",         labelNe: "विज्ञापन",       labelEn: "Ads",            icon: <Megaphone className="h-5 w-5" />, roles: ["ADMIN"] },
+  { href: "/admin/sports",      labelNe: "खेलकुद",         labelEn: "Sports",         icon: <Trophy className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/reels",       labelNe: "रिल्स",          labelEn: "Reels",          icon: <Clapperboard className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/galleries",   labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: <Radio className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/analytics",   labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: <TrendingUp className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/holidays",    labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: <Palmtree className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: <Coins className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: <ArrowLeftRight className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: <Sparkles className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: <Mail className="h-5 w-5" />, roles: ["ADMIN"] },
+  { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: <Users className="h-5 w-5" />, roles: ["ADMIN"] },
+  { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: <Settings className="h-5 w-5" />, roles: ["ADMIN"] },
+  { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: <ClipboardList className="h-5 w-5" />, roles: ["ADMIN"] },
 ];
 
 function FontSizerInline() {
@@ -200,7 +223,7 @@ function SidebarContent() {
             className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors border border-border hover:bg-surface-alt"
             style={{ background: "var(--surface)", color: "var(--foreground)" }}
           >
-            {theme === "light" ? "🌙" : "☀️"}
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
             <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
           </button>
 

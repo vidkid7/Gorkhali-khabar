@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
 import { useState, useEffect, useCallback } from "react";
+import { BarChart3, Circle, Lightbulb } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
@@ -107,7 +108,8 @@ export default function ShareMarketPage() {
           <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-                📊 {ne("सेयर बजार (NEPSE)", "Share Market (NEPSE)")}
+                <BarChart3 className="h-6 w-6" />
+                {ne("सेयर बजार (NEPSE)", "Share Market (NEPSE)")}
               </h1>
               <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
                 {ne("नेपाल स्टक एक्सचेन्ज — बजार डाटा", "Nepal Stock Exchange — Market Data")}
@@ -242,7 +244,11 @@ export default function ShareMarketPage() {
 
           <div className="mt-4 rounded-xl p-4 flex items-start gap-3 text-sm"
             style={{ background: isLive ? "rgba(22,163,74,0.08)" : "var(--surface-alt)", color: "var(--muted)", border: `1px solid ${isLive ? "rgba(22,163,74,0.3)" : "var(--border)"}` }}>
-            <span className="text-lg shrink-0">{isLive ? "🟢" : "💡"}</span>
+            {isLive ? (
+              <Circle className="h-5 w-5 shrink-0 fill-green-500 text-green-500" />
+            ) : (
+              <Lightbulb className="h-5 w-5 shrink-0" />
+            )}
             <span>
               {isLive && hasMarketData
                 ? ne("वास्तविक NEPSE डाटा — nepalstock.com.np बाट।", "Live NEPSE data sourced from nepalstock.com.np.")

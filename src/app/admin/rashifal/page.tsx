@@ -1,19 +1,27 @@
 import { prisma } from "@/lib/prisma";
-import { AdminRashifalActions } from "./AdminRashifalActions";
+import { AdminRashifalActions, AdminRashifalRow } from "./AdminRashifalActions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminRashifalPage() {
-  const entries = await prisma.rashifal.findMany({
+  const entriesRaw = await prisma.rashifal.findMany({
     orderBy: [{ ad_date: "desc" }, { sign: "asc" }],
     take: 24,
   });
+  const entries = entriesRaw.map((r) => ({
+    id: r.id,
+    sign: r.sign,
+    sign_ne: r.sign_ne,
+    bs_year: r.bs_year,
+    bs_month: r.bs_month,
+    bs_day: r.bs_day,
+    ad_date: r.ad_date.toISOString(),
+    prediction: r.prediction,
+    prediction_en: r.prediction_en,
+    rating: r.rating,
+  }));
 
   const signs = ["mesh", "brish", "mithun", "karkat", "simha", "kanya", "tula", "brishchik", "dhanu", "makar", "kumbha", "meen"];
-  const EMOJIS: Record<string, string> = {
-    mesh: "♈", brish: "♉", mithun: "♊", karkat: "♋", simha: "♌", kanya: "♍",
-    tula: "♎", brishchik: "♏", dhanu: "♐", makar: "♑", kumbha: "♒", meen: "♓",
-  };
 
   return (
     <div className="space-y-6">
@@ -31,25 +39,12 @@ export default async function AdminRashifalPage() {
               <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Date</th>
               <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Prediction</th>
               <th className="text-center p-3 font-medium" style={{ color: "var(--muted)" }}>Rating</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {entries.map((r) => (
-              <tr key={r.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                <td className="p-3 font-medium whitespace-nowrap">
-                  <span className="mr-1">{EMOJIS[r.sign] ?? "⭐"}</span>
-                  {r.sign_ne ?? r.sign}
-                </td>
-                <td className="p-3 whitespace-nowrap" style={{ color: "var(--muted)" }}>
-                  {new Date(r.ad_date).toLocaleDateString()}
-                </td>
-                <td className="p-3 max-w-md truncate" style={{ color: "var(--foreground)" }}>
-                  {r.prediction.slice(0, 80)}...
-                </td>
-                <td className="p-3 text-center">
-                  {r.rating ? "⭐".repeat(r.rating) : "—"}
-                </td>
-              </tr>
+              <AdminRashifalRow key={r.id} entry={r} signs={signs} />
             ))}
           </tbody>
         </table>

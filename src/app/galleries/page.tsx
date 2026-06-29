@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GalleryCard } from "@/components/gallery/GalleryCard";
+import { Image as ImageIcon, ArrowLeft, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
@@ -39,7 +40,7 @@ export default async function GalleriesPage({ searchParams }: PageProps) {
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-6 space-y-6">
         <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
-          🖼️ फोटो ग्यालेरी
+          <span className="inline-flex items-center gap-2"><ImageIcon className="h-6 w-6" />फोटो ग्यालेरी</span>
         </h1>
 
         {galleries.length > 0 ? (
@@ -64,7 +65,7 @@ export default async function GalleriesPage({ searchParams }: PageProps) {
           <div className="flex items-center justify-center gap-2">
             {page > 1 && (
               <a href={`/galleries?page=${page - 1}`} className="btn-secondary text-sm">
-                ← अघिल्लो
+                <ArrowLeft className="inline h-3.5 w-3.5" /> अघिल्लो
               </a>
             )}
             <span className="text-sm px-3" style={{ color: "var(--muted)" }}>
@@ -72,7 +73,7 @@ export default async function GalleriesPage({ searchParams }: PageProps) {
             </span>
             {page < totalPages && (
               <a href={`/galleries?page=${page + 1}`} className="btn-secondary text-sm">
-                अर्को →
+                अर्को <ArrowRight className="inline h-3.5 w-3.5" />
               </a>
             )}
           </div>

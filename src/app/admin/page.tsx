@@ -1,6 +1,24 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { STATUS_COLORS } from "@/lib/utils";
+import {
+  FileText,
+  Eye,
+  MessageSquare,
+  Megaphone,
+  Users,
+  Tag,
+  Globe,
+  Plus,
+  Newspaper,
+  User,
+  Pencil,
+  TrendingUp,
+  Settings,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -93,7 +111,7 @@ function TrendBadge({ current, previous }: { current: number; previous: number }
         color: up ? "var(--success)" : "var(--error)",
       }}
     >
-      {up ? "↑" : "↓"} {Math.abs(pct)}%
+      {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />} {Math.abs(pct)}%
     </span>
   );
 }
@@ -107,12 +125,12 @@ export default async function AdminDashboard() {
   const maxCat = Math.max(...stats.categoryBreakdown.map((c) => c._count.articles), 1);
 
   const statCards = [
-    { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: "📝", color: "var(--primary)", href: "/admin/articles" },
-    { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: "👁️", color: "var(--accent)", href: "/admin/analytics" },
-    { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: "💬", color: "var(--warning)", href: "/admin/comments" },
-    { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: "📢", color: "var(--success)", href: "/admin/ads" },
-    { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: "👥", color: "var(--info, var(--primary))", href: "/admin/users" },
-    { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: "🏷️", color: "var(--muted)", href: "/admin/tags" },
+    { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: <FileText className="h-5 w-5" />, color: "var(--primary)", href: "/admin/articles" },
+    { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: <Eye className="h-5 w-5" />, color: "var(--accent)", href: "/admin/analytics" },
+    { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: <MessageSquare className="h-5 w-5" />, color: "var(--warning)", href: "/admin/comments" },
+    { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: <Megaphone className="h-5 w-5" />, color: "var(--success)", href: "/admin/ads" },
+    { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: <Users className="h-5 w-5" />, color: "var(--info, var(--primary))", href: "/admin/users" },
+    { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: <Tag className="h-5 w-5" />, color: "var(--muted)", href: "/admin/tags" },
   ];
 
   return (
@@ -127,10 +145,10 @@ export default async function AdminDashboard() {
         </div>
         <div className="flex gap-2">
           <Link href="/" className="btn-secondary">
-            🌐 साइट हेर्नुहोस्
+            <span className="inline-flex items-center gap-2"><Globe className="h-4 w-4" />साइट हेर्नुहोस्</span>
           </Link>
           <Link href="/admin/articles/new" className="btn-primary">
-            + नयाँ लेख
+            <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />नयाँ लेख</span>
           </Link>
         </div>
       </div>
@@ -166,10 +184,10 @@ export default async function AdminDashboard() {
           <h2 className="text-base font-semibold mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>आजको गतिविधि</h2>
           <div className="space-y-3">
             {[
-              { label: "प्रकाशित लेख", value: stats.publishedToday, icon: "📰", color: "var(--primary)" },
-              { label: "पेज भ्युज", value: stats.pageViewsToday, icon: "👁️", color: "var(--accent)", compare: stats.pageViewsYesterday },
-              { label: "नया प्रयोगकर्ता", value: stats.newUsersToday, icon: "👤", color: "var(--success)" },
-              { label: "पेन्डिङ टिप्पणी", value: stats.pendingComments, icon: "💬", color: "var(--warning)" },
+              { label: "प्रकाशित लेख", value: stats.publishedToday, icon: <Newspaper className="h-5 w-5" />, color: "var(--primary)" },
+              { label: "पेज भ्युज", value: stats.pageViewsToday, icon: <Eye className="h-5 w-5" />, color: "var(--accent)", compare: stats.pageViewsYesterday },
+              { label: "नया प्रयोगकर्ता", value: stats.newUsersToday, icon: <User className="h-5 w-5" />, color: "var(--success)" },
+              { label: "पेन्डिङ टिप्पणी", value: stats.pendingComments, icon: <MessageSquare className="h-5 w-5" />, color: "var(--warning)" },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-2.5 rounded-lg" style={{ background: "var(--surface-alt)" }}>
                 <div className="flex items-center gap-2">
@@ -209,7 +227,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>वर्ग अनुसार लेखहरू</h2>
             <Link href="/admin/categories" className="text-xs font-medium" style={{ color: "var(--accent)" }}>
-              व्यवस्थापन →
+              व्यवस्थापन <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="space-y-2.5">
@@ -235,9 +253,9 @@ export default async function AdminDashboard() {
           {/* Quick links */}
           <div className="mt-5 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ borderColor: "var(--border)" }}>
             {[
-              { label: "नयाँ लेख", href: "/admin/articles/new", icon: "✏️", color: "var(--primary)" },
-              { label: "विश्लेषण", href: "/admin/analytics", icon: "📈", color: "var(--accent)" },
-              { label: "सेटिङ", href: "/admin/settings", icon: "⚙️", color: "var(--muted)" },
+              { label: "नयाँ लेख", href: "/admin/articles/new", icon: <Pencil className="h-4 w-4" />, color: "var(--primary)" },
+              { label: "विश्लेषण", href: "/admin/analytics", icon: <TrendingUp className="h-4 w-4" />, color: "var(--accent)" },
+              { label: "सेटिङ", href: "/admin/settings", icon: <Settings className="h-4 w-4" />, color: "var(--muted)" },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -258,7 +276,7 @@ export default async function AdminDashboard() {
         <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>हालका लेखहरू</h2>
           <Link href="/admin/articles" className="text-sm font-medium" style={{ color: "var(--accent)" }}>
-            सबै हेर्नुहोस् →
+            सबै हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
           </Link>
         </div>
         <div className="overflow-x-auto">

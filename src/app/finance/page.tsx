@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { TrendingUp, ArrowLeftRight, Coins, Lightbulb } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -66,7 +67,7 @@ export default function FinancePage() {
           style={{ background: "linear-gradient(135deg, #1565c0, #0d47a1, #01579b)" }}>
           <div className="mx-auto max-w-7xl px-4 py-8 text-white relative">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl">💹</span>
+              <TrendingUp className="h-8 w-8" />
               <h1 className="text-xl sm:text-2xl font-black" style={{ fontFamily: "var(--font-nepali-serif)" }}>
                 {language === "ne" ? "वित्तीय बजार" : "Financial Market"}
               </h1>
@@ -103,7 +104,7 @@ export default function FinancePage() {
                 <div className="px-6 py-4 text-white"
                   style={{ background: "linear-gradient(135deg, #1565c0, #0d47a1)" }}>
                   <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
-                    <span>💱</span>
+                    <ArrowLeftRight className="h-5 w-5" />
                     {language === "ne" ? "नेपाल राष्ट्र बैंक — विदेशी विनिमय दर" : "Nepal Rastra Bank — Foreign Exchange Rates"}
                   </h2>
                   <p className="text-xs opacity-70 mt-1">
@@ -176,7 +177,7 @@ export default function FinancePage() {
                     <div className="px-6 py-4 text-white"
                       style={{ background: "linear-gradient(135deg, #f9a825, #e65100)" }}>
                       <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
-                        <span>🥇</span>
+                        <Coins className="h-5 w-5" />
                         {language === "ne" ? "सुनको दर" : "Gold Rate"}
                       </h2>
                     </div>
@@ -206,7 +207,7 @@ export default function FinancePage() {
                     <div className="px-6 py-4 text-white"
                       style={{ background: "linear-gradient(135deg, #90a4ae, #546e7a)" }}>
                       <h2 className="text-lg font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-nepali-serif)" }}>
-                        <span>🥈</span>
+                        <Coins className="h-5 w-5" />
                         {language === "ne" ? "चाँदीको दर" : "Silver Rate"}
                       </h2>
                     </div>
@@ -233,11 +234,12 @@ export default function FinancePage() {
               )}
 
               {/* Disclaimer */}
-              <div className="rounded-xl p-4 text-center text-sm"
+              <div className="rounded-xl p-4 text-center text-sm flex items-center justify-center gap-2"
                 style={{ background: "var(--surface-alt)", color: "var(--muted)", border: "1px solid var(--border)" }}>
+                <Lightbulb className="h-4 w-4 shrink-0" />
                 {language === "ne"
-                  ? "💡 सुन-चाँदीको मूल्य नेपाल सुनकारी व्यवसायी महासंघको आधारमा अनुमानित हो। वास्तविक किनबेचमा फरक हुन सक्छ।"
-                  : "💡 Gold/silver prices are indicative based on Nepal Goldsmiths Federation. Actual prices may vary."}
+                  ? "सुन-चाँदीको मूल्य नेपाल सुनकारी व्यवसायी महासंघको आधारमा अनुमानित हो। वास्तविक किनबेचमा फरक हुन सक्छ।"
+                  : "Gold/silver prices are indicative based on Nepal Goldsmiths Federation. Actual prices may vary."}
               </div>
             </>
           )}

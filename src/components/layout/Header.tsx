@@ -13,6 +13,7 @@ import { WeatherWidget } from "@/components/widgets/WeatherWidget";
 import { useRouter } from "next/navigation";
 import { FontSizer } from "@/components/ui/FontSizer";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { User as UserIcon, LogIn, UserPlus } from "lucide-react";
 
 /* ─── Navigation Data ─────────────────────────────────────────────────── */
 
@@ -134,6 +135,9 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const userBtnRef = useRef<HTMLButtonElement>(null);
+  const userMenuPanelRef = useRef<HTMLDivElement>(null);
+  const [userMenuPos, setUserMenuPos] = useState<{ top: number; right: number } | null>(null);
 
   useEffect(() => { setToday(new Date()); }, []);
   useEffect(() => { setMounted(true); }, []);
@@ -166,11 +170,35 @@ export function Header() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node) &&
+        (!userMenuPanelRef.current || !userMenuPanelRef.current.contains(e.target as Node))
+      ) {
+        setUserMenuOpen(false);
+      }
     }
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, []);
+
+  function toggleUserMenu() {
+    if (!userMenuOpen && userBtnRef.current) {
+      const r = userBtnRef.current.getBoundingClientRect();
+      setUserMenuPos({ top: r.bottom + 6, right: Math.max(8, window.innerWidth - r.right) });
+    }
+    setUserMenuOpen((v) => !v);
+  }
+
+  function handleLogout() {
+    setUserMenuOpen(false);
+    setSidebarOpen(false);
+    // redirect:false avoids NextAuth using NEXTAUTH_URL (production) for the
+    // redirect; navigate to the current origin instead so it works locally too.
+    signOut({ redirect: false }).then(() => {
+      window.location.href = "/";
+    });
+  }
 
   const siteName = language === "en" ? config.site_name.en : config.site_name.ne;
   const isAdmin = session?.user?.role && ["ADMIN", "EDITOR", "AUTHOR"].includes(session.user.role);
@@ -260,33 +288,37 @@ export function Header() {
             {session?.user && (
               <div className="relative ml-2" ref={userMenuRef}>
                 <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  ref={userBtnRef}
+                  onClick={toggleUserMenu}
                   className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-xs font-medium"
                 >
                   <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
                     {(session.user.name?.[0] || session.user.email?.[0] || "U").toUpperCase()}
                   </span>
                   <span className="hidden xl:inline max-w-[8rem] truncate">{session.user.name || session.user.email}</span>
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M19 9l-7 7-7-7" /></svg>
+                  <svg className={`h-3.5 w-3.5 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M19 9l-7 7-7-7" /></svg>
                 </button>
-                {userMenuOpen && (
-                  <div className="absolute top-full right-0 mt-1 w-48 rounded-xl shadow-xl py-1.5 z-50 border animate-slideDown bg-surface border-border">
-                    <Link href="/profile" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt" onClick={() => setUserMenuOpen(false)}>
-                      {t("nav.profile") || (language === "ne" ? "प्रोफाइल" : "Profile")}
-                    </Link>
-                    {isAdmin && (
-                      <Link href="/admin" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt font-medium" style={{ color: "var(--accent)" }} onClick={() => setUserMenuOpen(false)}>
-                        {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => { signOut({ callbackUrl: "/" }); setUserMenuOpen(false); }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt"
-                    >
-                      {t("common.logout") || (language === "ne" ? "लगआउट" : "Logout")}
-                    </button>
-                  </div>
-                )}
+              </div>
+            )}
+
+            {/* Logged-out: Sign in / Sign up (desktop) */}
+            {!session?.user && (
+              <div className="flex items-center gap-2 ml-2">
+                <Link
+                  href="/auth/login"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors whitespace-nowrap"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  {t("common.login")}
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors whitespace-nowrap"
+                  style={{ background: "var(--accent)" }}
+                >
+                  <UserPlus className="h-3.5 w-3.5" />
+                  {t("common.register")}
+                </Link>
               </div>
             )}
           </div>
@@ -418,6 +450,21 @@ export function Header() {
 
             <div className="w-px h-5 bg-border hidden sm:block" />
 
+            {/* Account (mobile/tablet) — full buttons appear on lg+ in the top bar */}
+            <Link
+              href={session?.user ? "/profile" : "/auth/login"}
+              className="lg:hidden flex items-center p-2 rounded-md hover:bg-surface-alt text-foreground transition-colors"
+              aria-label={session?.user ? t("common.profile") : t("common.login")}
+            >
+              {session?.user ? (
+                <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
+                  {(session.user.name?.[0] || session.user.email?.[0] || "U").toUpperCase()}
+                </span>
+              ) : (
+                <UserIcon className="h-5 w-5" />
+              )}
+            </Link>
+
             {/* Hamburger */}
             <button
               onClick={() => setSidebarOpen(true)}
@@ -499,6 +546,31 @@ export function Header() {
         </div>
       </div>
     </header>
+
+    {/* ══════════ USER MENU DROPDOWN (portal — escapes header overflow clip) ══════════ */}
+    {mounted && userMenuOpen && session?.user && userMenuPos && createPortal(
+      <div
+        ref={userMenuPanelRef}
+        className="fixed w-48 rounded-xl shadow-xl py-1.5 z-[300] border animate-slideDown bg-surface border-border"
+        style={{ top: userMenuPos.top, right: userMenuPos.right }}
+      >
+        <Link href="/profile" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt" onClick={() => setUserMenuOpen(false)}>
+          {t("common.profile")}
+        </Link>
+        {isAdmin && (
+          <Link href="/admin" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt font-medium" style={{ color: "var(--accent)" }} onClick={() => setUserMenuOpen(false)}>
+            {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
+          </Link>
+        )}
+        <button
+          onClick={handleLogout}
+          className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt"
+        >
+          {t("common.logout") || (language === "ne" ? "लगआउट" : "Logout")}
+        </button>
+      </div>,
+      document.body
+    )}
 
     {/* ══════════ SIDEBAR DRAWER ══════════ */}
     {/* Sidebar rendered at document.body level */}
@@ -597,6 +669,33 @@ export function Header() {
               </div>
             </div>
 
+            {/* Sign in / Sign up (logged out) */}
+            {!session?.user && (
+              <div className="border-t border-border px-4 py-3 shrink-0">
+                <p className="text-xs font-medium text-muted mb-2">
+                  {language === "ne" ? "खाता" : "Account"}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/auth/login"
+                    className="flex items-center justify-center gap-1.5 rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <LogIn className="h-3.5 w-3.5" />
+                    {t("common.login")}
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    className="flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-accent-hover"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <UserPlus className="h-3.5 w-3.5" />
+                    {t("common.register")}
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {/* User / Admin links in sidebar */}
             {session?.user && (
               <div className="border-t border-border px-4 py-3 shrink-0">
@@ -613,7 +712,7 @@ export function Header() {
                     </Link>
                   )}
                   {!isAdmin && (
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border text-left">
+                    <button onClick={handleLogout} className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border text-left">
                       {language === "ne" ? "लगआउट" : "Logout"}
                     </button>
                   )}

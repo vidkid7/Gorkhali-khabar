@@ -1,13 +1,21 @@
 import { prisma } from "@/lib/prisma";
-import { AdminGoldSilverActions } from "./AdminGoldSilverActions";
+import { AdminGoldSilverActions, AdminGoldSilverRow } from "./AdminGoldSilverActions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminGoldSilverPage() {
-  const prices = await prisma.goldSilverPrice.findMany({
+  const pricesRaw = await prisma.goldSilverPrice.findMany({
     orderBy: { date: "desc" },
     take: 30,
   });
+  const prices = pricesRaw.map((p) => ({
+    id: p.id,
+    date: p.date.toISOString(),
+    fine_gold: p.fine_gold,
+    tejabi_gold: p.tejabi_gold,
+    silver: p.silver,
+    source: p.source,
+  }));
 
   return (
     <div className="space-y-6">
@@ -26,23 +34,12 @@ export default async function AdminGoldSilverPage() {
               <th className="text-right p-3 font-medium" style={{ color: "var(--muted)" }}>Gold 22k/tola</th>
               <th className="text-right p-3 font-medium" style={{ color: "var(--muted)" }}>Silver/tola</th>
               <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Source</th>
+              <th className="text-left p-3 font-medium" style={{ color: "var(--muted)" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {prices.map((p) => (
-              <tr key={p.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                <td className="p-3 font-medium">{new Date(p.date).toLocaleDateString()}</td>
-                <td className="p-3 text-right" style={{ color: "#f59e0b" }}>
-                  {p.fine_gold ? `Rs ${p.fine_gold.toLocaleString()}` : "—"}
-                </td>
-                <td className="p-3 text-right" style={{ color: "var(--foreground)" }}>
-                  {p.tejabi_gold ? `Rs ${p.tejabi_gold.toLocaleString()}` : "—"}
-                </td>
-                <td className="p-3 text-right" style={{ color: "#64748b" }}>
-                  {p.silver ? `Rs ${p.silver.toLocaleString()}` : "—"}
-                </td>
-                <td className="p-3 text-xs" style={{ color: "var(--muted)" }}>{p.source ?? "—"}</td>
-              </tr>
+              <AdminGoldSilverRow key={p.id} price={p} />
             ))}
           </tbody>
         </table>

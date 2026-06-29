@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowLeftRight, Coins, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ExchangeRate {
@@ -55,11 +56,12 @@ export function FinanceWidget() {
       <div className="px-4 py-3 flex items-center justify-between"
         style={{ background: "linear-gradient(135deg, #1565c0, #0d47a1)", color: "#fff" }}>
         <h3 className="text-sm font-bold flex items-center gap-2">
-          <span>💱</span>
+          <ArrowLeftRight className="h-4 w-4" />
           {language === "ne" ? "विनिमय दर" : "Exchange Rates"}
         </h3>
-        <Link href="/finance" className="text-xs opacity-80 hover:opacity-100">
-          {language === "ne" ? "सबै" : "All →"}
+        <Link href="/finance" className="text-xs opacity-80 hover:opacity-100 inline-flex items-center gap-1">
+          {language === "ne" ? "सबै" : "All"}
+          <ArrowRight className="inline h-3.5 w-3.5" />
         </Link>
       </div>
       <div className="divide-y" style={{ borderColor: "var(--border)" }}>
@@ -90,11 +92,12 @@ export function FinanceWidget() {
           <div className="px-4 py-3 flex items-center justify-between"
             style={{ background: "linear-gradient(135deg, #f9a825, #e65100)", color: "#fff" }}>
             <h3 className="text-sm font-bold flex items-center gap-2">
-              <span>🪙</span>
+              <Coins className="h-4 w-4" />
               {language === "ne" ? "सुन-चाँदी दर" : "Gold & Silver"}
             </h3>
-            <Link href="/finance#gold" className="text-xs opacity-80 hover:opacity-100">
-              {language === "ne" ? "सबै" : "All →"}
+            <Link href="/finance#gold" className="text-xs opacity-80 hover:opacity-100 inline-flex items-center gap-1">
+              {language === "ne" ? "सबै" : "All"}
+              <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="divide-y" style={{ borderColor: "var(--border)" }}>
@@ -142,8 +145,9 @@ export function FinanceWidget() {
       )}
 
       <div className="px-4 py-2 text-center" style={{ background: "var(--surface-alt)" }}>
-        <Link href="/finance" className="text-xs font-semibold hover:underline" style={{ color: "var(--primary)" }}>
-          {language === "ne" ? "पूर्ण वित्तीय डाटा हेर्नुहोस् →" : "View Full Financial Data →"}
+        <Link href="/finance" className="text-xs font-semibold hover:underline inline-flex items-center gap-1" style={{ color: "var(--primary)" }}>
+          {language === "ne" ? "पूर्ण वित्तीय डाटा हेर्नुहोस्" : "View Full Financial Data"}
+          <ArrowRight className="inline h-3.5 w-3.5" />
         </Link>
       </div>
     </div>

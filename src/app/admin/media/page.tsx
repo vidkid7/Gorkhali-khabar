@@ -2,6 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
+import {
+  Image as ImageIcon,
+  Clapperboard,
+  FileText,
+  Plus,
+  Check,
+  X,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -147,7 +157,7 @@ export default function AdminMediaPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold">🖼️ Media Library</h1>
+        <h1 className="text-2xl font-bold"><span className="inline-flex items-center gap-2"><ImageIcon className="h-6 w-6" />Media Library</span></h1>
         <div className="flex gap-2">
           <input
             ref={fileInputRef}
@@ -162,7 +172,7 @@ export default function AdminMediaPage() {
             className="w-full px-4 py-2 rounded-md text-sm font-medium sm:w-auto"
             style={{ background: "var(--accent)", color: "#fff", opacity: uploading ? 0.5 : 1 }}
           >
-            {uploading ? "Uploading..." : "+ Upload File"}
+            {uploading ? "Uploading..." : <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />Upload File</span>}
           </button>
         </div>
       </div>
@@ -228,11 +238,11 @@ export default function AdminMediaPage() {
                   />
                 ) : file.mime_type.startsWith("video/") ? (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-4xl">🎬</span>
+                    <Clapperboard className="h-10 w-10" />
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-4xl">📄</span>
+                    <FileText className="h-10 w-10" />
                   </div>
                 )}
               </div>
@@ -252,9 +262,9 @@ export default function AdminMediaPage() {
                       style={inputStyle}
                     />
                     <button onClick={() => updateAltText(file.id)}
-                      className="px-1 py-0.5 rounded text-xs" style={{ background: "#16a34a", color: "#fff" }}>✓</button>
+                      className="px-1 py-0.5 rounded text-xs" style={{ background: "#16a34a", color: "#fff" }}><Check className="h-3.5 w-3.5" /></button>
                     <button onClick={() => setEditingId(null)}
-                      className="px-1 py-0.5 rounded text-xs" style={{ background: "#6b7280", color: "#fff" }}>✕</button>
+                      className="px-1 py-0.5 rounded text-xs" style={{ background: "#6b7280", color: "#fff" }}><X className="h-3.5 w-3.5" /></button>
                   </div>
                 ) : (
                   <div className="flex gap-1">
@@ -284,7 +294,7 @@ export default function AdminMediaPage() {
           {page > 1 && (
             <button onClick={() => setPage(page - 1)} className="px-3 py-1.5 rounded-md text-sm"
               style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
-              ← Previous
+              <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Previous</span>
             </button>
           )}
           <span className="text-sm px-3" style={{ color: "var(--muted)" }}>
@@ -293,7 +303,7 @@ export default function AdminMediaPage() {
           {page < totalPages && (
             <button onClick={() => setPage(page + 1)} className="px-3 py-1.5 rounded-md text-sm"
               style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
-              Next →
+              <span className="inline-flex items-center gap-1">Next<ArrowRight className="h-4 w-4" /></span>
             </button>
           )}
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
@@ -180,7 +181,10 @@ export function LatestUpdatesPanel() {
             className="block text-center py-2 text-sm font-medium rounded-lg transition-colors text-white"
             style={{ background: "var(--primary)" }}
           >
-            {language === "ne" ? "२४ घण्टाका ताजा अपडेट →" : "24-Hour Updates →"}
+            <span className="inline-flex items-center justify-center gap-1">
+              {language === "ne" ? "२४ घण्टाका ताजा अपडेट" : "24-Hour Updates"}
+              <ArrowRight className="inline h-3.5 w-3.5" />
+            </span>
           </Link>
         </div>
       </aside>

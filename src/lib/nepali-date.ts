@@ -273,27 +273,27 @@ export function toNepaliNums(n: number | string): string {
   return String(n).replace(/\d/g, (d) => nepaliDigits[parseInt(d)]);
 }
 
-/** Festivals list: { bsMonth, bsDay, ne, en, emoji } */
+/** Festivals list: { bsMonth, bsDay, ne, en, icon } where icon is a Lucide icon name */
 export const BS_FESTIVALS = [
-  { bsMonth: 1, bsDay: 1, ne: "नयाँ वर्ष", en: "Nepali New Year", emoji: "🎉" },
-  { bsMonth: 1, bsDay: 1, ne: "विश्व स्वास्थ्य दिवस", en: "World Health Day", emoji: "🏥" },
-  { bsMonth: 1, bsDay: 15, ne: "मेष संक्रान्ति", en: "Mesh Sankranti", emoji: "🌞" },
-  { bsMonth: 2, bsDay: 15, ne: "वृष संक्रान्ति", en: "Brish Sankranti", emoji: "🌱" },
-  { bsMonth: 3, bsDay: 15, ne: "मिथुन संक्रान्ति", en: "Mithun Sankranti", emoji: "🌿" },
-  { bsMonth: 4, bsDay: 15, ne: "कर्क संक्रान्ति", en: "Karkat Sankranti", emoji: "☔" },
-  { bsMonth: 4, bsDay: 32, ne: "साउन संक्रान्ति", en: "Shrawan Sankranti", emoji: "🌧️" },
-  { bsMonth: 5, bsDay: 29, ne: "तीज", en: "Teej", emoji: "💃" },
-  { bsMonth: 6, bsDay: 1, ne: "गाई जात्रा", en: "Gai Jatra", emoji: "🐄" },
-  { bsMonth: 6, bsDay: 15, ne: "इन्द्र जात्रा", en: "Indra Jatra", emoji: "🎭" },
-  { bsMonth: 7, bsDay: 1, ne: "विजया दशमी", en: "Vijaya Dashami", emoji: "🙏" },
-  { bsMonth: 7, bsDay: 15, ne: "कोजाग्रत पूर्णिमा", en: "Kojagrat Purnima", emoji: "🌕" },
-  { bsMonth: 7, bsDay: 18, ne: "दीपावली", en: "Tihar / Deepawali", emoji: "🪔" },
-  { bsMonth: 8, bsDay: 1, ne: "छठ पर्व", en: "Chhath Parwa", emoji: "🌅" },
-  { bsMonth: 9, bsDay: 1, ne: "पुष संक्रान्ति", en: "Poush Sankranti", emoji: "❄️" },
-  { bsMonth: 10, bsDay: 1, ne: "माघे संक्रान्ति", en: "Maghe Sankranti", emoji: "🎑" },
-  { bsMonth: 11, bsDay: 7, ne: "सरस्वती पूजा", en: "Saraswati Puja", emoji: "📚" },
-  { bsMonth: 11, bsDay: 30, ne: "शिवरात्रि", en: "Shiva Ratri", emoji: "🕉️" },
-  { bsMonth: 12, bsDay: 7, ne: "फागु पूर्णिमा / होली", en: "Holi", emoji: "🎨" },
+  { bsMonth: 1, bsDay: 1, ne: "नयाँ वर्ष", en: "Nepali New Year", icon: "PartyPopper" },
+  { bsMonth: 1, bsDay: 1, ne: "विश्व स्वास्थ्य दिवस", en: "World Health Day", icon: "HeartPulse" },
+  { bsMonth: 1, bsDay: 15, ne: "मेष संक्रान्ति", en: "Mesh Sankranti", icon: "Sun" },
+  { bsMonth: 2, bsDay: 15, ne: "वृष संक्रान्ति", en: "Brish Sankranti", icon: "Sprout" },
+  { bsMonth: 3, bsDay: 15, ne: "मिथुन संक्रान्ति", en: "Mithun Sankranti", icon: "Leaf" },
+  { bsMonth: 4, bsDay: 15, ne: "कर्क संक्रान्ति", en: "Karkat Sankranti", icon: "Umbrella" },
+  { bsMonth: 4, bsDay: 32, ne: "साउन संक्रान्ति", en: "Shrawan Sankranti", icon: "CloudRain" },
+  { bsMonth: 5, bsDay: 29, ne: "तीज", en: "Teej", icon: "Music" },
+  { bsMonth: 6, bsDay: 1, ne: "गाई जात्रा", en: "Gai Jatra", icon: "PawPrint" },
+  { bsMonth: 6, bsDay: 15, ne: "इन्द्र जात्रा", en: "Indra Jatra", icon: "Drama" },
+  { bsMonth: 7, bsDay: 1, ne: "विजया दशमी", en: "Vijaya Dashami", icon: "Sparkles" },
+  { bsMonth: 7, bsDay: 15, ne: "कोजाग्रत पूर्णिमा", en: "Kojagrat Purnima", icon: "Moon" },
+  { bsMonth: 7, bsDay: 18, ne: "दीपावली", en: "Tihar / Deepawali", icon: "Flame" },
+  { bsMonth: 8, bsDay: 1, ne: "छठ पर्व", en: "Chhath Parwa", icon: "Sunrise" },
+  { bsMonth: 9, bsDay: 1, ne: "पुष संक्रान्ति", en: "Poush Sankranti", icon: "Snowflake" },
+  { bsMonth: 10, bsDay: 1, ne: "माघे संक्रान्ति", en: "Maghe Sankranti", icon: "Moon" },
+  { bsMonth: 11, bsDay: 7, ne: "सरस्वती पूजा", en: "Saraswati Puja", icon: "BookOpen" },
+  { bsMonth: 11, bsDay: 30, ne: "शिवरात्रि", en: "Shiva Ratri", icon: "Sparkles" },
+  { bsMonth: 12, bsDay: 7, ne: "फागु पूर्णिमा / होली", en: "Holi", icon: "Palette" },
 ];
 
 /** Format a BS date as string: e.g. "बैशाख ५, २०८१" */

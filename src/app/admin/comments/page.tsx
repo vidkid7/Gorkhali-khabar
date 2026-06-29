@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { AdminCommentActions } from "@/components/admin/AdminCommentActions";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +115,7 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
               href={`/admin/comments?page=${page - 1}${status ? `&status=${status}` : ""}`}
               className="btn-secondary text-sm"
             >
-              ← Previous
+              <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Previous</span>
             </a>
           )}
           <span className="text-sm px-3" style={{ color: "var(--muted)" }}>
@@ -125,7 +126,7 @@ export default async function AdminCommentsPage({ searchParams }: PageProps) {
               href={`/admin/comments?page=${page + 1}${status ? `&status=${status}` : ""}`}
               className="btn-secondary text-sm"
             >
-              Next →
+              <span className="inline-flex items-center gap-1">Next<ArrowRight className="h-4 w-4" /></span>
             </a>
           )}
         </div>

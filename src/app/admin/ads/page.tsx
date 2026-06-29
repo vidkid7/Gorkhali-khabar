@@ -1,6 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import {
+  Megaphone,
+  CheckCircle2,
+  X,
+  Upload,
+  Sparkles,
+  Plus,
+  MapPin,
+  PanelTop,
+  PanelRight,
+  FileText,
+  BarChart3,
+  PanelBottom,
+  MessageSquare,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +41,12 @@ interface AdPosition {
 }
 
 const AD_POSITION_TYPES = [
-  { value: "HEADER", label: "Header Banner", icon: "🔝" },
-  { value: "SIDEBAR", label: "Sidebar", icon: "📐" },
-  { value: "IN_ARTICLE", label: "In Article", icon: "📄" },
-  { value: "BETWEEN_SECTIONS", label: "Between Sections", icon: "📊" },
-  { value: "FOOTER", label: "Footer", icon: "⬇️" },
-  { value: "POPUP", label: "Popup", icon: "💬" },
+  { value: "HEADER", label: "Header Banner", icon: <PanelTop className="h-4 w-4" /> },
+  { value: "SIDEBAR", label: "Sidebar", icon: <PanelRight className="h-4 w-4" /> },
+  { value: "IN_ARTICLE", label: "In Article", icon: <FileText className="h-4 w-4" /> },
+  { value: "BETWEEN_SECTIONS", label: "Between Sections", icon: <BarChart3 className="h-4 w-4" /> },
+  { value: "FOOTER", label: "Footer", icon: <PanelBottom className="h-4 w-4" /> },
+  { value: "POPUP", label: "Popup", icon: <MessageSquare className="h-4 w-4" /> },
 ];
 
 export default function AdminAdsPage() {
@@ -175,7 +190,7 @@ export default function AdminAdsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold leading-tight" style={{ color: "var(--foreground)" }}>📢 Ad Management</h1>
+        <h1 className="text-2xl font-bold leading-tight" style={{ color: "var(--foreground)" }}><span className="inline-flex items-center gap-2"><Megaphone className="h-6 w-6" />Ad Management</span></h1>
         <div className="grid grid-cols-2 gap-2 sm:flex">
           <button onClick={() => setActiveTab("ads")}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "ads" ? "text-white" : ""}`}
@@ -193,7 +208,7 @@ export default function AdminAdsPage() {
       {message && (
         <div className="p-3 rounded-lg text-sm font-medium animate-fadeIn"
           style={{ background: messageType === "success" ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)", border: `1px solid ${messageType === "success" ? "rgba(22,163,74,0.3)" : "rgba(220,38,38,0.3)"}`, color: messageType === "success" ? "#16a34a" : "#dc2626" }}>
-          {messageType === "success" ? "✅" : "❌"} {message}
+          <span className="inline-flex items-center gap-2">{messageType === "success" ? <CheckCircle2 className="h-4 w-4" /> : <X className="h-4 w-4" />}{message}</span>
         </div>
       )}
 
@@ -243,7 +258,7 @@ export default function AdminAdsPage() {
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
                     className="px-4 py-2.5 rounded-lg text-sm font-medium shrink-0 w-full sm:w-auto" style={{ background: "var(--primary)", color: "#fff", opacity: uploading ? 0.6 : 1 }}>
-                    {uploading ? "Uploading..." : "📤 Upload"}
+                    {uploading ? "Uploading..." : <span className="inline-flex items-center gap-2"><Upload className="h-4 w-4" />Upload</span>}
                   </button>
                 </div>
                 {imageUrl && <img src={imageUrl} alt="Preview" className="mt-2 max-h-20 rounded-lg" />}
@@ -259,7 +274,7 @@ export default function AdminAdsPage() {
               <div className="flex items-end">
                 <button type="submit" className="w-full px-4 py-2.5 rounded-lg text-sm font-bold"
                   style={{ background: "var(--accent)", color: "#fff" }}>
-                  ✨ Create Ad
+                  <span className="inline-flex items-center justify-center gap-2"><Sparkles className="h-4 w-4" />Create Ad</span>
                 </button>
               </div>
             </form>
@@ -311,7 +326,7 @@ export default function AdminAdsPage() {
                 })}
                 {ads.length === 0 && (
                   <tr><td colSpan={8} className="p-12 text-center" style={{ color: "var(--muted)" }}>
-                    <p className="text-3xl mb-2">📢</p>
+                    <p className="flex justify-center mb-2"><Megaphone className="h-8 w-8" /></p>
                     <p>No ads yet. Create your first advertisement above.</p>
                   </td></tr>
                 )}
@@ -333,7 +348,7 @@ export default function AdminAdsPage() {
                 <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Type *</label>
                 <select value={posType} onChange={(e) => setPosType(e.target.value)} className={inputCls} style={inputStyle}>
                   {AD_POSITION_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+                    <option key={t.value} value={t.value}>{t.label}</option>
                   ))}
                 </select>
               </div>
@@ -348,7 +363,7 @@ export default function AdminAdsPage() {
                 </div>
                 <button type="submit" className="px-4 py-2.5 rounded-lg text-sm font-bold shrink-0 w-full sm:w-auto"
                   style={{ background: "var(--primary)", color: "#fff" }}>
-                  + Add
+                  <span className="inline-flex items-center justify-center gap-2"><Plus className="h-4 w-4" />Add</span>
                 </button>
               </div>
             </form>
@@ -372,7 +387,7 @@ export default function AdminAdsPage() {
             ))}
             {positions.length === 0 && (
               <div className="col-span-full p-12 text-center rounded-xl" style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}>
-                <p className="text-3xl mb-2">📍</p>
+                <p className="flex justify-center mb-2"><MapPin className="h-8 w-8" /></p>
                 <p>No positions yet. Create positions for ad placement.</p>
               </div>
             )}

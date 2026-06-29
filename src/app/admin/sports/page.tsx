@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Trophy } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -157,7 +158,7 @@ export default function AdminSportsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">⚽ Sports Management</h1>
+      <h1 className="text-2xl font-bold"><span className="inline-flex items-center gap-2"><Trophy className="h-6 w-6" />Sports Management</span></h1>
 
       {message && (
         <div className="p-3 rounded-md text-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--foreground)" }}>

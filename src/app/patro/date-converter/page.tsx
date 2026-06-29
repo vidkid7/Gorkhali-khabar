@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RefreshCw, ArrowRight, ArrowLeftRight } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PatroTabs } from "@/components/patro/PatroTabs";
@@ -58,13 +59,13 @@ export default function DateConverterPage() {
       <div className="mx-auto max-w-6xl px-4 py-8" style={{ minHeight: "100vh" }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
-            style={{ background: "linear-gradient(135deg,#8b5cf6,#7c3aed)" }}>🔄</div>
+            style={{ background: "linear-gradient(135deg,#8b5cf6,#7c3aed)" }}><RefreshCw className="h-5 w-5" /></div>
           <div>
             <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("मिति परिवर्तन", "Date Converter")}
             </h1>
-            <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
-              {mn("बि.सं. ↔ ई.सं. मिति रूपान्तरण", "BS ↔ AD date conversion")}
+            <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color: "var(--muted)" }}>
+              {mn("बि.सं.", "BS")} <ArrowLeftRight className="inline h-3 w-3" /> {mn("ई.सं. मिति रूपान्तरण", "AD date conversion")}
             </p>
           </div>
         </div>
@@ -76,7 +77,7 @@ export default function DateConverterPage() {
           <div className="rounded-2xl overflow-hidden"
             style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #c62828, #b71c1c)", color: "#fff" }}>
-              <h2 className="text-sm font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("बि.सं. → ई.सं.", "BS → AD")}</h2>
+              <h2 className="text-sm font-bold flex items-center gap-1.5" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("बि.सं.", "BS")} <ArrowRight className="h-3.5 w-3.5" /> {mn("ई.सं.", "AD")}</h2>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -126,7 +127,7 @@ export default function DateConverterPage() {
           <div className="rounded-2xl overflow-hidden"
             style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
             <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#fff" }}>
-              <h2 className="text-sm font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("ई.सं. → बि.सं.", "AD → BS")}</h2>
+              <h2 className="text-sm font-bold flex items-center gap-1.5" style={{ fontFamily: "var(--font-nepali-serif)" }}>{mn("ई.सं.", "AD")} <ArrowRight className="h-3.5 w-3.5" /> {mn("बि.सं.", "BS")}</h2>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-3 gap-2 sm:gap-3">

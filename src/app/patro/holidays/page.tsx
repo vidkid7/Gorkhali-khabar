@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Umbrella } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PatroTabs } from "@/components/patro/PatroTabs";
@@ -42,7 +43,7 @@ export default function HolidaysPage() {
       <div className="mx-auto max-w-6xl px-4 py-8" style={{ minHeight: "100vh" }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg"
-            style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}>🏖️</div>
+            style={{ background: "linear-gradient(135deg,#e11b22,#c41018)" }}><Umbrella className="h-5 w-5" /></div>
           <div>
             <h1 className="text-2xl font-black" style={{ color: "var(--foreground)", fontFamily: "var(--font-nepali-serif)" }}>
               {mn("सार्वजनिक बिदाहरू", "Public Holidays")}

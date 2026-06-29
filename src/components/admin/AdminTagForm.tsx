@@ -22,6 +22,9 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editNameEn, setEditNameEn] = useState("");
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -65,6 +68,33 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
       alert("नेटवर्क त्रुटि भयो");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleUpdate(id: string) {
+    if (!editName.trim()) return;
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/v1/admin/tags", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name: editName.trim(), name_en: editNameEn.trim() || null }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingId(null);
+        setEditName("");
+        setEditNameEn("");
+        router.refresh();
+      } else {
+        setError(data.error || "ट्याग अपडेट भएन");
+      }
+    } catch {
+      setError("नेटवर्क त्रुटि भयो");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -134,8 +164,28 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
             <tbody>
               {tags.map((tag) => (
                 <tr key={tag.id}>
-                  <td className="font-medium">{tag.name}</td>
-                  <td style={{ color: "var(--muted)" }}>{tag.name_en || "—"}</td>
+                  <td className="font-medium">
+                    {editingId === tag.id ? (
+                      <input
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="input"
+                      />
+                    ) : (
+                      tag.name
+                    )}
+                  </td>
+                  <td style={{ color: "var(--muted)" }}>
+                    {editingId === tag.id ? (
+                      <input
+                        value={editNameEn}
+                        onChange={(e) => setEditNameEn(e.target.value)}
+                        className="input"
+                      />
+                    ) : (
+                      tag.name_en || "—"
+                    )}
+                  </td>
                   <td>
                     <code
                       className="px-1.5 py-0.5 rounded text-xs"
@@ -146,13 +196,46 @@ export function AdminTagForm({ tags }: AdminTagFormProps) {
                   </td>
                   <td style={{ color: "var(--muted)" }}>{tag._count?.articles ?? 0}</td>
                   <td>
-                    <button
-                      onClick={() => handleDelete(tag.id, tag.name)}
-                      disabled={deletingId === tag.id}
-                      className="btn-danger btn-sm"
-                    >
-                      {deletingId === tag.id ? "..." : "मेट्नुहोस्"}
-                    </button>
+                    {editingId === tag.id ? (
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleUpdate(tag.id)}
+                          disabled={loading}
+                          className="btn-primary btn-sm"
+                        >
+                          सेभ
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingId(null)}
+                          className="btn-secondary btn-sm"
+                        >
+                          रद्द
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingId(tag.id);
+                            setEditName(tag.name);
+                            setEditNameEn(tag.name_en || "");
+                          }}
+                          className="btn-secondary btn-sm"
+                        >
+                          सम्पादन
+                        </button>
+                        <button
+                          onClick={() => handleDelete(tag.id, tag.name)}
+                          disabled={deletingId === tag.id}
+                          className="btn-danger btn-sm"
+                        >
+                          {deletingId === tag.id ? "..." : "मेट्नुहोस्"}
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

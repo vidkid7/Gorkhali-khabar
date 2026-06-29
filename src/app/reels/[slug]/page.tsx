@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { Eye } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -103,7 +104,7 @@ export default async function ReelPage({ params }: Props) {
         )}
 
         <div className="flex items-center gap-4 text-sm" style={{ color: "var(--muted)" }}>
-          <span>👁 {reel.view_count.toLocaleString()} views</span>
+          <span className="inline-flex items-center gap-1"><Eye className="h-4 w-4" /> {reel.view_count.toLocaleString()} views</span>
           <span suppressHydrationWarning>{reel.created_at.toLocaleDateString("ne-NP")}</span>
         </div>
       </main>

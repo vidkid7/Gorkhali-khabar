@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CloudSun, Thermometer } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WeatherData {
@@ -8,7 +9,6 @@ interface WeatherData {
   feels_like: number;
   desc: string;
   desc_ne: string;
-  icon: string;
   humidity: number;
   wind: number;
   city: string;
@@ -29,7 +29,6 @@ export function WeatherWidget() {
           feels_like: parseInt(cc.FeelsLikeC),
           desc: cc.weatherDesc[0].value,
           desc_ne: cc.weatherDesc[0].value,
-          icon: "🌤️",
           humidity: parseInt(cc.humidity),
           wind: parseInt(cc.windspeedKmph),
           city: "Kathmandu",
@@ -42,7 +41,7 @@ export function WeatherWidget() {
   if (loading) {
     return (
       <div className="weather-chip animate-pulse">
-        <span>🌡️</span>
+        <Thermometer className="h-4 w-4" />
         <span className="w-12 h-3 rounded" style={{ background: "var(--border)" }} />
       </div>
     );
@@ -52,7 +51,7 @@ export function WeatherWidget() {
 
   return (
     <div className="weather-chip cursor-default" title={language === "ne" ? weather.desc_ne : weather.desc}>
-      <span>{weather.icon}</span>
+      <CloudSun className="h-4 w-4" />
       <span className="font-semibold">{weather.temp}°C</span>
       <span className="hidden sm:inline text-xs" style={{ color: "var(--muted)" }}>
         {language === "ne" ? "काठमाडौं" : "KTM"}
