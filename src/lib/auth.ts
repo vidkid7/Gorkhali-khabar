@@ -14,6 +14,9 @@ const ACCOUNT_LOCK_WINDOW_MS = 15 * 60 * 1000;
 const ACCOUNT_LOCK_MAX_FAILURES = 5;
 const DUMMY_PASSWORD_HASH =
   "$2b$12$rN6gn4q1MqAelqfkLKKqnOK6sqY8Sr74jkLLzbVcdOU8xjs9d7Bvm";
+const googleAuthEnabled = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+);
 
 declare module "next-auth" {
   interface Session {
@@ -52,10 +55,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/auth/error",
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    ...(googleAuthEnabled
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          }),
+        ]
+      : []),
     Credentials({
       name: "credentials",
       credentials: {
