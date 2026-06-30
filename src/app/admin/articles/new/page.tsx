@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminPath } from "@/lib/admin-path";
 
 export const dynamic = "force-dynamic";
 
@@ -96,7 +97,7 @@ export default function NewArticlePage() {
       });
       const data = await res.json();
       if (data.success) {
-        router.push("/admin/articles");
+        router.push(adminPath("/articles"));
       } else {
         setError(data.error || "Failed to create article");
       }

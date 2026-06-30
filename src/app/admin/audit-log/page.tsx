@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { adminPath } from "@/lib/admin-path";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -116,7 +117,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
         <div className="flex flex-wrap items-center justify-center gap-2">
           {page > 1 && (
             <a
-              href={`/admin/audit-log?page=${page - 1}${search ? `&search=${search}` : ""}${action ? `&action=${action}` : ""}`}
+              href={adminPath(`/audit-log?page=${page - 1}${search ? `&search=${search}` : ""}${action ? `&action=${action}` : ""}`)}
               className="btn-secondary text-sm"
             >
               <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Previous</span>
@@ -127,7 +128,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
           </span>
           {page < totalPages && (
             <a
-              href={`/admin/audit-log?page=${page + 1}${search ? `&search=${search}` : ""}${action ? `&action=${action}` : ""}`}
+              href={adminPath(`/audit-log?page=${page + 1}${search ? `&search=${search}` : ""}${action ? `&action=${action}` : ""}`)}
               className="btn-secondary text-sm"
             >
               <span className="inline-flex items-center gap-1">Next<ArrowRight className="h-4 w-4" /></span>

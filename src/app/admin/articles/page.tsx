@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { adminPath } from "@/lib/admin-path";
 import type { ArticleStatus } from "@prisma/client";
 import { Plus, ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -47,7 +48,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)" }}>Articles</h1>
-        <Link href="/admin/articles/new" className="btn-primary">
+        <Link href={adminPath("/articles/new")} className="btn-primary">
           <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />New Article</span>
         </Link>
       </div>
@@ -98,7 +99,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
               <tr key={article.id} style={{ borderBottom: "1px solid var(--border)" }}>
                 <td className="p-3">
                   <Link
-                    href={`/admin/articles/${article.id}`}
+                    href={adminPath(`/articles/${article.id}`)}
                     className="hover:underline font-medium"
                     style={{ color: "var(--accent)" }}
                   >
@@ -132,7 +133,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
         <div className="flex items-center justify-center gap-2">
           {page > 1 && (
             <Link
-              href={`/admin/articles?page=${page - 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`}
+              href={adminPath(`/articles?page=${page - 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`)}
               className="btn-secondary text-sm"
             >
               <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Previous</span>
@@ -143,7 +144,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
           </span>
           {page < totalPages && (
             <Link
-              href={`/admin/articles?page=${page + 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`}
+              href={adminPath(`/articles?page=${page + 1}${search ? `&search=${search}` : ""}${status ? `&status=${status}` : ""}`)}
               className="btn-secondary text-sm"
             >
               <span className="inline-flex items-center gap-1">Next<ArrowRight className="h-4 w-4" /></span>

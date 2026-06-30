@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { adminPath } from "@/lib/admin-path";
 import {
   ArrowLeft,
   Trash2,
@@ -137,7 +138,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
       const res = await fetch(`/api/v1/articles/${article.id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
-        router.push("/admin/articles");
+        router.push(adminPath("/articles"));
       } else {
         setError(data.error || "मेट्न सकिएन");
         setDeleting(false);
@@ -195,7 +196,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Link href="/admin/articles" className="text-sm" style={{ color: "var(--muted)" }}>
+            <Link href={adminPath("/articles")} className="text-sm" style={{ color: "var(--muted)" }}>
               <span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />लेखहरू</span>
             </Link>
             <span style={{ color: "var(--muted)" }}>/</span>
@@ -406,7 +407,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
                   {tags.length === 0 && (
                     <p className="text-xs" style={{ color: "var(--muted)" }}>
                       कुनै ट्याग छैन —{" "}
-                      <a href="/admin/tags" className="underline" style={{ color: "var(--accent)" }}>
+                      <a href={adminPath("/tags")} className="underline" style={{ color: "var(--accent)" }}>
                         थप्नुहोस्
                       </a>
                     </p>

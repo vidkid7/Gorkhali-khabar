@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import { adminPath } from "@/lib/admin-path";
 
 const FOOTER_SECTIONS = {
   news: [
@@ -296,7 +297,7 @@ export function Footer() {
             <Link href="/about" className="hover:text-footer-heading">
               {t("footer.about")}
             </Link>
-            <Link href="/admin" className="hover:text-footer-heading">
+            <Link href={adminPath()} className="hover:text-footer-heading">
               {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
             </Link>
           </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { adminPath } from "@/lib/admin-path";
 import { STATUS_COLORS } from "@/lib/utils";
 import {
   FileText,
@@ -125,12 +126,12 @@ export default async function AdminDashboard() {
   const maxCat = Math.max(...stats.categoryBreakdown.map((c) => c._count.articles), 1);
 
   const statCards = [
-    { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: <FileText className="h-5 w-5" />, color: "var(--primary)", href: "/admin/articles" },
-    { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: <Eye className="h-5 w-5" />, color: "var(--accent)", href: "/admin/analytics" },
-    { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: <MessageSquare className="h-5 w-5" />, color: "var(--warning)", href: "/admin/comments" },
-    { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: <Megaphone className="h-5 w-5" />, color: "var(--success)", href: "/admin/ads" },
-    { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: <Users className="h-5 w-5" />, color: "var(--info, var(--primary))", href: "/admin/users" },
-    { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: <Tag className="h-5 w-5" />, color: "var(--muted)", href: "/admin/tags" },
+    { label: "कुल लेखहरू", value: stats.totalArticles, sub: `${stats.publishedArticles} प्रकाशित`, icon: <FileText className="h-5 w-5" />, color: "var(--primary)", href: adminPath("/articles") },
+    { label: "कुल भ्युज", value: stats.totalViews.toLocaleString(), sub: `आज: ${stats.pageViewsToday}`, icon: <Eye className="h-5 w-5" />, color: "var(--accent)", href: adminPath("/analytics") },
+    { label: "टिप्पणीहरू", value: stats.pendingComments, sub: `${stats.approvedComments} स्वीकृत`, icon: <MessageSquare className="h-5 w-5" />, color: "var(--warning)", href: adminPath("/comments") },
+    { label: "विज्ञापन", value: stats.activeAds, sub: "सक्रिय", icon: <Megaphone className="h-5 w-5" />, color: "var(--success)", href: adminPath("/ads") },
+    { label: "प्रयोगकर्ता", value: stats.recentUsers, sub: "७ दिनमा नया", icon: <Users className="h-5 w-5" />, color: "var(--info, var(--primary))", href: adminPath("/users") },
+    { label: "ट्यागहरू", value: stats.totalTags, sub: `${stats.totalCategories} वर्ग`, icon: <Tag className="h-5 w-5" />, color: "var(--muted)", href: adminPath("/tags") },
   ];
 
   return (
@@ -147,7 +148,7 @@ export default async function AdminDashboard() {
           <Link href="/" className="btn-secondary">
             <span className="inline-flex items-center gap-2"><Globe className="h-4 w-4" />साइट हेर्नुहोस्</span>
           </Link>
-          <Link href="/admin/articles/new" className="btn-primary">
+          <Link href={adminPath("/articles/new")} className="btn-primary">
             <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />नयाँ लेख</span>
           </Link>
         </div>
@@ -226,7 +227,7 @@ export default async function AdminDashboard() {
         <div className="card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>वर्ग अनुसार लेखहरू</h2>
-            <Link href="/admin/categories" className="text-xs font-medium" style={{ color: "var(--accent)" }}>
+            <Link href={adminPath("/categories")} className="text-xs font-medium" style={{ color: "var(--accent)" }}>
               व्यवस्थापन <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
           </div>
@@ -253,9 +254,9 @@ export default async function AdminDashboard() {
           {/* Quick links */}
           <div className="mt-5 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ borderColor: "var(--border)" }}>
             {[
-              { label: "नयाँ लेख", href: "/admin/articles/new", icon: <Pencil className="h-4 w-4" />, color: "var(--primary)" },
-              { label: "विश्लेषण", href: "/admin/analytics", icon: <TrendingUp className="h-4 w-4" />, color: "var(--accent)" },
-              { label: "सेटिङ", href: "/admin/settings", icon: <Settings className="h-4 w-4" />, color: "var(--muted)" },
+              { label: "नयाँ लेख", href: adminPath("/articles/new"), icon: <Pencil className="h-4 w-4" />, color: "var(--primary)" },
+              { label: "विश्लेषण", href: adminPath("/analytics"), icon: <TrendingUp className="h-4 w-4" />, color: "var(--accent)" },
+              { label: "सेटिङ", href: adminPath("/settings"), icon: <Settings className="h-4 w-4" />, color: "var(--muted)" },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -275,7 +276,7 @@ export default async function AdminDashboard() {
       <div className="card">
         <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-nepali-serif)" }}>हालका लेखहरू</h2>
-          <Link href="/admin/articles" className="text-sm font-medium" style={{ color: "var(--accent)" }}>
+          <Link href={adminPath("/articles")} className="text-sm font-medium" style={{ color: "var(--accent)" }}>
             सबै हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
           </Link>
         </div>
@@ -298,7 +299,7 @@ export default async function AdminDashboard() {
                   <tr key={article.id}>
                     <td>
                       <Link
-                        href={`/admin/articles/${article.id}`}
+                        href={adminPath(`/articles/${article.id}`)}
                         className="hover:underline font-medium"
                         style={{ color: "var(--accent)" }}
                       >

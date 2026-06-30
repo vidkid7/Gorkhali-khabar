@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { adminPath } from "@/lib/admin-path";
 
 export const dynamic = "force-dynamic";
 
@@ -115,7 +116,7 @@ export default async function AdminNewsletterPage({ searchParams }: PageProps) {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <a
-            href={`/admin/newsletter?page=${page - 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`}
+            href={adminPath(`/newsletter?page=${page - 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`)}
             className={`btn-secondary ${page <= 1 ? "pointer-events-none opacity-50" : ""}`}
           >
             Previous
@@ -124,7 +125,7 @@ export default async function AdminNewsletterPage({ searchParams }: PageProps) {
             Page {page} of {totalPages}
           </span>
           <a
-            href={`/admin/newsletter?page=${page + 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`}
+            href={adminPath(`/newsletter?page=${page + 1}${search ? `&search=${encodeURIComponent(search)}` : ""}`)}
             className={`btn-secondary ${page >= totalPages ? "pointer-events-none opacity-50" : ""}`}
           >
             Next

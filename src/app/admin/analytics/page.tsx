@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { adminPath } from "@/lib/admin-path";
 import {
   FileText,
   Eye,
@@ -194,7 +195,7 @@ export default async function AdminAnalyticsPage() {
             साइटको प्रदर्शन र तथ्याङ्कहरू
           </p>
         </div>
-        <Link href="/admin" className="btn-secondary btn-sm"><span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />ड्यासबोर्ड</span></Link>
+        <Link href={adminPath()} className="btn-secondary btn-sm"><span className="inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" />ड्यासबोर्ड</span></Link>
       </div>
 
       {/* Key Metrics Grid */}
@@ -206,7 +207,7 @@ export default async function AdminAnalyticsPage() {
             sub: `${data.articles.published} प्रकाशित · ${data.articles.draft} ड्राफ्ट`,
             icon: <FileText className="h-6 w-6" />, color: "var(--primary)",
             trend: <TrendBadge current={data.articles.thisMonth} previous={data.articles.lastMonth} />,
-            href: "/admin/articles",
+            href: adminPath("/articles"),
           },
           {
             label: "कुल हेराइ", labelEn: "Total Views",
@@ -222,7 +223,7 @@ export default async function AdminAnalyticsPage() {
             sub: `यो हप्ता: +${data.users.thisWeek}`,
             icon: <Users className="h-6 w-6" />, color: "var(--success)",
             trend: <TrendBadge current={data.users.thisMonth} previous={data.users.thisMonth > 0 ? Math.max(1, data.users.thisMonth - data.users.thisWeek) : 1} />,
-            href: "/admin/users",
+            href: adminPath("/users"),
           },
           {
             label: "टिप्पणीहरू", labelEn: "Comments",
@@ -230,7 +231,7 @@ export default async function AdminAnalyticsPage() {
             sub: `${data.comments.pending} पेन्डिङ`,
             icon: <MessageSquare className="h-6 w-6" />, color: "var(--warning)",
             trend: <TrendBadge current={data.comments.today} previous={0} />,
-            href: "/admin/comments",
+            href: adminPath("/comments"),
           },
         ].map((card) => (
           <Link key={card.label} href={card.href} className="card p-5 hover:scale-[1.02] transition-transform">
@@ -323,7 +324,7 @@ export default async function AdminAnalyticsPage() {
         <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold">वर्ग अनुसार लेखहरू</h2>
-            <Link href="/admin/categories" className="text-xs" style={{ color: "var(--accent)" }}>
+            <Link href={adminPath("/categories")} className="text-xs" style={{ color: "var(--accent)" }}>
               हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
           </div>
@@ -398,7 +399,7 @@ export default async function AdminAnalyticsPage() {
       <div className="card">
         <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-base font-semibold">सबैभन्दा धेरै हेरिएका लेखहरू</h2>
-          <Link href="/admin/articles" className="text-xs" style={{ color: "var(--accent)" }}>
+          <Link href={adminPath("/articles")} className="text-xs" style={{ color: "var(--accent)" }}>
             सबै हेर्नुहोस् <ArrowRight className="inline h-3.5 w-3.5" />
           </Link>
         </div>
@@ -422,7 +423,7 @@ export default async function AdminAnalyticsPage() {
                   </td>
                   <td>
                     <Link
-                      href={`/admin/articles/${article.id}`}
+                      href={adminPath(`/articles/${article.id}`)}
                       className="hover:underline font-medium text-sm"
                       style={{ color: "var(--accent)" }}
                     >

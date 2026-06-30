@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { FontSizeProvider, useFontSize } from "@/contexts/FontSizeContext";
 import { useAdminRole } from "@/components/admin/AdminRoleProvider";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
+import { adminPath, internalAdminPath } from "@/lib/admin-path";
 import { signOut } from "next-auth/react";
 import {
   BarChart3,
@@ -33,26 +34,26 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/admin",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: <BarChart3 className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/articles",    labelNe: "लेखहरू",         labelEn: "Articles",       icon: <FileText className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/categories",  labelNe: "वर्गहरू",        labelEn: "Categories",     icon: <Folder className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/tags",        labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: <Tag className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/comments",    labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: <MessageSquare className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/media",       labelNe: "मिडिया",         labelEn: "Media",          icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
-  { href: "/admin/ads",         labelNe: "विज्ञापन",       labelEn: "Ads",            icon: <Megaphone className="h-5 w-5" />, roles: ["ADMIN"] },
-  { href: "/admin/sports",      labelNe: "खेलकुद",         labelEn: "Sports",         icon: <Trophy className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/reels",       labelNe: "रिल्स",          labelEn: "Reels",          icon: <Clapperboard className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/galleries",   labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: <Radio className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/analytics",   labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: <TrendingUp className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/holidays",    labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: <Palmtree className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/gold-silver", labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: <Coins className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/forex",       labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: <ArrowLeftRight className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/rashifal",    labelNe: "राशिफल",         labelEn: "Rashifal",       icon: <Sparkles className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
-  { href: "/admin/newsletter",  labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: <Mail className="h-5 w-5" />, roles: ["ADMIN"] },
-  { href: "/admin/users",       labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: <Users className="h-5 w-5" />, roles: ["ADMIN"] },
-  { href: "/admin/settings",    labelNe: "सेटिङ",          labelEn: "Settings",       icon: <Settings className="h-5 w-5" />, roles: ["ADMIN"] },
-  { href: "/admin/audit-log",   labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: <ClipboardList className="h-5 w-5" />, roles: ["ADMIN"] },
+  { path: "/",             labelNe: "ड्यासबोर्ड",     labelEn: "Dashboard",      icon: <BarChart3 className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { path: "/articles",     labelNe: "लेखहरू",         labelEn: "Articles",       icon: <FileText className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { path: "/categories",   labelNe: "वर्गहरू",        labelEn: "Categories",     icon: <Folder className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/tags",         labelNe: "ट्यागहरू",       labelEn: "Tags",           icon: <Tag className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/comments",     labelNe: "टिप्पणीहरू",     labelEn: "Comments",       icon: <MessageSquare className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/media",        labelNe: "मिडिया",         labelEn: "Media",          icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR", "AUTHOR"] },
+  { path: "/ads",          labelNe: "विज्ञापन",       labelEn: "Ads",            icon: <Megaphone className="h-5 w-5" />, roles: ["ADMIN"] },
+  { path: "/sports",       labelNe: "खेलकुद",         labelEn: "Sports",         icon: <Trophy className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/reels",        labelNe: "रिल्स",          labelEn: "Reels",          icon: <Clapperboard className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/galleries",    labelNe: "ग्यालेरीहरू",    labelEn: "Galleries",      icon: <ImageIcon className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/breaking-news", labelNe: "ब्रेकिङ न्युज", labelEn: "Breaking News", icon: <Radio className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/analytics",    labelNe: "विश्लेषण",       labelEn: "Analytics",      icon: <TrendingUp className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/holidays",     labelNe: "बिदाहरू",        labelEn: "Holidays",       icon: <Palmtree className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/gold-silver",  labelNe: "सुन-चाँदी",      labelEn: "Gold-Silver",    icon: <Coins className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/forex",        labelNe: "विनिमय दर",      labelEn: "Forex Rates",    icon: <ArrowLeftRight className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/rashifal",     labelNe: "राशिफल",         labelEn: "Rashifal",       icon: <Sparkles className="h-5 w-5" />, roles: ["ADMIN", "EDITOR"] },
+  { path: "/newsletter",   labelNe: "सदस्यता",        labelEn: "Newsletter",     icon: <Mail className="h-5 w-5" />, roles: ["ADMIN"] },
+  { path: "/users",        labelNe: "प्रयोगकर्ता",    labelEn: "Users",          icon: <Users className="h-5 w-5" />, roles: ["ADMIN"] },
+  { path: "/settings",     labelNe: "सेटिङ",          labelEn: "Settings",       icon: <Settings className="h-5 w-5" />, roles: ["ADMIN"] },
+  { path: "/audit-log",    labelNe: "अडिट लग",        labelEn: "Audit Log",      icon: <ClipboardList className="h-5 w-5" />, roles: ["ADMIN"] },
 ];
 
 function FontSizerInline() {
@@ -113,9 +114,11 @@ function SidebarContent() {
     localStorage.setItem("adminLang", next);
   }
 
-  function isActive(href: string) {
-    if (href === "/admin") return pathname === "/admin";
-    return pathname.startsWith(href);
+  function isActive(path: string) {
+    const publicPath = adminPath(path);
+    const internalPath = internalAdminPath(path);
+    if (path === "/") return pathname === publicPath || pathname === internalPath;
+    return pathname.startsWith(publicPath) || pathname.startsWith(internalPath);
   }
 
   return (
@@ -150,7 +153,7 @@ function SidebarContent() {
           className="px-4 py-3.5 border-b flex items-center justify-between"
           style={{ borderColor: "var(--border)" }}
         >
-          <Link href="/admin" className="flex items-center gap-3" style={{ color: "var(--foreground)" }}>
+          <Link href={adminPath()} className="flex items-center gap-3" style={{ color: "var(--foreground)" }}>
             {config.site_logo ? (
               <div className="relative w-9 h-9 rounded-lg bg-white overflow-hidden ring-1 ring-border shrink-0">
                 <Image src={config.site_logo} alt="Logo" fill className="object-contain p-0.5" unoptimized />
@@ -182,11 +185,12 @@ function SidebarContent() {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-2 px-2" style={{ scrollbarWidth: "thin" }}>
           {navItems.filter(item => item.roles.includes(role)).map((item) => {
-            const active = isActive(item.href);
+            const href = adminPath(item.path);
+            const active = isActive(item.path);
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={item.path}
+                href={href}
                 onClick={() => setOpen(false)}
                 className={`admin-nav-link ${active ? "active" : ""}`}
               >

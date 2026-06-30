@@ -13,6 +13,7 @@ import { WeatherWidget } from "@/components/widgets/WeatherWidget";
 import { useRouter } from "next/navigation";
 import { FontSizer } from "@/components/ui/FontSizer";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { adminPath } from "@/lib/admin-path";
 import { User as UserIcon, LogIn, UserPlus } from "lucide-react";
 
 /* ─── Navigation Data ─────────────────────────────────────────────────── */
@@ -558,7 +559,7 @@ export function Header() {
           {t("common.profile")}
         </Link>
         {isAdmin && (
-          <Link href="/admin" className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt font-medium" style={{ color: "var(--accent)" }} onClick={() => setUserMenuOpen(false)}>
+          <Link href={adminPath()} className="block px-4 py-2.5 text-sm text-foreground hover:bg-surface-alt font-medium" style={{ color: "var(--accent)" }} onClick={() => setUserMenuOpen(false)}>
             {language === "ne" ? "एडमिन प्यानल" : "Admin Panel"}
           </Link>
         )}
@@ -707,7 +708,7 @@ export function Header() {
                     {language === "ne" ? "प्रोफाइल" : "Profile"}
                   </Link>
                   {isAdmin && (
-                    <Link href="/admin" className="rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-accent-hover" onClick={() => setSidebarOpen(false)}>
+                    <Link href={adminPath()} className="rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-accent-hover" onClick={() => setSidebarOpen(false)}>
                       {language === "ne" ? "एडमिन" : "Admin"}
                     </Link>
                   )}
