@@ -97,6 +97,9 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <link rel="icon" href="/icons/logo.jpeg" type="image/jpeg" />
+        <link rel="shortcut icon" href="/icons/logo.jpeg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/icons/logo.jpeg" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#c30000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
