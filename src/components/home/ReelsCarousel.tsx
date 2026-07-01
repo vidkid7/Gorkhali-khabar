@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
+import { publicContentPath } from "@/lib/public-articles";
 
 interface Reel {
   id: string;
@@ -53,7 +54,7 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
             return (
               <Link
                 key={reel.id}
-                href={`/reels/${reel.slug}`}
+                href={publicContentPath("/reels", reel.slug)}
                 className="group/reel w-40 shrink-0 snap-start sm:w-48"
               >
                 <div className="relative h-72 w-40 overflow-hidden rounded-2xl border border-border shadow-lg sm:h-80 sm:w-48" style={{ backgroundColor: "var(--surface)" }}>

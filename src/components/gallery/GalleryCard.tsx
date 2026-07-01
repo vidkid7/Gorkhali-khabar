@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Image as ImageIcon, Camera } from "lucide-react";
+import { publicContentPath } from "@/lib/public-articles";
 
 interface GalleryCardProps {
   slug: string;
@@ -11,7 +12,7 @@ interface GalleryCardProps {
 
 export function GalleryCard({ slug, title, coverImage, imageCount }: GalleryCardProps) {
   return (
-    <Link href={`/galleries/${slug}`} className="group block">
+    <Link href={publicContentPath("/galleries", slug)} className="group block">
       <div
         className="relative aspect-[4/3] rounded-lg overflow-hidden"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}

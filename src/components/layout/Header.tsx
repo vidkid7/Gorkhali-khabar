@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { FontSizer } from "@/components/ui/FontSizer";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { adminPath } from "@/lib/admin-path";
+import { publicArticlePath } from "@/lib/public-articles";
 import { User as UserIcon, LogIn, UserPlus } from "lucide-react";
 
 /* ─── Navigation Data ─────────────────────────────────────────────────── */
@@ -498,7 +499,7 @@ export function Header() {
               >
                 {/* Render items twice for seamless loop (marquee moves -50%) */}
                 {[...trendingTopics, ...trendingTopics].map((topic, i) => (
-                  <Link key={i} href={`/articles/${topic.slug}`} className="flex items-center gap-2 shrink-0 group">
+                  <Link key={i} href={publicArticlePath(topic.slug)} className="flex items-center gap-2 shrink-0 group">
                     <div className="relative w-6 h-6 rounded-full overflow-hidden bg-muted shrink-0 ring-1 ring-border">
                       {topic.image ? (
                         <Image src={topic.image} alt="" fill sizes="24px" className="object-cover" />

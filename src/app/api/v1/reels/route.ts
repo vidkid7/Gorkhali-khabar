@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
+import { buildActiveContentListWhere } from "@/lib/public-articles";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Reel } from "@prisma/client";
 
@@ -10,9 +11,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const pageSize = Math.min(50, Math.max(1, parseInt(searchParams.get("pageSize") || "20")));
+    const includeInactive = searchParams.get("includeInactive") === "true";
     const skip = (page - 1) * pageSize;
 
-    const where = { is_active: true };
+    let canManage = false;
+    if (includeInactive) {
+      const roleCheck = await requireRole(["ADMIN"]);
+      canManage = !roleCheck.error;
+    }
+
+    const where = buildActiveContentListWhere({ includeInactive, canManage });
 
     const [reels, total] = await Promise.all([
       prisma.reel.findMany({

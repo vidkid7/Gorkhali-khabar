@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
+import { publicArticlePath } from "@/lib/public-articles";
 
 interface BreakingNewsItem {
   id: string;
@@ -43,7 +44,7 @@ export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: {
             return item.article ? (
               <Link
                 key={`${item.id}-${idx}`}
-                href={`/articles/${item.article.slug}`}
+                href={publicArticlePath(item.article.slug)}
                 className="hover:underline"
               >
                 {inner}

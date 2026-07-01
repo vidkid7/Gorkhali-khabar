@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, unauthorizedResponse } from "@/lib/auth-helpers";
+import { buildPublishedArticleByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Bookmark } from "@prisma/client";
 
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
     const pageSize = Math.min(50, Math.max(1, parseInt(searchParams.get("pageSize") || "10")));
     const skip = (page - 1) * pageSize;
 
-    const where = { user_id: session!.user.id };
+    const where = { user_id: session!.user.id, article: { status: "PUBLISHED" as const } };
 
     const [bookmarks, total] = await Promise.all([
       prisma.bookmark.findMany({
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const article = await prisma.article.findUnique({ where: { id: articleId } });
+    const article = await prisma.article.findUnique({ where: buildPublishedArticleByIdWhere(articleId) });
     if (!article) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "लेख फेला परेन" },

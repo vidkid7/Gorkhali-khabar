@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { buildPublishedArticleByIdWhere, publicArticlePath } from "@/lib/public-articles";
 import { headers } from "next/headers";
 import type { ApiResponse } from "@/types";
 
@@ -18,7 +19,7 @@ export async function POST(
       );
     }
 
-    const article = await prisma.article.findUnique({ where: { id } });
+    const article = await prisma.article.findUnique({ where: buildPublishedArticleByIdWhere(id) });
     if (!article) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "लेख फेला परेन" },
@@ -34,7 +35,7 @@ export async function POST(
     const [, updatedArticle] = await prisma.$transaction([
       prisma.pageView.create({
         data: {
-          page_url: `/articles/${article.slug}`,
+          page_url: publicArticlePath(article.slug),
           article_id: id,
           ip_address: ip,
           user_agent: userAgent,

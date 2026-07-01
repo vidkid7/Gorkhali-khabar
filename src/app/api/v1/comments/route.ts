@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { commentSchema } from "@/lib/validations";
 import { requireAuth, unauthorizedResponse } from "@/lib/auth-helpers";
 import { sanitizeCommentHtml } from "@/lib/html";
+import { buildPublishedArticleByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Comment } from "@prisma/client";
 
@@ -18,6 +19,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: "article_id आवश्यक छ" },
         { status: 400 }
+      );
+    }
+
+    const article = await prisma.article.findUnique({
+      where: buildPublishedArticleByIdWhere(articleId),
+      select: { id: true },
+    });
+    if (!article) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: "लेख फेला परेन" },
+        { status: 404 }
       );
     }
 
@@ -113,7 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     const article = await prisma.article.findUnique({
-      where: { id: parsed.data.article_id },
+      where: buildPublishedArticleByIdWhere(parsed.data.article_id),
     });
     if (!article) {
       return NextResponse.json<ApiResponse>(

@@ -2,6 +2,7 @@ import { Suspense, type ComponentProps } from "react";
 import prisma from "@/lib/prisma";
 import type { Metadata } from "next";
 import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildPublicBreakingNewsWhere } from "@/lib/public-articles";
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -56,7 +57,7 @@ const articleSelect = {
 
 async function getBreakingNews() {
   return prisma.breakingNews.findMany({
-    where: { is_active: true, OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }] },
+    where: buildPublicBreakingNewsWhere(),
     include: { article: { select: { slug: true } } },
     orderBy: { created_at: "desc" },
     take: 10,

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface ArticleContentProps {
@@ -62,7 +63,7 @@ export function ArticleContent({
   const shareUrl =
     typeof window !== "undefined"
       ? window.location.href
-      : `${process.env.NEXT_PUBLIC_SITE_URL || ""}/articles/${slug}`;
+      : `${process.env.NEXT_PUBLIC_SITE_URL || ""}${publicArticlePath(slug)}`;
 
   return (
     <article>

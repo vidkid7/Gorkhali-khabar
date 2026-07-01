@@ -9,6 +9,7 @@ import { ArticleContent } from "@/components/articles/ArticleContent";
 import { ArticleCardSkeleton } from "@/components/ui/SkeletonLoader";
 import { sanitizeArticleHtml } from "@/lib/html";
 import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { decodeArticleSlugParam, publicArticlePath } from "@/lib/public-articles";
 
 export const dynamic = "force-dynamic";
 
@@ -48,10 +49,10 @@ async function getRelatedArticles(categoryId: string, excludeId: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  const article = await getArticle(decodeArticleSlugParam(slug));
   if (!article) return { title: "Not Found" };
 
-  const url = canonicalUrl(`/articles/${article.slug}`);
+  const url = canonicalUrl(publicArticlePath(article.slug));
   return {
     title: article.title,
     description: article.excerpt || undefined,
@@ -110,7 +111,7 @@ async function RelatedArticles({
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  const article = await getArticle(decodeArticleSlugParam(slug));
 
   if (!article) notFound();
 
@@ -138,7 +139,7 @@ export default async function ArticlePage({ params }: Props) {
         name: "नमस्ते एक्सप्रेस",
                 logo: { "@type": "ImageObject", url: defaultOpenGraphImage() },
               },
-              mainEntityOfPage: { "@type": "WebPage", "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/articles/${article.slug}` },
+              mainEntityOfPage: { "@type": "WebPage", "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}${publicArticlePath(article.slug)}` },
               articleSection: article.category.name,
               wordCount: article.word_count,
               timeRequired: `PT${article.reading_time}M`,

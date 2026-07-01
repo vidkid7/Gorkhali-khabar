@@ -4,6 +4,7 @@ import { Eye } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { decodePublicSlugParam } from "@/lib/public-articles";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ function getYouTubeEmbedUrl(url: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const reel = await getReel(slug);
+  const reel = await getReel(decodePublicSlugParam(slug));
   if (!reel) return { title: "Not Found" };
 
   return {
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ReelPage({ params }: Props) {
   const { slug } = await params;
-  const reel = await getReel(slug);
+  const reel = await getReel(decodePublicSlugParam(slug));
 
   if (!reel) notFound();
   const youtubeEmbedUrl = getYouTubeEmbedUrl(reel.video_url);

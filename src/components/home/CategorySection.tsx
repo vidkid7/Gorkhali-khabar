@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { timeAgo } from "@/lib/utils";
 import { SectionHeader } from "./SectionHeader";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
@@ -53,7 +54,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
         <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
         <div className="space-y-1">
           {articles.map((a) => (
-            <Link key={a.id} href={`/articles/${a.slug}`} className="side-article-item group">
+            <Link key={a.id} href={publicArticlePath(a.slug)} className="side-article-item group">
               {/* Thumbnail */}
               <div className="relative w-24 h-[4.5rem] shrink-0 rounded-lg overflow-hidden bg-surface-alt thumb-zoom">
                 {a.featured_image ? (
@@ -96,7 +97,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
           {articles.map((a) => (
             <Link
               key={a.id}
-              href={`/articles/${a.slug}`}
+              href={publicArticlePath(a.slug)}
               className="group block rounded-xl border border-border bg-surface overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-border-strong"
             >
               {/* Image */}
@@ -148,7 +149,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
 
         {/* Main featured card */}
         <Link
-          href={`/articles/${main.slug}`}
+          href={publicArticlePath(main.slug)}
           className="lg:col-span-3 group block relative rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           style={{ minHeight: "18rem" }}
         >
@@ -200,7 +201,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
           {rest.map((a) => (
             <Link
               key={a.id}
-              href={`/articles/${a.slug}`}
+              href={publicArticlePath(a.slug)}
               className="side-article-item group"
             >
               {/* Thumbnail */}

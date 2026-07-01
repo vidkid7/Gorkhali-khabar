@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { LightboxViewer } from "@/components/gallery/LightboxViewer";
+import { decodePublicSlugParam } from "@/lib/public-articles";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ interface GalleryData {
 
 export default function GallerySlugPage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = decodePublicSlugParam(params.slug as string);
   const [gallery, setGallery] = useState<GalleryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);

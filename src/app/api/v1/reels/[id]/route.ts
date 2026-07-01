@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
+import { buildActiveContentByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse } from "@/types";
 
 export async function GET(
@@ -11,7 +12,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const reel = await prisma.reel.findUnique({ where: { id } });
+    const reel = await prisma.reel.findUnique({ where: buildActiveContentByIdWhere(id) });
 
     if (!reel) {
       return NextResponse.json<ApiResponse>(

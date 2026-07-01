@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
+import { buildPublishedArticleByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse } from "@/types";
 
 export async function PATCH(
@@ -42,7 +43,21 @@ export async function PATCH(
       updateData.title = body.title.trim();
     }
     if (body.title_en !== undefined) updateData.title_en = body.title_en?.trim() || null;
-    if (body.article_id !== undefined) updateData.article_id = body.article_id || null;
+    if (body.article_id !== undefined) {
+      if (body.article_id) {
+        const article = await prisma.article.findUnique({
+          where: buildPublishedArticleByIdWhere(body.article_id),
+          select: { id: true },
+        });
+        if (!article) {
+          return NextResponse.json<ApiResponse>(
+            { success: false, error: "Breaking news can only link to published articles" },
+            { status: 400 }
+          );
+        }
+      }
+      updateData.article_id = body.article_id || null;
+    }
     if (body.expires_at !== undefined) updateData.expires_at = body.expires_at ? new Date(body.expires_at) : null;
     if (body.is_active !== undefined) updateData.is_active = Boolean(body.is_active);
 

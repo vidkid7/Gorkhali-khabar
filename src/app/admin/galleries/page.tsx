@@ -38,7 +38,7 @@ export default function AdminGalleriesPage() {
   }, []);
 
   async function loadGalleries() {
-    const res = await fetch("/api/v1/galleries?pageSize=50");
+    const res = await fetch("/api/v1/galleries?pageSize=50&includeInactive=true");
     const json = await res.json();
     if (json.success) setGalleries(json.data.data || []);
   }

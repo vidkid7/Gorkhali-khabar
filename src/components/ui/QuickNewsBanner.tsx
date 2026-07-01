@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicArticlePath } from "@/lib/public-articles";
 
 interface QuickNewsBannerProps {
   title: string;
@@ -22,7 +23,7 @@ export function QuickNewsBanner({
 
   return (
     <Link
-      href={`/articles/${slug}`}
+      href={publicArticlePath(slug)}
       className="group flex min-w-0 items-center gap-3 rounded-xl border border-border bg-surface px-3 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4"
       style={{ borderLeft: `4px solid ${categoryColor}` }}
     >

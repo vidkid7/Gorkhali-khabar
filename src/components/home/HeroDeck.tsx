@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
 import { timeAgo } from "@/lib/utils";
+import { publicArticlePath } from "@/lib/public-articles";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 interface HeroArticle {
@@ -79,7 +80,7 @@ export function HeroDeck({ articles }: { articles: HeroArticle[] }) {
           </div>
 
           {/* Content at bottom */}
-          <Link href={`/articles/${active.slug}`} className="absolute inset-x-0 bottom-0 block p-5 text-white sm:p-7">
+          <Link href={publicArticlePath(active.slug)} className="absolute inset-x-0 bottom-0 block p-5 text-white sm:p-7">
             {/* Thin accent rule above category */}
             <span className="block w-10 h-0.5 mb-3 rounded-full" style={{ background: "rgba(255,255,255,0.7)" }} />
             <span

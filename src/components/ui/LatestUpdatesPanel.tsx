@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { timeAgo } from "@/lib/utils";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
@@ -128,7 +129,7 @@ export function LatestUpdatesPanel() {
                 return (
                   <li key={article.id}>
                     <Link
-                      href={`/articles/${article.slug}`}
+                      href={publicArticlePath(article.slug)}
                       onClick={() => setOpen(false)}
                       className="flex gap-3 p-3 hover:bg-surface-alt transition-colors group"
                     >

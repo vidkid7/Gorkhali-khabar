@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { adminPath } from "@/lib/admin-path";
+import { publicArticlePath } from "@/lib/public-articles";
 import {
   ArrowLeft,
   Trash2,
@@ -489,7 +490,7 @@ export function EditArticleForm({ article, categories, tags }: EditArticleFormPr
             {/* View on site */}
             {article.status === "PUBLISHED" && (
               <a
-                href={`/articles/${article.slug}`}
+                href={publicArticlePath(article.slug)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-secondary w-full text-center block"

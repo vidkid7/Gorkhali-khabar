@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { timeAgo } from "@/lib/utils";
 
 interface Article {
@@ -105,7 +106,7 @@ export function ProvincialNews({ articlesByProvince }: ProvincialNewsProps) {
           articles.slice(0, 5).map((a, idx) => (
             <Link
               key={a.id}
-              href={`/articles/${a.slug}`}
+              href={publicArticlePath(a.slug)}
               className="group flex items-start gap-3 px-4 py-3 transition-colors hover:bg-surface-alt"
             >
               {/* Number */}

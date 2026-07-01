@@ -45,7 +45,7 @@ export default function AdminReelsPage() {
   }, []);
 
   async function loadReels() {
-    const res = await fetch("/api/v1/reels?pageSize=50");
+    const res = await fetch("/api/v1/reels?pageSize=50&includeInactive=true");
     const json = await res.json();
     if (json.success) setReels(json.data.data || []);
   }

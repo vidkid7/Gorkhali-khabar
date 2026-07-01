@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
+import { buildActiveContentByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse } from "@/types";
 
 export async function GET(
@@ -12,7 +13,7 @@ export async function GET(
     const { id } = await params;
 
     const gallery = await prisma.gallery.findUnique({
-      where: { id },
+      where: buildActiveContentByIdWhere(id),
       include: {
         images: { orderBy: { sort_order: "asc" } },
         _count: { select: { images: true } },

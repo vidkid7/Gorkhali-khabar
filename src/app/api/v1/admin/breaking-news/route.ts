@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
+import { buildPublishedArticleByIdWhere } from "@/lib/public-articles";
 import type { ApiResponse } from "@/types";
 
 export async function POST(request: NextRequest) {
@@ -18,6 +19,19 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Title is required" },
         { status: 400 }
       );
+    }
+
+    if (article_id) {
+      const article = await prisma.article.findUnique({
+        where: buildPublishedArticleByIdWhere(article_id),
+        select: { id: true },
+      });
+      if (!article) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, error: "Breaking news can only link to published articles" },
+          { status: 400 }
+        );
+      }
     }
 
     const item = await prisma.breakingNews.create({

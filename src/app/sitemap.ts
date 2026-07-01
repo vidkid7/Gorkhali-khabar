@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import prisma from "@/lib/prisma";
+import { publicArticlePath } from "@/lib/public-articles";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -30,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       take: 5000,
     });
     const articlePages: MetadataRoute.Sitemap = articles.map((a) => ({
-      url: `${BASE_URL}/articles/${a.slug}`,
+      url: `${BASE_URL}${publicArticlePath(a.slug)}`,
       lastModified: a.updated_at,
       changeFrequency: "daily" as const,
       priority: 0.8,

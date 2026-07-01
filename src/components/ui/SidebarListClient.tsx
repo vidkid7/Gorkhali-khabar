@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 
 interface SidebarArticle {
   id: string;
@@ -55,7 +56,7 @@ export function SidebarListClient({
           return (
             <li key={a.id}>
               <Link
-                href={`/articles/${a.slug}`}
+                href={publicArticlePath(a.slug)}
                 className="flex gap-3 items-start px-4 py-3 group transition-colors hover:bg-surface-alt"
               >
                 {/* Rank number */}

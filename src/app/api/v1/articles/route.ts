@@ -4,6 +4,7 @@ import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
 import { sanitizeArticleHtml } from "@/lib/html";
+import { buildPublicArticleWhere } from "@/lib/public-articles";
 import { cacheDel } from "@/lib/redis";
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type { Article } from "@prisma/client";
@@ -18,23 +19,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const skip = (page - 1) * pageSize;
 
-    const where: Record<string, unknown> = {};
-
-    if (category) {
-      where.category_id = category;
-    }
-    if (status) {
-      where.status = status;
-    } else {
-      where.status = "PUBLISHED";
-    }
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { content: { contains: search, mode: "insensitive" } },
-        { excerpt: { contains: search, mode: "insensitive" } },
-      ];
-    }
+    const where = buildPublicArticleWhere({ category, status, search });
 
     const [articles, total] = await Promise.all([
       prisma.article.findMany({

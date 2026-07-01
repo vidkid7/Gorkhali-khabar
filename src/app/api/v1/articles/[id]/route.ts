@@ -4,6 +4,10 @@ import { articleSchema } from "@/lib/validations";
 import { requireRole, unauthorizedResponse, forbiddenResponse } from "@/lib/auth-helpers";
 import { auditLog } from "@/lib/audit";
 import { sanitizeArticleHtml } from "@/lib/html";
+import {
+  buildArticleVisibilityUpdateData,
+  buildPublishedArticleByIdWhere,
+} from "@/lib/public-articles";
 import { cacheDel } from "@/lib/redis";
 import type { ApiResponse } from "@/types";
 
@@ -15,7 +19,7 @@ export async function GET(
     const { id } = await params;
 
     const article = await prisma.article.findUnique({
-      where: { id },
+      where: buildPublishedArticleByIdWhere(id),
       include: {
         category: { select: { id: true, name: true, slug: true } },
         author: { select: { id: true, name: true, image: true } },
@@ -101,15 +105,15 @@ export async function PUT(
       (updateData as Record<string, unknown>).reading_time = Math.ceil(wordCount / 200);
     }
 
-    // Set published_at when transitioning to PUBLISHED
-    if (updateData.status === "PUBLISHED" && existing.status !== "PUBLISHED") {
-      (updateData as Record<string, unknown>).published_at = new Date();
-    }
+    const articleUpdateData = buildArticleVisibilityUpdateData(
+      existing.status,
+      updateData
+    );
 
     const article = await prisma.article.update({
       where: { id },
       data: {
-        ...updateData,
+        ...articleUpdateData,
         ...(tag_ids !== undefined
           ? {
               tags: {
@@ -125,6 +129,13 @@ export async function PUT(
         tags: { include: { tag: { select: { id: true, name: true, slug: true } } } },
       },
     });
+
+    if (article.status !== "PUBLISHED") {
+      await prisma.breakingNews.updateMany({
+        where: { article_id: article.id, is_active: true },
+        data: { is_active: false },
+      });
+    }
 
     await auditLog({
       adminId: session!.user.id,

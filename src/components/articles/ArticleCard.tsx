@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { timeAgo as sharedTimeAgo, getInitials } from "@/lib/utils";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
@@ -51,7 +52,7 @@ export function ArticleCard({
 
   if (variant === "horizontal") {
     return (
-      <Link href={`/articles/${slug}`} className="card flex w-full min-w-0 flex-row group">
+      <Link href={publicArticlePath(slug)} className="card flex w-full min-w-0 flex-row group">
         <div className="relative w-36 h-28 shrink-0">
           {featured_image ? (
             <ImageWithFallback src={featured_image} alt={displayTitle} fill
@@ -90,7 +91,7 @@ export function ArticleCard({
 
   if (variant === "hero") {
     return (
-      <Link href={`/articles/${slug}`} className="card group block w-full min-w-0 relative overflow-hidden">
+      <Link href={publicArticlePath(slug)} className="card group block w-full min-w-0 relative overflow-hidden">
         <div className="relative w-full h-72 lg:h-96">
           {featured_image ? (
             <ImageWithFallback src={featured_image} alt={displayTitle} fill
@@ -139,7 +140,7 @@ export function ArticleCard({
 
   // Default card — magazine style
   return (
-    <Link href={`/articles/${slug}`} className="card-news group block">
+    <Link href={publicArticlePath(slug)} className="card-news group block">
       <div className="relative w-full h-48 card-news-img overflow-hidden">
         {featured_image ? (
           <ImageWithFallback src={featured_image} alt={displayTitle} fill

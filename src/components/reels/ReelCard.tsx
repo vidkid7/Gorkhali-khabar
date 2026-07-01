@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Clapperboard, Play, Eye } from "lucide-react";
+import { publicContentPath } from "@/lib/public-articles";
 
 interface ReelCardProps {
   slug: string;
@@ -11,7 +12,7 @@ interface ReelCardProps {
 
 export function ReelCard({ slug, title, thumbnail, viewCount }: ReelCardProps) {
   return (
-    <Link href={`/reels/${slug}`} className="group block">
+    <Link href={publicContentPath("/reels", slug)} className="group block">
       <div
         className="relative aspect-[9/16] rounded-lg overflow-hidden"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}

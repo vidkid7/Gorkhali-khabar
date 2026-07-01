@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { publicArticlePath } from "@/lib/public-articles";
 
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gorkhali.com";
@@ -26,8 +27,8 @@ export async function GET() {
 
       return `    <item>
       <title><![CDATA[${article.title}]]></title>
-      <link>${siteUrl}/articles/${article.slug}</link>
-      <guid isPermaLink="true">${siteUrl}/articles/${article.slug}</guid>
+      <link>${siteUrl}${publicArticlePath(article.slug)}</link>
+      <guid isPermaLink="true">${siteUrl}${publicArticlePath(article.slug)}</guid>
       <description><![CDATA[${article.excerpt || ""}]]></description>
       <pubDate>${pubDate}</pubDate>
       <category><![CDATA[${article.category.name}]]></category>

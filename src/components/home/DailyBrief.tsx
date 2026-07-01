@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
+import { publicArticlePath } from "@/lib/public-articles";
 import { timeAgo } from "@/lib/utils";
 
 interface BriefArticle {
@@ -59,7 +60,7 @@ export function DailyBrief({ articles }: { articles: BriefArticle[] }) {
         {articles.slice(0, 5).map((article, index) => (
           <li key={article.id}>
             <Link
-              href={`/articles/${article.slug}`}
+              href={publicArticlePath(article.slug)}
               className="flex items-start gap-3 px-4 py-3 group transition-colors hover:bg-surface-alt"
             >
               {/* Number badge */}
