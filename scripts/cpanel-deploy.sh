@@ -30,7 +30,7 @@ set +u
 source "$NODE_ENV_ACTIVATE"
 set -u
 export NODE_OPTIONS="${NODE_OPTIONS:-} --v8-pool-size=1"
-npm ci --include=dev
+npm ci
 npx next build --webpack
 mkdir -p "$APP_ROOT/tmp"
 touch "$APP_ROOT/tmp/restart.txt"
