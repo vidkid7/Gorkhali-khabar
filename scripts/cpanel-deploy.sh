@@ -24,7 +24,9 @@ if [[ ! -f "$APP_ROOT/.env" && -f "/home1/gorkhal1/app/.env" ]]; then
 fi
 
 cd "$APP_ROOT"
+set +u
 source "$NODE_ENV_ACTIVATE"
+set -u
 npm ci
 npx prisma generate
 npm run build
