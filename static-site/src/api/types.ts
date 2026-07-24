@@ -46,7 +46,8 @@ export interface HomePayload {
 
 export interface Paginated<T> {
   data: T[];
-  current_page?: number;
-  last_page?: number;
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
   total?: number;
 }
