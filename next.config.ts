@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const workspaceRoot = process.cwd();
 
 const nextConfig: NextConfig = {
+  experimental: {
+    webpackBuildWorker: false,
+  },
   // Explicitly pin Turbopack's workspace root to this project so module
   // resolution doesn't follow sibling lockfiles in the parent directory.
   turbopack: {
