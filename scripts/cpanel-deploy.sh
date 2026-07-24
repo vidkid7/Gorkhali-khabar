@@ -29,6 +29,6 @@ source "$NODE_ENV_ACTIVATE"
 set -u
 npm ci
 npx prisma generate
-npm run build
+npx next build --webpack
 mkdir -p "$APP_ROOT/tmp"
 touch "$APP_ROOT/tmp/restart.txt"
