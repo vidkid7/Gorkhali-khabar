@@ -31,9 +31,35 @@ jobs:
           printf '%s\n' "$CPANEL_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
           chmod 644 "$HOME/.ssh/known_hosts"
 
-      - name: Push commit to cPanel
+      - name: Load production build environment
         env:
           CPANEL_GIT_URL: ${{ secrets.CPANEL_GIT_URL }}
         run: |
-          git remote add cpanel "$CPANEL_GIT_URL"
-          git push cpanel HEAD:master
+          cpanel_target="${CPANEL_GIT_URL#ssh://}"
+          cpanel_target="${cpanel_target%%/*}"
+          scp "$cpanel_target:/home1/gorkhal1/gorkhali-khabar/.env" .env
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build production artifact
+        env:
+          NODE_OPTIONS: --v8-pool-size=1
+          RAYON_NUM_THREADS: 1
+        run: |
+          npm ci
+          npm run build -- --webpack
+          tar --exclude=.git --exclude=.env --exclude=backend/.env --exclude=node_modules --exclude=.next/cache -czf gorkhali-release.tgz .
+
+      - name: Upload and activate release
+        env:
+          CPANEL_GIT_URL: ${{ secrets.CPANEL_GIT_URL }}
+        run: |
+          cpanel_target="${CPANEL_GIT_URL#ssh://}"
+          cpanel_target="${cpanel_target%%/*}"
+          scp gorkhali-release.tgz "$cpanel_target:/home1/gorkhal1/gorkhali-release.tgz"
+          scp scripts/cpanel-release.sh "$cpanel_target:/home1/gorkhal1/cpanel-release.sh"
+          ssh "$cpanel_target" "/bin/bash /home1/gorkhal1/cpanel-release.sh /home1/gorkhal1/gorkhali-release.tgz"
