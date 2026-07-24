@@ -10,6 +10,7 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   exit 1
 fi
 cleanup() {
+  cloudlinux-selector start --interpreter nodejs --user gorkhal1 --app-root "$APP_ROOT" >/dev/null 2>&1 || true
   rmdir "$LOCK_DIR"
 }
 trap cleanup EXIT
@@ -24,6 +25,7 @@ if [[ ! -f "$APP_ROOT/.env" && -f "/home1/gorkhal1/app/.env" ]]; then
 fi
 
 cd "$APP_ROOT"
+cloudlinux-selector stop --interpreter nodejs --user gorkhal1 --app-root "$APP_ROOT" >/dev/null 2>&1 || true
 set +u
 source "$NODE_ENV_ACTIVATE"
 set -u
