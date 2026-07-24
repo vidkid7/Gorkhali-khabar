@@ -26,6 +26,7 @@ fi
 
 cd "$APP_ROOT"
 cloudlinux-selector stop --interpreter nodejs --user gorkhal1 --app-root "$APP_ROOT" >/dev/null 2>&1 || true
+pkill -u gorkhal1 -f '/usr/local/lsws/fcgi-bin/lsnode.js' >/dev/null 2>&1 || true
 set +u
 source "$NODE_ENV_ACTIVATE"
 set -u
