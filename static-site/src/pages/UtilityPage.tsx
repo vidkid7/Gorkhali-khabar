@@ -1,4 +1,4 @@
-import { apiGet } from "../api/client";
+import { apiGet, ApiRequestError } from "../api/client";
 import { ErrorState, LoadingState, NotFoundPage } from "../components/PageState";
 import { UtilityPanels } from "../components/UtilityPanels";
 import { useApiResource } from "../hooks/useApiResource";
@@ -22,13 +22,25 @@ export function endpointForUtility(slug: string): string[] {
   return map[slug] || [];
 }
 
+export async function loadUtilityPayloads(endpoints: string[]) {
+  return Promise.all(
+    endpoints.map(async (endpoint) => {
+      try {
+        return { endpoint, data: await apiGet<unknown>(endpoint) };
+      } catch (error) {
+        if (error instanceof ApiRequestError && error.status === 404) {
+          return { endpoint, data: null };
+        }
+        throw error;
+      }
+    }),
+  );
+}
+
 export function UtilityPage({ slug }: { slug: string }) {
   const endpoints = endpointForUtility(slug);
   const state = useApiResource(
-    async () => Promise.all(endpoints.map(async (endpoint) => ({
-      endpoint,
-      data: await apiGet<unknown>(endpoint),
-    }))),
+    () => loadUtilityPayloads(endpoints),
     [slug],
   );
   if (endpoints.length === 0) return <NotFoundPage />;

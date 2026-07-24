@@ -2,10 +2,14 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { apiGet } from "../api/client";
 import { CollectionPage } from "./CollectionPage";
-import { endpointForUtility } from "./UtilityPage";
+import { ApiRequestError } from "../api/client";
+import { endpointForUtility, loadUtilityPayloads } from "./UtilityPage";
 import { StaticPage } from "./StaticPage";
 
-vi.mock("../api/client", () => ({ apiGet: vi.fn() }));
+vi.mock("../api/client", async (importOriginal) => {
+  const original = await importOriginal<typeof import("../api/client")>();
+  return { ...original, apiGet: vi.fn() };
+});
 
 describe("remaining public pages", () => {
   it("maps utilities to the Laravel endpoints", () => {
@@ -30,6 +34,16 @@ describe("remaining public pages", () => {
     render(<CollectionPage kind="reels" />);
     expect(await screen.findByRole("heading", { name: "रिल्स" })).toBeInTheDocument();
     expect(apiGet).toHaveBeenCalledWith("/api/v1/reels");
+  });
+
+  it("treats an empty utility endpoint as an empty panel", async () => {
+    vi.mocked(apiGet).mockRejectedValue(
+      new ApiRequestError(404, "No forex data"),
+    );
+    await expect(loadUtilityPayloads(["/api/v1/finance/exchange-rates"]))
+      .resolves.toEqual([
+        { endpoint: "/api/v1/finance/exchange-rates", data: null },
+      ]);
   });
 
   it("renders policy copy without an API request", () => {
