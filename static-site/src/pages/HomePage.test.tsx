@@ -62,4 +62,23 @@ describe("HomePage", () => {
       await screen.findByRole("button", { name: "पुनः प्रयास गर्नुहोस्" }),
     ).toBeInTheDocument();
   });
+
+  it("shows an editorial empty state when no articles are published", async () => {
+    vi.mocked(apiGet).mockResolvedValue({
+      breakingNews: [],
+      featured: [],
+      categoryGroups: {},
+      trending: [],
+      mostCommented: [],
+      reels: [],
+      matches: [],
+      olderArticles: [],
+      editorPicks: [],
+      provinceGroups: {},
+    });
+    render(<HomePage />);
+    expect(
+      await screen.findByText("पहिलो समाचार प्रकाशनको तयारी हुँदैछ।"),
+    ).toBeInTheDocument();
+  });
 });

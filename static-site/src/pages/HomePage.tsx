@@ -35,6 +35,27 @@ export function HomePage() {
   if (state.loading) return <LoadingState />;
   if (state.error) return <ErrorState retry={state.retry} />;
   if (!state.data) return <EmptyState />;
+  const hasPublishedContent =
+    state.data.featured.length > 0 ||
+    state.data.trending.length > 0 ||
+    state.data.olderArticles.length > 0 ||
+    Object.values(state.data.categoryGroups).some(
+      (articles) => articles.length > 0,
+    );
+  if (!hasPublishedContent) {
+    return (
+      <main>
+        <div className="page-state">
+          <p className="eyebrow">Gorkhali Khabar</p>
+          <h1>समाचार कक्ष तयार छ</h1>
+          <p>पहिलो समाचार प्रकाशनको तयारी हुँदैछ।</p>
+          <a className="button-link" href="/gorkhali-admin">
+            सम्पादकीय प्रवेश
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
