@@ -1,6 +1,7 @@
 import { NotFoundPage } from "./components/PageState";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
+import { HomePage } from "./pages/HomePage";
 import { resolvePublicRoute } from "./router";
 
 function PendingPage() {
@@ -18,7 +19,13 @@ export function App() {
     <>
       <SiteHeader />
       <div className="site-main">
-        {route.name === "not-found" ? <NotFoundPage /> : <PendingPage />}
+        {route.name === "home" ? (
+          <HomePage />
+        ) : route.name === "not-found" ? (
+          <NotFoundPage />
+        ) : (
+          <PendingPage />
+        )}
       </div>
       <SiteFooter />
     </>
