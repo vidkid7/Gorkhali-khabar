@@ -1,0 +1,9 @@
+<?php
+
+require 'vendor/autoload.php';
+$app = require 'bootstrap/app.php';
+$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+
+foreach (\App\Models\Category::where('slug', 'like', '%pradesh%')->get() as $c) {
+    echo $c->slug . ' => ' . $c->name . PHP_EOL;
+}

@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;
+class Comment extends LegacyModel { protected function casts(): array { return ['created_at' => 'datetime', 'updated_at' => 'datetime']; } public function article() { return $this->belongsTo(Article::class); } public function user() { return $this->belongsTo(User::class); } public function parent() { return $this->belongsTo(self::class, 'parent_id'); } public function children() { return $this->hasMany(self::class, 'parent_id'); } public function votes() { return $this->hasMany(CommentVote::class); } }

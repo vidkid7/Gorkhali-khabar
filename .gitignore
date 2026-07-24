@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+backend/vendor/
+
+# Build output and framework caches
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+backend/bootstrap/cache/*.php
+backend/public/storage
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+!backend/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs, runtime state, and local databases
+*.log
+*.pid
+*.seed
+*.sqlite
+*.sqlite3
+cookies.txt
+
+# Test and tooling output
+.phpunit.cache/
+.phpunit.result.cache
+.eslintcache
+.turbo/
+.vercel/
+.nyc_output/
+playwright-report/
+test-results/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Local agent/session artifacts
+.superpowers/
+public/active_chrome_*.png
+public/debug-*.png
+public/screen-*.png
+
+# Temporary and backup files
+*.bak
+*.tmp
+*.temp
