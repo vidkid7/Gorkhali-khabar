@@ -5,6 +5,9 @@ import { HomePage } from "./pages/HomePage";
 import { ArticlePage } from "./pages/ArticlePage";
 import { CategoryPage } from "./pages/CategoryPage";
 import { SearchPage } from "./pages/SearchPage";
+import { CollectionPage } from "./pages/CollectionPage";
+import { StaticPage } from "./pages/StaticPage";
+import { UtilityPage } from "./pages/UtilityPage";
 import { resolvePublicRoute } from "./router";
 
 function PendingPage() {
@@ -31,6 +34,18 @@ export function App() {
       break;
     case "search":
       page = <SearchPage />;
+      break;
+    case "reels":
+      page = <CollectionPage kind="reels" />;
+      break;
+    case "galleries":
+      page = <CollectionPage kind="galleries" />;
+      break;
+    case "utility":
+      page = <UtilityPage slug={route.slug} />;
+      break;
+    case "static":
+      page = <StaticPage slug={route.slug} />;
       break;
     case "not-found":
       page = <NotFoundPage />;

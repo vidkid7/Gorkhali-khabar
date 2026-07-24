@@ -87,6 +87,20 @@ button, input { font: inherit; }
 .search-form div { display: flex; }
 .search-form input { flex: 1; min-width: 0; border: 1px solid var(--line); padding: 13px; }
 .search-form button { border: 0; background: var(--blue); color: #fff; padding: 12px 22px; font-weight: 800; }
+.collection-grid, .utility-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.collection-card, .utility-card { background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.collection-card__media { aspect-ratio: 4 / 3; display: grid; place-items: center; background: #dce8f4; color: var(--blue); font-size: 2rem; font-weight: 800; overflow: hidden; }
+.collection-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.collection-card h2, .collection-card p { margin: 16px 18px; }
+.utility-panel { margin-bottom: 50px; }
+.utility-panel > h2 { border-bottom: 3px solid var(--red); padding-bottom: 8px; }
+.utility-card { padding: 20px; }
+.utility-card h3 { margin-top: 0; }
+.utility-card p { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 9px; }
+.utility-card p span { color: var(--muted); }
+.static-page { width: min(800px, calc(100% - 32px)); margin-top: 70px; padding: 48px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.static-page h1 { font-size: clamp(2.2rem, 5vw, 4rem); margin-top: 5px; }
+.static-page > p:not(.eyebrow) { font-size: 1.1rem; line-height: 2; color: #39445a; }
 .site-footer { margin-top: 80px; background: #081d34; color: #dce7f2; }
 .footer-grid { display: grid; grid-template-columns: 1fr auto; gap: 48px; padding-block: 48px; }
 .footer-grid img { width: 260px; background: #fff; padding: 8px; }
@@ -106,5 +120,6 @@ button, input { font: inherit; }
   .nav-links a { padding: 12px 4px; border-bottom: 1px solid var(--line); }
   .footer-grid { grid-template-columns: 1fr; }
   .article-layout--grid, .article-layout--featured, .article-layout--list, .media-grid, .score-grid { grid-template-columns: 1fr; }
+  .collection-grid, .utility-grid { grid-template-columns: 1fr; }
   .breaking-ticker__inner div { overflow-x: auto; }
 }
