@@ -30,6 +30,7 @@ set +u
 source "$NODE_ENV_ACTIVATE"
 set -u
 export NODE_OPTIONS="${NODE_OPTIONS:-} --v8-pool-size=1"
+export RAYON_NUM_THREADS=1
 npm ci
 npx next build --webpack
 mkdir -p "$APP_ROOT/tmp"
