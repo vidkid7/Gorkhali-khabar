@@ -24,7 +24,7 @@ export function SiteHeader() {
       </div>
       <div className="container masthead">
         <a href="/" className="brand" aria-label="गोर्खाली खबर गृहपृष्ठ">
-          <img src="/icons/logo.svg" alt="Gorkhali Khabar" />
+          <img src="/icons/logo.png" alt="Gorkhali Khabar" />
         </a>
         <a className="search-link" href="/search" aria-label="समाचार खोज्नुहोस्">
           खोज्नुहोस्

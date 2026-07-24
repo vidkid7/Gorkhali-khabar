@@ -3,7 +3,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="container footer-grid">
         <div>
-          <img src="/icons/logo.svg" alt="Gorkhali Khabar" />
+          <img src="/icons/logo.png" alt="Gorkhali Khabar" />
           <p>तथ्य, सन्दर्भ र जनसरोकारसहितको नेपाली पत्रकारिता।</p>
         </div>
         <nav aria-label="नीति लिंक">
