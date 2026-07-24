@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class LegacyCompatibleSeeder extends Seeder
@@ -14,7 +15,7 @@ class LegacyCompatibleSeeder extends Seeder
         $now = now();
         $seedPassword = env('SEED_ADMIN_PASSWORD', 'Admin@12345');
 
-        DB::table('users')->insertOrIgnore([
+        $admin = [
             'id' => (string) Str::ulid(),
             'name' => 'Gorkhali Admin',
             'email' => 'admin@gorkhali.com',
@@ -24,7 +25,14 @@ class LegacyCompatibleSeeder extends Seeder
             'is_active' => true,
             'created_at' => $now,
             'updated_at' => $now,
-        ]);
+        ];
+        $userIdType = Schema::getColumnType('users', 'id');
+        if ($userIdType !== 'integer' && $userIdType !== 'bigint') {
+            DB::table('users')->insertOrIgnore($admin);
+        } else {
+            unset($admin['id']);
+            DB::table('users')->insertOrIgnore($admin);
+        }
 
         $this->insertDefaults('categories', 'slug', [
             ['name' => 'समाचार', 'name_en' => 'News', 'slug' => 'samachar', 'color' => '#c62828', 'sort_order' => 1],
