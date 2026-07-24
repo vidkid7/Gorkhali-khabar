@@ -3,5 +3,5 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home1/gorkhal1/gorkhali-khabar/
     - /bin/mkdir -p "$DEPLOYPATH"
-    - /usr/bin/rsync -a --delete --exclude='.git' --exclude='.env' --exclude='backend/.env' --exclude='node_modules' --exclude='.next' ./ "$DEPLOYPATH"
+    - /usr/bin/tar --exclude=.git --exclude=.env --exclude=backend/.env --exclude=node_modules --exclude=.next -cf - . | /usr/bin/tar -xf - -C "$DEPLOYPATH"
     - /bin/bash "$DEPLOYPATH/scripts/cpanel-deploy.sh"
