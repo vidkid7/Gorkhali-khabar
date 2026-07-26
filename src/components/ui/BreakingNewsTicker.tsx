@@ -16,6 +16,32 @@ export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: {
 
   if (!items.length) return null;
 
+  const renderItems = (sequence: number) =>
+    items.map((item, index) => {
+      const title =
+        language === "en" && item.title_en ? item.title_en : item.title;
+      const inner = (
+        <span className="flex items-center gap-2 text-sm font-medium">
+          <span className="h-1 w-1 rounded-full bg-white/50" />
+          {title}
+        </span>
+      );
+
+      return item.article ? (
+        <Link
+          key={`${sequence}-${item.id}-${index}`}
+          href={publicArticlePath(item.article.slug)}
+          className="whitespace-nowrap hover:underline focus-visible:underline focus-visible:outline-none"
+        >
+          {inner}
+        </Link>
+      ) : (
+        <span key={`${sequence}-${item.id}-${index}`} className="whitespace-nowrap">
+          {inner}
+        </span>
+      );
+    });
+
   return (
     <div
       className="relative flex items-center overflow-hidden bg-accent text-white"
@@ -23,7 +49,10 @@ export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: {
       aria-live="polite"
       aria-label={t("article.breakingNews")}
     >
-      <span className="shrink-0 z-10 flex items-center gap-1.5 px-4 py-2.5 font-bold text-sm bg-accent-hover whitespace-nowrap">
+      <span
+        data-testid="breaking-label"
+        className="z-10 flex shrink-0 items-center gap-1.5 whitespace-nowrap bg-accent-hover px-4 py-2.5 text-sm font-bold"
+      >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-70" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
@@ -32,32 +61,11 @@ export function BreakingNewsTicker({ items, label = "ब्रेकिङ" }: {
       </span>
       <div className="relative flex-1 min-w-0 overflow-hidden">
         <div
-          className="flex shrink-0 items-center gap-6 whitespace-nowrap py-2.5 hover:[animation-play-state:paused] motion-reduce:animate-none"
-          style={{ animation: "marquee 35s linear infinite" }}
+          data-testid="breaking-track"
+          className="breaking-news-track py-2.5"
         >
-          {items.map((item, idx) => {
-            const title =
-              language === "en" && item.title_en ? item.title_en : item.title;
-            const inner = (
-              <span className="text-sm font-medium flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-white/50" />
-                {title}
-              </span>
-            );
-            return item.article ? (
-              <Link
-                key={`${item.id}-${idx}`}
-                href={publicArticlePath(item.article.slug)}
-                className="hover:underline whitespace-nowrap"
-              >
-                {inner}
-              </Link>
-            ) : (
-              <span key={`${item.id}-${idx}`} className="whitespace-nowrap">
-                {inner}
-              </span>
-            );
-          })}
+          <div className="breaking-news-sequence">{renderItems(0)}</div>
+          <div className="breaking-news-sequence" aria-hidden="true">{renderItems(1)}</div>
         </div>
       </div>
     </div>

@@ -77,7 +77,7 @@ export default function RegisterPage() {
             </div>
           )}
           <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>
-            {t("auth.registerTitle")}
+            {t("common.readerRegister")}
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
             {language === "ne" ? "गोर्खाली खबरमा स्वागत छ" : "Welcome to Gorkhali Khabar"}
@@ -159,7 +159,7 @@ export default function RegisterPage() {
             disabled={loading}
             className="btn-primary w-full disabled:opacity-50"
           >
-            {loading ? t("common.loading") : t("common.register")}
+            {loading ? t("common.loading") : t("common.readerRegister")}
           </button>
         </form>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\PageView;
+use App\Support\DateGrouping;
 use Illuminate\View\View;
 
 class AnalyticsController extends Controller
@@ -30,7 +31,7 @@ class AnalyticsController extends Controller
         // Daily view counts (last 14 days)
         $daily = PageView::query()
             ->where('created_at', '>=', $now->copy()->subDays(14))
-            ->selectRaw("date_trunc('day', created_at) as day, count(*) as total")
+            ->selectRaw(DateGrouping::day().' as day, count(*) as total')
             ->groupBy('day')
             ->orderBy('day')
             ->get();

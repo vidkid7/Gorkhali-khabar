@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import prisma from "@/lib/prisma";
+import { laravelApi } from "@/lib/api/laravel";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { EditorialEmptyState } from "@/components/ui/EditorialEmptyState";
+import { CategoryDiscovery } from "@/components/categories/CategoryDiscovery";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { canonicalUrl, defaultOpenGraphImage } from "@/lib/seo";
+import type { HomeArticle } from "@/lib/home-api";
 
 export const dynamic = "force-dynamic";
 
@@ -20,42 +22,35 @@ type Props = {
 const PAGE_SIZE = 12;
 
 async function getCategory(slug: string) {
-  return prisma.category.findUnique({
-    where: { slug, is_active: true },
-    select: {
-      id: true,
-      name: true,
-      name_en: true,
-      slug: true,
-      description: true,
-      color: true,
-    },
-  });
+  const categories = await laravelApi.get<Array<{
+    id: string;
+    name: string;
+    name_en?: string | null;
+    slug: string;
+    description?: string | null;
+    color?: string | null;
+  }>>("/api/v1/categories");
+  return categories.find((category) => category.slug === slug) ?? null;
 }
 
 async function getCategoryArticles(
   categoryId: string,
   page: number
 ) {
-  const skip = (page - 1) * PAGE_SIZE;
-  const [articles, total] = await Promise.all([
-    prisma.article.findMany({
-      where: { category_id: categoryId, status: "PUBLISHED" },
-      orderBy: { published_at: "desc" },
-      skip,
-      take: PAGE_SIZE,
-      include: {
-        category: {
-          select: { name: true, name_en: true, slug: true, color: true },
-        },
-        author: { select: { name: true } },
-      },
-    }),
-    prisma.article.count({
-      where: { category_id: categoryId, status: "PUBLISHED" },
-    }),
-  ]);
-  return { articles, total, totalPages: Math.ceil(total / PAGE_SIZE) };
+  const response = await laravelApi.get<{
+    data: HomeArticle[];
+    total: number;
+    totalPages: number;
+  }>(`/api/v1/articles?category=${encodeURIComponent(categoryId)}&page=${page}&pageSize=${PAGE_SIZE}`);
+  return {
+    articles: response.data.map((article) => ({
+      ...article,
+      category: { ...article.category, color: article.category?.color ?? "#07579B" },
+      author: article.author ?? {},
+    })),
+    total: response.total,
+    totalPages: response.totalPages,
+  };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -115,25 +110,32 @@ export default async function CategoryArchivePage({
           eyebrow={category.name_en || undefined}
           description={category.description}
           countLabel={`${total} ${total === 1 ? "article" : "articles"}`}
-          accentColor={category.color}
+          accentColor={category.color ?? "#07579B"}
           breadcrumbs={[{ label: "गृहपृष्ठ", href: "/" }, { label: category.name }]}
         />
 
         <div className="mt-8">
           {articles.length > 0 ? (
-            articles.length >= 4 ? (
+            articles.length >= 3 ? (
               <div className="space-y-8">
-                <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.8fr)]">
+                <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(17rem,0.78fr)_minmax(15rem,0.62fr)]">
                   <ArticleCard {...articles[0]} variant="hero" />
                   <div className="grid gap-3">{articles.slice(1, 3).map((article) => <ArticleCard key={article.id} {...article} variant="horizontal" />)}</div>
+                  <CategoryDiscovery articles={articles} activeSlug={slug} accentColor={category.color ?? "#07579B"} />
                 </div>
                 {articles.length > 3 && <div className="grid gap-5 sm:grid-cols-2">{articles.slice(3).map((article) => <ArticleCard key={article.id} {...article} variant="default" />)}</div>}
               </div>
             ) : (
-              <div className="divide-y divide-border">{articles.map((article) => <div key={article.id} className="py-3 first:pt-0 last:pb-0"><ArticleCard {...article} variant="horizontal" /></div>)}</div>
+              <div className="space-y-6">
+                <CategoryDiscovery articles={articles} activeSlug={slug} accentColor={category.color ?? "#07579B"} />
+                <div className="divide-y divide-border">{articles.map((article) => <div key={article.id} className="py-3 first:pt-0 last:pb-0"><ArticleCard {...article} variant="horizontal" /></div>)}</div>
+              </div>
             )
           ) : (
-            <EditorialEmptyState title="कुनै समाचार भेटिएन" description="अर्को विषय वा पछिल्लो समाचार हेर्नुहोस्।" action={{ label: "गृहपृष्ठमा फर्कनुहोस्", href: "/" }} />
+            <div className="space-y-6">
+              <CategoryDiscovery articles={articles} activeSlug={slug} accentColor={category.color ?? "#07579B"} />
+              <EditorialEmptyState title="कुनै समाचार भेटिएन" description="अर्को विषय वा पछिल्लो समाचार हेर्नुहोस्।" action={{ label: "गृहपृष्ठमा फर्कनुहोस्", href: "/" }} />
+            </div>
           )}
         </div>
 

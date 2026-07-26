@@ -15,20 +15,9 @@ import { adminPath } from "@/lib/admin-path";
 import { publicArticlePath } from "@/lib/public-articles";
 import { User as UserIcon, LogIn, UserPlus } from "lucide-react";
 import { BrandWordmark } from "@/components/layout/BrandWordmark";
-import { PUBLIC_NAV_ITEMS } from "@/components/layout/navigation-data";
+import { getPublicNavItems, PUBLIC_NAV_ITEMS } from "@/components/layout/navigation-data";
 
 /* ─── Navigation Data ─────────────────────────────────────────────────── */
-
-const MAIN_NAV = PUBLIC_NAV_ITEMS.filter((item) => item.group === "primary");
-const MORE_NAV = PUBLIC_NAV_ITEMS.filter((item) => item.group === "secondary");
-const SPECIAL_NAV = PUBLIC_NAV_ITEMS.filter((item) => item.group === "service").map((item) => ({
-  ...item,
-  color: {
-    patro: "#D60000",
-    shareMarket: "#07579B",
-    horoscope: "#980000",
-  }[item.key] || "#07579B",
-}));
 
 // Sidebar items with icon paths and colors
 const SIDEBAR_ITEMS = [
@@ -118,6 +107,30 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState(PUBLIC_NAV_ITEMS);
+
+  useEffect(() => {
+    getPublicNavItems()
+      .then((items) => {
+        if (items.length > 0) setNavItems(items);
+      })
+      .catch(() => {
+        // Keep the bundled navigation when the API is temporarily unavailable.
+      });
+  }, []);
+
+  const mainNav = navItems.filter((item) => item.group === "primary");
+  const moreNav = navItems.filter((item) => item.group === "secondary");
+  const specialNav = navItems.filter((item) => item.group === "service").map((item) => ({
+    ...item,
+    color: {
+      patro: "#D60000",
+      shareMarket: "#07579B",
+      horoscope: "#980000",
+    }[item.key] || "#07579B",
+  }));
+  const navLabel = (item: (typeof navItems)[number]) =>
+    item.label ? (language === "en" && item.label_en ? item.label_en : item.label) : t(`nav.${item.key}`);
   const moreRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userBtnRef = useRef<HTMLButtonElement>(null);
@@ -295,7 +308,7 @@ export function Header() {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors whitespace-nowrap"
                 >
                   <LogIn className="h-3.5 w-3.5" />
-                  {t("common.login")}
+                  {t("common.readerLogin")}
                 </Link>
                 <Link
                   href="/auth/register"
@@ -303,7 +316,7 @@ export function Header() {
                   style={{ background: "var(--accent)" }}
                 >
                   <UserPlus className="h-3.5 w-3.5" />
-                  {t("common.register")}
+                  {t("common.readerRegister")}
                 </Link>
               </div>
             )}
@@ -328,21 +341,21 @@ export function Header() {
           <Link
             href="/"
             aria-label={siteName}
-            className="flex items-center gap-2 shrink-0 site-primary-nav__brand"
+            className="flex w-[150px] items-center gap-2 shrink-0 site-primary-nav__brand sm:w-auto"
           >
             <BrandWordmark priority compact className="h-8 sm:h-9 w-auto" />
           </Link>
 
           {/* Main nav — clean minimal with red underline */}
           <nav className="hidden lg:flex items-center min-w-0" aria-label="Main navigation">
-            {MAIN_NAV.map((item) => (
+            {mainNav.map((item) => (
               <Link
                 key={item.key}
                 href={item.href}
                 className={`nav-link px-3 py-3 font-semibold text-sm whitespace-nowrap ${isNavActive(item.href) ? "active" : ""}`}
                 aria-current={isNavActive(item.href) ? "page" : undefined}
               >
-                {t(`nav.${item.key}`)}
+                {navLabel(item)}
               </Link>
             ))}
 
@@ -357,7 +370,7 @@ export function Header() {
               </button>
               {moreOpen && (
                 <div className="absolute top-full left-0 mt-1 w-56 rounded-xl shadow-xl py-1.5 z-50 border animate-slideDown bg-surface border-border">
-                  {MORE_NAV.map((item) => (
+                  {moreNav.map((item) => (
                     <Link
                       key={item.key}
                       href={item.href}
@@ -365,9 +378,27 @@ export function Header() {
                       aria-current={isNavActive(item.href) ? "page" : undefined}
                       onClick={() => setMoreOpen(false)}
                     >
-                      {t(`nav.${item.key}`)}
+                      {navLabel(item)}
                     </Link>
                   ))}
+                  {specialNav.length > 0 && (
+                    <>
+                      <div className="my-1.5 border-t border-border" />
+                      <p className="px-4 pb-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-muted">
+                        {t("nav.services")}
+                      </p>
+                      {specialNav.map((item) => (
+                        <Link
+                          key={`service-${item.key}`}
+                          href={item.href}
+                          className="block px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-surface-alt hover:text-accent"
+                          onClick={() => setMoreOpen(false)}
+                        >
+                          {navLabel(item)}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -377,7 +408,7 @@ export function Header() {
           <div className="site-primary-nav__controls flex items-center gap-2 ml-auto shrink-0">
             {/* Special nav (desktop) — clean monochrome pills with brand color accents */}
             <div className="hidden 2xl:flex items-center gap-1.5">
-              {SPECIAL_NAV.map((item) => (
+              {specialNav.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
@@ -388,7 +419,7 @@ export function Header() {
                   {item.key === "patro" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>}
                   {item.key === "shareMarket" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>}
                   {item.key === "health" && <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>}
-                  {t(`nav.${item.key}`)}
+                  {navLabel(item)}
                 </Link>
               ))}
             </div>
@@ -421,7 +452,7 @@ export function Header() {
             <Link
               href={session?.user ? "/profile" : "/auth/login"}
               className="flex items-center rounded-md p-2 text-foreground transition-colors hover:bg-surface-alt md:hidden"
-              aria-label={session?.user ? t("common.profile") : t("common.login")}
+              aria-label={session?.user ? t("common.profile") : t("common.readerLogin")}
             >
               {session?.user ? (
                 <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
@@ -584,9 +615,9 @@ export function Header() {
             {/* Mobile main nav (lg:hidden) */}
             <div className="lg:hidden border-b border-border py-1">
               <p className="px-4 pb-1 pt-2 text-[10px] font-bold uppercase text-muted">{t("nav.topics")}</p>
-              {MAIN_NAV.map((item) => (
+              {mainNav.map((item) => (
                 <Link key={item.key} href={item.href} className="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-surface-alt hover:text-accent" onClick={() => setSidebarOpen(false)} aria-current={isNavActive(item.href) ? "page" : undefined}>
-                  {t(`nav.${item.key}`)}
+                  {navLabel(item)}
                 </Link>
               ))}
             </div>
@@ -620,20 +651,16 @@ export function Header() {
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Link
-                  href="/share-market"
-                  className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  NEPSE
-                </Link>
-                <Link
-                  href="/finance"
-                  className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  {language === "ne" ? "विनिमय दर" : "Finance"}
-                </Link>
+                {specialNav.map((item) => (
+                  <Link
+                    key={`drawer-service-${item.key}`}
+                    href={item.href}
+                    className="rounded-lg bg-surface-alt px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-border"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    {navLabel(item)}
+                  </Link>
+                ))}
               </div>
             </div>
 
@@ -650,7 +677,7 @@ export function Header() {
                     onClick={() => setSidebarOpen(false)}
                   >
                     <LogIn className="h-3.5 w-3.5" />
-                    {t("common.login")}
+                    {t("common.readerLogin")}
                   </Link>
                   <Link
                     href="/auth/register"
@@ -658,7 +685,7 @@ export function Header() {
                     onClick={() => setSidebarOpen(false)}
                   >
                     <UserPlus className="h-3.5 w-3.5" />
-                    {t("common.register")}
+                    {t("common.readerRegister")}
                   </Link>
                 </div>
               </div>

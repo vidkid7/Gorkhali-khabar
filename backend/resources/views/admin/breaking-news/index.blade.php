@@ -22,10 +22,12 @@
                         <td>{{ $item->priority ?? 0 }}</td>
                         <td><span class="badge {{ $item->is_active ? 'badge-success' : 'badge-muted' }}">{{ $item->is_active ? 'ON' : 'OFF' }}</span></td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.breaking-news.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

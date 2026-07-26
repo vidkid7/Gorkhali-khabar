@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title">
+  <title>Gorkhali Khabar</title>
+  <rect width="1200" height="800" fill="#e8eef5"/>
+  <rect x="80" y="90" width="1040" height="620" rx="36" fill="#07579b"/>
+  <path d="M180 590 390 380l150 120 210-220 270 310H180Z" fill="#4d8fbe" opacity=".8"/>
+  <circle cx="880" cy="245" r="72" fill="#f4c542"/>
+  <text x="600" y="650" text-anchor="middle" font-family="sans-serif" font-size="46" font-weight="700" fill="#fff">गोर्खाली खबर</text>
+</svg>

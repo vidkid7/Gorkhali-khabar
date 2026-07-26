@@ -38,6 +38,13 @@ class ReelController extends Controller
         return $reel ? ApiResponse::success($reel) : ApiResponse::error('रिल फेला परेन', 404);
     }
 
+    public function showBySlug(string $slug): JsonResponse
+    {
+        $reel = Reel::query()->where('is_active', true)->where('slug', $slug)->first();
+
+        return $reel ? ApiResponse::success($reel) : ApiResponse::error('रिल फेला परेन', 404);
+    }
+
     public function store(Request $request): JsonResponse
     {
         if (! $request->isJson()) {

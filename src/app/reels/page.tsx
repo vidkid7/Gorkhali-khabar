@@ -4,7 +4,7 @@ import { ReelCard } from "@/components/reels/ReelCard";
 import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { EditorialEmptyState } from "@/components/ui/EditorialEmptyState";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { laravelApi } from "@/lib/api/laravel";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -22,17 +22,20 @@ export default async function ReelsPage({ searchParams }: PageProps) {
   const page = Math.max(1, parseInt(typeof params.page === "string" ? params.page : "1"));
   const pageSize = 20;
 
-  const [reels, total] = await Promise.all([
-    prisma.reel.findMany({
-      where: { is_active: true },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      orderBy: { created_at: "desc" },
-    }),
-    prisma.reel.count({ where: { is_active: true } }),
-  ]);
-
-  const totalPages = Math.ceil(total / pageSize);
+  const response = await laravelApi.get<{
+    data: Array<{
+      id: string;
+      title: string;
+      slug: string;
+      thumbnail?: string | null;
+      view_count?: number;
+    }>;
+    total: number;
+    totalPages: number;
+  }>(`/api/v1/reels?page=${page}&pageSize=${pageSize}`);
+  const reels = response.data;
+  const total = response.total;
+  const totalPages = response.totalPages;
 
   return (
     <>
@@ -48,7 +51,7 @@ export default async function ReelsPage({ searchParams }: PageProps) {
                 slug={reel.slug}
                 title={reel.title}
                 thumbnail={reel.thumbnail}
-                viewCount={reel.view_count}
+                viewCount={reel.view_count ?? 0}
               />
             ))}
           </div>

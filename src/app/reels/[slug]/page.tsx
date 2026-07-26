@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Eye } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { laravelApi } from "@/lib/api/laravel";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { decodePublicSlugParam } from "@/lib/public-articles";
@@ -14,9 +13,21 @@ type Props = {
 };
 
 async function getReel(slug: string) {
-  return prisma.reel.findUnique({
-    where: { slug, is_active: true },
-  });
+  try {
+    return await laravelApi.get<{
+      id: string;
+      title: string;
+      title_en?: string | null;
+      slug: string;
+      video_url: string;
+      thumbnail?: string | null;
+      description?: string | null;
+      view_count?: number;
+      created_at?: string | null;
+    }>(`/api/v1/reels/slug/${encodeURIComponent(slug)}`);
+  } catch {
+    return null;
+  }
 }
 
 function getYouTubeEmbedUrl(url: string) {
@@ -58,18 +69,17 @@ export default async function ReelPage({ params }: Props) {
   if (!reel) notFound();
   const youtubeEmbedUrl = getYouTubeEmbedUrl(reel.video_url);
 
-  // Fire-and-forget view count increment
-  prisma.reel.update({
-    where: { id: reel.id },
-    data: { view_count: { increment: 1 } },
-  }).catch(() => {});
-
   return (
     <>
       <Header />
-      <main className="public-page-shell mx-auto max-w-5xl px-4 py-8">
+      <main className="public-page-shell mx-auto max-w-5xl px-3 py-6 sm:px-4 sm:py-10">
         <PublicPageHeader title={reel.title} eyebrow={reel.title_en || "OK Reels"} breadcrumbs={[{ label: "OK Reels", href: "/reels" }, { label: reel.title }]} />
-        <div className="media-stage mt-8 aspect-video overflow-hidden">
+        <div className="mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
+          <span className="rounded-full bg-accent/10 px-3 py-1 text-accent">OK Reels</span>
+          <span>•</span>
+          <span>{(reel.view_count ?? 0).toLocaleString()} views</span>
+        </div>
+        <div className="media-stage mt-7 aspect-video overflow-hidden rounded-2xl border border-border shadow-lg">
           {youtubeEmbedUrl ? (
             <iframe
               src={youtubeEmbedUrl}
@@ -95,9 +105,8 @@ export default async function ReelPage({ params }: Props) {
           </p>
         )}
 
-        <div className="flex items-center gap-4 text-sm" style={{ color: "var(--muted)" }}>
-          <span className="inline-flex items-center gap-1"><Eye className="h-4 w-4" /> {reel.view_count.toLocaleString()} views</span>
-          <span suppressHydrationWarning>{reel.created_at.toLocaleDateString("ne-NP")}</span>
+        <div className="mt-4 flex items-center gap-4 text-sm" style={{ color: "var(--muted)" }}>
+          {reel.created_at && <span suppressHydrationWarning>{new Date(reel.created_at).toLocaleDateString("ne-NP")}</span>}
         </div>
       </main>
       <Footer />

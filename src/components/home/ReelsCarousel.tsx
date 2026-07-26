@@ -7,13 +7,13 @@ import { ArrowRight, ChevronLeft, ChevronRight, Eye, Play } from "lucide-react";
 import { useLanguage, toNepaliDigits } from "@/contexts/LanguageContext";
 import { publicContentPath } from "@/lib/public-articles";
 
-interface Reel {
+export interface Reel {
   id: string;
   title: string;
   title_en?: string | null;
   slug: string;
   thumbnail?: string | null;
-  view_count: number;
+  view_count?: number;
 }
 
 function formatViewCount(value: number, language: "ne" | "en"): string {
@@ -124,7 +124,8 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
         >
           {reels.map((reel, index) => {
             const title = isNe && reel.title_en ? reel.title_en : reel.title;
-            const isTopView = reel.view_count >= 10_000;
+            const viewCount = reel.view_count ?? 0;
+            const isTopView = viewCount >= 10_000;
             const rank = isNe ? toNepaliDigits(index + 1) : index + 1;
             const watchLabel = isNe ? "हेर्नुहोस्" : "Watch now";
             return (
@@ -196,7 +197,7 @@ export function ReelsCarousel({ reels }: { reels: Reel[] }) {
                     <div className="flex items-center justify-between gap-2 pt-1">
                       <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-white/85">
                         <Eye className="h-3 w-3" aria-hidden="true" />
-                        {formatViewCount(reel.view_count, language)}
+                        {formatViewCount(viewCount, language)}
                       </span>
                       <span className="text-[10px] uppercase tracking-wider text-white/70">
                         {isNe ? "रेल" : "Reel"}

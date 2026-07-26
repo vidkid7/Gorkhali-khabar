@@ -12,6 +12,7 @@ RUN apk add --no-cache \
         mariadb-connector-c-dev \
         oniguruma-dev \
         sqlite-dev \
+        su-exec \
         unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \

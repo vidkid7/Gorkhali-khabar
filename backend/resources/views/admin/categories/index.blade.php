@@ -40,10 +40,12 @@
                         </td>
                         <td>{{ number_format($category->articles_count ?? 0) }}</td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

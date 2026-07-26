@@ -8,4 +8,10 @@ if [ ! -L public/storage ]; then
     php artisan storage:link >/dev/null 2>&1 || true
 fi
 
-exec "$@"
+chown -R www-data:www-data storage bootstrap/cache
+
+if [ "${1:-}" = "php-fpm" ]; then
+    exec "$@"
+fi
+
+exec su-exec www-data "$@"

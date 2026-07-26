@@ -21,10 +21,12 @@
                         <td style="max-width:300px;">{{ \Illuminate\Support\Str::limit($item->prediction, 80) }}</td>
                         <td>{{ $item->lucky_number ?? '—' }}</td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.rashifal.destroy', $item) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
