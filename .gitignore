@@ -58,6 +58,7 @@ Desktop.ini
 
 # Local agent/session artifacts
 .superpowers/
+.worktrees/
 public/active_chrome_*.png
 public/debug-*.png
 public/screen-*.png
