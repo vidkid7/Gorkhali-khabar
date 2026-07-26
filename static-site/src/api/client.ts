@@ -43,3 +43,13 @@ export async function apiGet<T>(
 
   return body.data;
 }
+
+export async function apiGetOptionalArray<T>(path: string): Promise<T[]> {
+  try {
+    const data = await apiGet<T[] | undefined>(path);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    if (error instanceof ApiRequestError && error.status === 404) return [];
+    throw error;
+  }
+}

@@ -26,6 +26,35 @@ export interface Article {
   author?: { id?: string; name: string } | null;
 }
 
+export interface HomeReel {
+  id: string;
+  title: string;
+  title_en: LocalizedText;
+  slug: string;
+  thumbnail: LocalizedText;
+  view_count: number | null;
+}
+
+export interface HomeGallery {
+  id: string;
+  title: string;
+  title_en: LocalizedText;
+  slug: string;
+  cover_image: LocalizedText;
+  images: Array<{ id: string }>;
+}
+
+export interface HomepageSection {
+  id: string;
+  section_key: string;
+  title: string;
+  title_en: LocalizedText;
+  category_slug: string | null;
+  layout: "featured" | "grid" | "list";
+  sort_order: number;
+  is_active: boolean;
+}
+
 export interface HomePayload {
   breakingNews: Array<{
     id: string;
@@ -37,11 +66,17 @@ export interface HomePayload {
   categoryGroups: Record<string, Article[]>;
   trending: Article[];
   mostCommented: Article[];
-  reels: Array<Record<string, unknown>>;
+  reels: HomeReel[];
   matches: Array<Record<string, unknown>>;
   olderArticles: Article[];
   editorPicks: Article[];
   provinceGroups: Record<string, Article[]>;
+  latestUpdates: Article[];
+  opinion: Article[];
+  mediaHighlights: {
+    reels: HomeReel[];
+    galleries: HomeGallery[];
+  };
 }
 
 export interface Paginated<T> {
