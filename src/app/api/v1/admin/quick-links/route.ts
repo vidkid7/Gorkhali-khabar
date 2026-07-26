@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
       create: parsed.data,
     });
     await auditLog({
-      adminId: auth.user.id,
-      action: "upsert",
+      adminId: auth.session!.user.id,
+      action: "UPDATE",
       entity: "QuickLink",
       entityId: link.id,
       newValue: link,

@@ -195,11 +195,9 @@ export function proxy(request: NextRequest) {
         : NextResponse.redirect(new URL("/", request.url));
     }
 
-    const token =
-      request.cookies.get("next-auth.session-token")?.value ||
-      request.cookies.get("__Secure-next-auth.session-token")?.value ||
-      request.cookies.get("authjs.session-token")?.value ||
-      request.cookies.get("__Secure-authjs.session-token")?.value;
+    const sessionCookieName =
+      process.env.SESSION_COOKIE || "gorkhali_session";
+    const token = request.cookies.get(sessionCookieName)?.value;
 
     if (!token) {
       if (pathname.startsWith("/api/")) {

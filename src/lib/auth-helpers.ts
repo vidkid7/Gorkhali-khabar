@@ -1,71 +1,90 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { UserRole } from "@prisma/client";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import {
+  LaravelApiError,
+  createLaravelApiClient,
+  resolveLaravelApiBaseUrl,
+} from "@/lib/api/laravel";
+import type {
+  LaravelSession,
+  LaravelUserRole,
+} from "@/lib/auth-types";
 import type { ApiResponse } from "@/types";
 
-export async function getSession() {
-  return await auth();
+export async function getSession(): Promise<LaravelSession | null> {
+  const cookieStore = await cookies();
+  const sessionCookieName = process.env.SESSION_COOKIE || "gorkhali_session";
+
+  if (!cookieStore.has(sessionCookieName)) {
+    return null;
+  }
+
+  const sessionCookie = cookieStore.get(sessionCookieName);
+  const cookieHeader = sessionCookie
+    ? `${sessionCookie.name}=${sessionCookie.value}`
+    : "";
+  const baseUrl = resolveLaravelApiBaseUrl({
+    server: true,
+    internalUrl: process.env.API_INTERNAL_URL,
+    publicUrl: process.env.NEXT_PUBLIC_LARAVEL_API_URL,
+  });
+  const client = createLaravelApiClient({ baseUrl });
+
+  try {
+    return await client.get<LaravelSession>("/api/v1/auth/session", {
+      headers: { Cookie: cookieHeader },
+      cache: "no-store",
+      csrf: false,
+    });
+  } catch (error) {
+    if (error instanceof LaravelApiError && error.status === 401) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 export async function requireAuth() {
-  const session = await auth();
+  const session = await getSession();
+
   if (!session?.user) {
     return { error: "unauthorized" as const, session: null };
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      role: true,
-      emailVerified: true,
-      is_active: true,
-      session_version: true,
-    },
-  });
-
-  if (!user?.is_active) {
-    return { error: "unauthorized" as const, session: null };
-  }
-
-  if ((session.user.session_version ?? 0) !== user.session_version) {
-    return { error: "unauthorized" as const, session: null };
-  }
-
-  session.user.role = user.role;
-  session.user.email_verified = user.emailVerified;
-  session.user.session_version = user.session_version;
-
   return { error: null, session };
 }
 
-export async function requireRole(roles: UserRole[]) {
+export async function requireRole(roles: LaravelUserRole[]) {
   const { error, session } = await requireAuth();
-  if (error) return { error, session: null };
-  if (!roles.includes(session!.user.role)) {
+
+  if (error) {
+    return { error, session: null };
+  }
+  if (!roles.includes(session.user.role)) {
     return { error: "forbidden" as const, session: null };
   }
-  return { error: null, session: session! };
+
+  return { error: null, session };
 }
 
 export function unauthorizedResponse() {
   return NextResponse.json<ApiResponse>(
     { success: false, error: "प्रमाणीकरण आवश्यक छ" },
-    { status: 401 }
+    { status: 401 },
   );
 }
 
 export function forbiddenResponse() {
   return NextResponse.json<ApiResponse>(
     { success: false, error: "अनुमति छैन" },
-    { status: 403 }
+    { status: 403 },
   );
 }
 
 export function notFoundResponse(message = "स्रोत फेला परेन") {
   return NextResponse.json<ApiResponse>(
     { success: false, error: message },
-    { status: 404 }
+    { status: 404 },
   );
 }

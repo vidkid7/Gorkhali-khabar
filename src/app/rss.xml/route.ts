@@ -1,23 +1,42 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import {
+  createLaravelApiClient,
+  resolveLaravelApiBaseUrl,
+} from "@/lib/api/laravel";
 import { publicArticlePath } from "@/lib/public-articles";
 
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gorkhali.com";
 
-  const articles = await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { published_at: "desc" },
-    take: 50,
-    select: {
-      title: true,
-      slug: true,
-      excerpt: true,
-      published_at: true,
-      category: { select: { name: true } },
-      author: { select: { name: true } },
-    },
+  type RssArticle = {
+    title: string;
+    slug: string;
+    excerpt?: string | null;
+    published_at?: string | null;
+    category?: { name?: string | null } | null;
+    author?: { name?: string | null } | null;
+  };
+
+  type ArticlePage = { data: RssArticle[] };
+
+  const client = createLaravelApiClient({
+    baseUrl: resolveLaravelApiBaseUrl({
+      server: true,
+      internalUrl: process.env.API_INTERNAL_URL,
+      publicUrl: process.env.NEXT_PUBLIC_LARAVEL_API_URL,
+    }),
   });
+
+  let articles: RssArticle[] = [];
+  try {
+    const page = await client.get<ArticlePage>("/api/v1/articles?pageSize=50", {
+      cache: "no-store",
+      csrf: false,
+    });
+    articles = page.data;
+  } catch {
+    // Keep RSS available during a transient API/database outage.
+  }
 
   const items = articles
     .map((article) => {
@@ -31,8 +50,8 @@ export async function GET() {
       <guid isPermaLink="true">${siteUrl}${publicArticlePath(article.slug)}</guid>
       <description><![CDATA[${article.excerpt || ""}]]></description>
       <pubDate>${pubDate}</pubDate>
-      <category><![CDATA[${article.category.name}]]></category>
-      ${article.author.name ? `<dc:creator><![CDATA[${article.author.name}]]></dc:creator>` : ""}
+      <category><![CDATA[${article.category?.name || ""}]]></category>
+      ${article.author?.name ? `<dc:creator><![CDATA[${article.author.name}]]></dc:creator>` : ""}
     </item>`;
     })
     .join("\n");

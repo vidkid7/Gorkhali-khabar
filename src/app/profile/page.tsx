@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -41,7 +41,7 @@ interface BookmarkItem {
 }
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useLaravelAuth();
   const router = useRouter();
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();

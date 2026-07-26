@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import Image from "next/image";
+import { LaravelApiError, laravelApi } from "@/lib/api/laravel";
 
 export default function RegisterPage() {
   const { t, language } = useLanguage();
@@ -30,19 +31,14 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || t("common.error"));
-      } else {
-        setSuccess(true);
-      }
-    } catch {
-      setError(t("common.error"));
+      await laravelApi.post("/api/v1/auth/register", { name, email, password });
+      setSuccess(true);
+    } catch (registerError) {
+      setError(
+        registerError instanceof LaravelApiError
+          ? registerError.message
+          : t("common.error"),
+      );
     } finally {
       setLoading(false);
     }

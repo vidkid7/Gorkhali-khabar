@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 RUN apk add --no-cache \
         curl \
@@ -9,8 +9,9 @@ RUN apk add --no-cache \
         libpng-dev \
         libxml2-dev \
         libzip-dev \
+        mariadb-connector-c-dev \
         oniguruma-dev \
-        postgresql-dev \
+        sqlite-dev \
         unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
@@ -20,7 +21,7 @@ RUN apk add --no-cache \
         intl \
         mbstring \
         pcntl \
-        pdo_pgsql \
+        pdo_mysql \
         pdo_sqlite \
         xml \
         zip
@@ -32,11 +33,13 @@ COPY backend/composer.json backend/composer.lock ./
 RUN composer install --no-interaction --no-scripts --prefer-dist --optimize-autoloader
 
 COPY backend/ .
-RUN composer dump-autoload --optimize \
+RUN touch .env \
+    && composer dump-autoload --optimize \
     && chown -R www-data:www-data storage bootstrap/cache
 
 COPY docker/php/entrypoint.sh /usr/local/bin/app-entrypoint
-RUN chmod +x /usr/local/bin/app-entrypoint
+RUN sed -i 's/\r$//' /usr/local/bin/app-entrypoint \
+    && chmod +x /usr/local/bin/app-entrypoint
 
 ENTRYPOINT ["app-entrypoint"]
 CMD ["php-fpm", "-F"]

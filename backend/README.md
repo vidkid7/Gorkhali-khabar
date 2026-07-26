@@ -7,6 +7,25 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Gorkhali backend runtime
+
+This application targets Laravel 13 on PHP 8.3. The Docker production/default
+database connection is MySQL 8.4; Redis remains the cache, session, and queue
+backend. The PHPUnit suite deliberately uses in-memory SQLite for isolated tests,
+while deployment migrations must be verified against MySQL:
+
+```bash
+docker compose up -d --wait mysql redis
+docker compose run --rm backend php artisan migrate:fresh --force
+docker compose run --rm --no-deps backend php artisan test
+docker compose run --rm --no-deps backend composer validate --strict
+```
+
+Copy the repository `.env.example` for local development and replace all local
+development passwords and application keys at deployment time. The frontend is
+not given database credentials; it reaches application data through the Laravel
+API.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

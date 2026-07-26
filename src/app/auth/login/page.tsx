@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { signIn, getSession, signOut } from "next-auth/react";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
+import { LaravelApiError } from "@/lib/api/laravel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import Image from "next/image";
@@ -28,41 +29,47 @@ function LoginForm() {
     callbackUrl === `/${adminSecret}` ||
     callbackUrl.startsWith(`/${adminSecret}/`);
   const googleAuthEnabled = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+  const { login, logout, refresh, googleRedirect } = useLaravelAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("google") !== "true") return;
+
+    void refresh().then((session) => {
+      if (!session?.user) return;
+      const stored = window.sessionStorage.getItem("gorkhali_auth_callback");
+      window.sessionStorage.removeItem("gorkhali_auth_callback");
+      window.location.replace(safeCallbackUrl(stored));
+    });
+  }, [refresh, searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        // Redirect admins/editors/authors to admin panel; others to callbackUrl
-        const session = await getSession();
-        const role = session?.user?.role;
-        const adminRoles = ["ADMIN", "EDITOR", "AUTHOR"];
-        if (isStaffLogin && !adminRoles.includes(role ?? "")) {
-          await signOut({ redirect: false });
-          setError(language === "ne" ? "यो खातालाई स्टाफ प्यानल पहुँच छैन" : "This account cannot access the staff panel");
-          return;
-        }
-        if (adminRoles.includes(role ?? "") && callbackUrl === "/") {
-          window.location.href = adminSecret === "admin" ? "/admin" : "/" + adminSecret;
-        } else {
-          window.location.href = callbackUrl;
-        }
+      const session = await login(email, password);
+      const role = session.user.role;
+      const adminRoles = ["ADMIN", "EDITOR", "AUTHOR"];
+      if (isStaffLogin && !adminRoles.includes(role)) {
+        await logout();
+        setError(language === "ne" ? "यो खातालाई स्टाफ प्यानल पहुँच छैन" : "This account cannot access the staff panel");
+        return;
       }
-    } catch {
-      setError(t("common.error"));
+      if (adminRoles.includes(role) && callbackUrl === "/") {
+        window.location.href = adminSecret === "admin" ? "/admin" : "/" + adminSecret;
+      } else {
+        window.location.href = callbackUrl;
+      }
+    } catch (loginError) {
+      setError(
+        loginError instanceof LaravelApiError
+          ? loginError.message
+          : t("common.error"),
+      );
     } finally {
       setLoading(false);
     }
@@ -168,7 +175,7 @@ function LoginForm() {
 
           {googleAuthEnabled && (
             <button
-              onClick={() => signIn("google", { callbackUrl })}
+              onClick={() => googleRedirect(callbackUrl)}
               className="btn-secondary w-full mt-4 gap-2"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">

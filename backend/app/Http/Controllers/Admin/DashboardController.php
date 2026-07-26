@@ -230,11 +230,11 @@ class DashboardController extends Controller
             DB::select('select 1');
             $checks['database'] = [
                 'ok' => true,
-                'label' => 'PostgreSQL',
+                'label' => 'MySQL',
                 'ms' => round((microtime(true) - $startedAt) * 1000, 1),
             ];
         } catch (\Throwable $e) {
-            $checks['database'] = ['ok' => false, 'label' => 'PostgreSQL', 'error' => $e->getMessage()];
+            $checks['database'] = ['ok' => false, 'label' => 'MySQL', 'error' => $e->getMessage()];
         }
 
         // Cache (Redis)
