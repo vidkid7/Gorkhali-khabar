@@ -6,12 +6,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect, useRef } from "react";
 import { CalendarDays, House, ListStart, Search, UserRound, X } from "lucide-react";
 import { MOBILE_NAV_ITEMS } from "@/components/layout/navigation-data";
-import { useSession } from "next-auth/react";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
 
 export function MobileBottomNav() {
   const pathname = usePathname();
   const { language, t } = useLanguage();
-  const { data: session } = useSession();
+  const { data: session } = useLaravelAuth();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);

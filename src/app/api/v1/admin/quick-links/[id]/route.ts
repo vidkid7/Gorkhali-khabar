@@ -46,8 +46,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     const link = await prisma.quickLink.update({ where: { id }, data: parsed.data });
     await auditLog({
-      adminId: auth.user.id,
-      action: "update",
+      adminId: auth.session!.user.id,
+      action: "UPDATE",
       entity: "QuickLink",
       entityId: link.id,
       oldValue: existing,
@@ -75,8 +75,8 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     if (!existing) return notFoundResponse();
     await prisma.quickLink.delete({ where: { id } });
     await auditLog({
-      adminId: auth.user.id,
-      action: "delete",
+      adminId: auth.session!.user.id,
+      action: "DELETE",
       entity: "QuickLink",
       entityId: id,
       oldValue: existing,

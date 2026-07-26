@@ -7,7 +7,7 @@ import { FontSizeProvider, useFontSize } from "@/contexts/FontSizeContext";
 import { useAdminRole } from "@/components/admin/AdminRoleProvider";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import { adminPath, internalAdminPath } from "@/lib/admin-path";
-import { signOut } from "next-auth/react";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
 import { BrandWordmark } from "@/components/layout/BrandWordmark";
 import {
   BarChart3,
@@ -88,6 +88,7 @@ function FontSizerInline() {
 
 function SidebarContent() {
   const pathname = usePathname();
+  const { logout } = useLaravelAuth();
   const role = useAdminRole();
   const { config } = useSiteConfig();
   const [open, setOpen] = useState(false);
@@ -241,7 +242,7 @@ function SidebarContent() {
 
           {/* Logout */}
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => logout().finally(() => { window.location.href = "/"; })}
             className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors border border-transparent hover:bg-error-light text-error"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>

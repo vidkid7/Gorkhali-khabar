@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
   // were authored against an older NextAuth session typing and need a
   // follow-up sweep. The runtime contract is unchanged.
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
   images: {
     remotePatterns: [
       // Cloudinary

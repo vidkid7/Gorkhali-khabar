@@ -1,16 +1,8 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
+import { LaravelAuthProvider } from "@/contexts/LaravelAuthContext";
 import { ReactNode } from "react";
 
 export function OptionalSessionProvider({ children }: { children: ReactNode }) {
-  return (
-    <SessionProvider 
-      refetchInterval={0} 
-      refetchOnWindowFocus={false}
-      basePath="/api/auth"
-    >
-      {children}
-    </SessionProvider>
-  );
+  return <LaravelAuthProvider>{children}</LaravelAuthProvider>;
 }

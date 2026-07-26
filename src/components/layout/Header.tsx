@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useSession, signOut } from "next-auth/react";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatNepaliDate } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -106,7 +106,7 @@ export function Header() {
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { config } = useSiteConfig();
-  const { data: session } = useSession();
+  const { data: session, logout } = useLaravelAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -200,9 +200,7 @@ export function Header() {
   function handleLogout() {
     setUserMenuOpen(false);
     setSidebarOpen(false);
-    // redirect:false avoids NextAuth using NEXTAUTH_URL (production) for the
-    // redirect; navigate to the current origin instead so it works locally too.
-    signOut({ redirect: false }).then(() => {
+    logout().then(() => {
       window.location.href = "/";
     });
   }

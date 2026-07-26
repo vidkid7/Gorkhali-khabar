@@ -5,6 +5,10 @@ import { BreakingTicker } from "../components/BreakingTicker";
 import { EmptyState, ErrorState, LoadingState } from "../components/PageState";
 import { useApiResource } from "../hooks/useApiResource";
 
+// This Vite static-site page intentionally uses native links; Next's rule is
+// not applicable to this separately built static surface.
+/* eslint-disable @next/next/no-html-link-for-pages */
+
 const sections = [
   ["ताजा समाचार", "samachar", "featured"],
   ["फिचर", "feature", "featured"],
@@ -34,12 +38,13 @@ export function HomePage() {
 
   if (state.loading) return <LoadingState />;
   if (state.error) return <ErrorState retry={state.retry} />;
-  if (!state.data) return <EmptyState />;
+  const data = state.data;
+  if (!data) return <EmptyState />;
   const hasPublishedContent =
-    state.data.featured.length > 0 ||
-    state.data.trending.length > 0 ||
-    state.data.olderArticles.length > 0 ||
-    Object.values(state.data.categoryGroups).some(
+    data.featured.length > 0 ||
+    data.trending.length > 0 ||
+    data.olderArticles.length > 0 ||
+    Object.values(data.categoryGroups).some(
       (articles) => articles.length > 0,
     );
   if (!hasPublishedContent) {
@@ -60,13 +65,13 @@ export function HomePage() {
   return (
     <main>
       <BreakingTicker
-        items={state.data.breakingNews}
-        fallback={state.data.trending}
+        items={data.breakingNews}
+        fallback={data.trending}
       />
       <ArticleSection
         title="प्रमुख समाचार"
         slug=""
-        articles={state.data.featured}
+        articles={data.featured}
         layout="featured"
       />
       {sections.map(([title, slug, layout]) => (
@@ -74,15 +79,15 @@ export function HomePage() {
           key={slug}
           title={title}
           slug={slug}
-          articles={state.data.categoryGroups[slug] || []}
+          articles={data.categoryGroups[slug] || []}
           layout={layout}
         />
       ))}
-      <ArticleSection title="ट्रेन्डिङ" slug="" articles={state.data.trending} layout="list" />
-      <ArticleSection title="धेरै प्रतिक्रिया" slug="" articles={state.data.mostCommented} layout="list" />
-      <ArticleSection title="सम्पादकको रोजाइ" slug="" articles={state.data.editorPicks} layout="grid" />
-      <ArticleSection title="लोकप्रिय पुराना समाचार" slug="" articles={state.data.olderArticles} layout="grid" />
-      {Object.entries(state.data.provinceGroups).map(([province, articles]) => (
+      <ArticleSection title="ट्रेन्डिङ" slug="" articles={data.trending} layout="list" />
+      <ArticleSection title="धेरै प्रतिक्रिया" slug="" articles={data.mostCommented} layout="list" />
+      <ArticleSection title="सम्पादकको रोजाइ" slug="" articles={data.editorPicks} layout="grid" />
+      <ArticleSection title="लोकप्रिय पुराना समाचार" slug="" articles={data.olderArticles} layout="grid" />
+      {Object.entries(data.provinceGroups).map(([province, articles]) => (
         <ArticleSection
           key={province}
           title={provinceLabels[province] || province}
@@ -91,22 +96,22 @@ export function HomePage() {
           layout="list"
         />
       ))}
-      {state.data.reels.length > 0 && (
+      {data.reels.length > 0 && (
         <section className="content-section container">
           <header className="section-heading"><h2>रिल्स</h2><a href="/reels">सबै हेर्नुहोस् →</a></header>
           <div className="media-grid">
-            {state.data.reels.map((reel) => {
+            {data.reels.map((reel) => {
               const id = String(reel.id || "");
               return <a key={id} href={`/reels#${id}`} className="media-card">{String(reel.title || reel.caption || "गोर्खाली रिल")}</a>;
             })}
           </div>
         </section>
       )}
-      {state.data.matches.length > 0 && (
+      {data.matches.length > 0 && (
         <section className="content-section container">
           <header className="section-heading"><h2>लाइभ स्कोर</h2><a href="/sports">सबै हेर्नुहोस् →</a></header>
           <div className="score-grid">
-            {state.data.matches.map((match) => {
+            {data.matches.map((match) => {
               const id = String(match.id || "");
               const home = String((match.home_team as { name?: string } | undefined)?.name || (match.homeTeam as { name?: string } | undefined)?.name || "Home");
               const away = String((match.away_team as { name?: string } | undefined)?.name || (match.awayTeam as { name?: string } | undefined)?.name || "Away");
