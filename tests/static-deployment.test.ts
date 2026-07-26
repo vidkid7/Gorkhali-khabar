@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const rules = readFileSync("static-site/deploy/.htaccess", "utf8");
+const laravelFrontController = readFileSync("static-site/deploy/laravel.php", "utf8");
 
 describe("static PHP deployment rules", () => {
   it("routes API and admin requests to Laravel", () => {
@@ -15,5 +16,10 @@ describe("static PHP deployment rules", () => {
     expect(rules.indexOf("RewriteCond %{REQUEST_FILENAME} -f")).toBeLessThan(
       rules.indexOf("RewriteRule ^ index.html [L]"),
     );
+  });
+
+  it("boots Laravel from the sibling PHP application directory", () => {
+    expect(laravelFrontController).toContain("../gorkhali-laravel");
+    expect(laravelFrontController).toContain("$app->handleRequest(Request::capture())");
   });
 });
