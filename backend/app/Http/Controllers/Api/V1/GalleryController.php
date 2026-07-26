@@ -41,6 +41,13 @@ class GalleryController extends Controller
         return $gallery ? ApiResponse::success($this->payload($gallery)) : ApiResponse::error('ग्यालरी फेला परेन', 404);
     }
 
+    public function showBySlug(string $slug): JsonResponse
+    {
+        $gallery = Gallery::query()->where('is_active', true)->withCount('images')->with('images')->where('slug', $slug)->first();
+
+        return $gallery ? ApiResponse::success($this->payload($gallery)) : ApiResponse::error('ग्यालरी फेला परेन', 404);
+    }
+
     public function store(Request $request): JsonResponse
     {
         if (! $request->isJson()) {

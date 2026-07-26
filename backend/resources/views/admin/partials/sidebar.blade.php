@@ -17,17 +17,21 @@
             ['admin.breaking-news.index', 'Breaking News', 'ब्रेकिङ न्युज', $isEditor],
             ['admin.web-stories.index', 'Web Stories', 'वेब स्टोरी', $isEditor],
             ['admin.panchang.index', 'Panchang', 'पञ्चाङ्ग', $isEditor],
+            ['admin.pages.index', 'Pages', 'पृष्ठहरू', $isAdmin],
+            ['admin.menus.index', 'Menus', 'मेनुहरू', $isAdmin],
+            ['admin.homepage-sections.index', 'Homepage Sections', 'गृहपृष्ठ खण्ड', $isAdmin],
+            ['admin.live-blogs.index', 'Live Blogs', 'लाइभ ब्लग', $isAdmin],
         ],
         'Media' => [
             ['admin.media.index', 'Media Library', 'मिडिया', $isStaff],
-            ['admin.galleries.index', 'Galleries', 'ग्यालेरी', $isEditor],
-            ['admin.gallery-images.index', 'Gallery Images', 'ग्यालेरी छविहरू', $isEditor],
-            ['admin.reels.index', 'Reels', 'रिल्स', $isEditor],
+            ['admin.galleries.index', 'Galleries', 'ग्यालेरी', $isAdmin],
+            ['admin.gallery-images.index', 'Gallery Images', 'ग्यालेरी छविहरू', $isAdmin],
+            ['admin.reels.index', 'Reels', 'रिल्स', $isAdmin],
         ],
         'Sports' => [
-            ['admin.sports.index', 'Tournaments', 'प्रतियोगिता', $isEditor],
-            ['admin.teams.index', 'Teams', 'टोली', $isEditor],
-            ['admin.matches.index', 'Matches', 'म्याच', $isEditor],
+            ['admin.sports.index', 'Tournaments', 'प्रतियोगिता', $isAdmin],
+            ['admin.teams.index', 'Teams', 'टोली', $isAdmin],
+            ['admin.matches.index', 'Matches', 'म्याच', $isAdmin],
         ],
         'Finance' => [
             ['admin.finance.gold-silver', 'Gold-Silver', 'सुन-चाँदी', $isEditor],
@@ -36,7 +40,7 @@
         'Reference' => [
             ['admin.rashifal.index', 'Rashifal', 'राशिफल', $isEditor],
             ['admin.holidays.index', 'Holidays', 'बिदाहरू', $isEditor],
-            ['admin.quick-links.index', 'Quick Links', 'द्रुत लिंक', $isEditor],
+            ['admin.quick-links.index', 'Quick Links', 'द्रुत लिंक', $isAdmin],
         ],
         'Insights' => [
             ['admin.analytics.index', 'Analytics', 'विश्लेषण', $isEditor],

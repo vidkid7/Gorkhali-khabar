@@ -59,6 +59,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem("language") as SupportedLanguage;
     if (saved && (saved === "ne" || saved === "en")) {
       setLanguageState(saved);
+      document.documentElement.lang = saved;
+    } else {
+      document.documentElement.lang = "ne";
     }
   }, []);
 

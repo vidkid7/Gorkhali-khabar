@@ -54,11 +54,15 @@ class MediaController extends Controller
         if (! $isVideo && $file->getSize() > 10 * 1024 * 1024) {
             return ApiResponse::error('फाइल १० MB भन्दा ठूलो हुन सक्दैन', 400);
         }
+        try {
+            $media = $storage->store($file, $request->user());
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return ApiResponse::error('मिडिया अपलोड गर्न सकिएन। कृपया पुनः प्रयास गर्नुहोस्।', 502);
+        }
         if ($request->filled('alt_text')) {
-            $media = $storage->store($file, $request->user());
             $media->update(['alt_text' => $request->string('alt_text')->toString()]);
-        } else {
-            $media = $storage->store($file, $request->user());
         }
 
         return ApiResponse::success($media->load('uploader:id,name'), 201);

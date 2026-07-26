@@ -87,11 +87,16 @@ export default function GallerySlugPage() {
   return (
     <>
       <Header />
-      <main className="public-page-shell mx-auto max-w-6xl px-4 py-8">
+      <main className="public-page-shell mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-10">
         <PublicPageHeader title={gallery.title} eyebrow={gallery.title_en || "Photo Gallery"} description={gallery.description} breadcrumbs={[{ label: "फोटो ग्यालेरी", href: "/galleries" }, { label: gallery.title }]} />
+        <div className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
+          <span className="rounded-full bg-accent/10 px-3 py-1 text-accent">{gallery.images.length} फोटो</span>
+          <span>•</span>
+          <span>Gorkhali Khabar</span>
+        </div>
 
         {gallery.images.length > 0 ? (
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4">
             {gallery.images.map((img, idx) => (
               <button
                 key={img.id}

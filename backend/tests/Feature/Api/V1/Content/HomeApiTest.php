@@ -21,6 +21,7 @@ class HomeApiTest extends TestCase
     {
         $author = User::query()->create(['id' => 'home-author', 'name' => 'Home Author', 'email' => 'home-author@example.com']);
         $news = Category::query()->create(['id' => 'home-news', 'name' => 'News', 'slug' => 'samachar']);
+        $opinionCategory = Category::query()->create(['id' => 'home-opinion', 'name' => 'Opinion', 'slug' => 'bichar']);
         $province = Category::query()->create(['id' => 'home-bagmati', 'name' => 'Bagmati', 'slug' => 'bagmati-pradesh']);
 
         $featured = [];
@@ -34,6 +35,7 @@ class HomeApiTest extends TestCase
         }
 
         $popular = $this->article('home-popular', $news, $author, ['view_count' => 20, 'comment_count' => 8]);
+        $opinionArticle = $this->article('home-opinion-article', $opinionCategory, $author, ['published_at' => now()->subMinutes(2)]);
         $older = $this->article('home-older', $news, $author, ['view_count' => 30, 'published_at' => now()->subHours(13)]);
         $provincial = $this->article('home-provincial', $province, $author);
         $draft = $this->article('home-draft', $news, $author, ['status' => 'DRAFT', 'is_featured' => true, 'view_count' => 999]);
@@ -70,6 +72,17 @@ class HomeApiTest extends TestCase
             ->assertJsonPath('data.matches.0.home_team.name', 'Home')
             ->assertJsonPath('data.olderArticles.0.id', $older->id)
             ->assertJsonPath('data.editorPicks.0.id', $featured[5]->id)
+            ->assertJsonStructure([
+                'data' => [
+                    'latestUpdates',
+                    'opinion',
+                    'mediaHighlights' => ['reels', 'galleries'],
+                ],
+            ])
+            ->assertJsonFragment(['id' => $featured[0]->id])
+            ->assertJsonPath('data.opinion.0.id', $opinionArticle->id)
+            ->assertJsonCount(1, 'data.mediaHighlights.reels')
+            ->assertJsonCount(0, 'data.mediaHighlights.galleries')
             ->assertJsonPath('data.provinceGroups.bagmati.0.id', $provincial->id)
             ->assertJsonCount(7, 'data.provinceGroups')
             ->assertJsonMissing(['id' => $draft->id]);

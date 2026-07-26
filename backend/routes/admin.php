@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BreakingNewsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EditorialManagementController;
 use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\GalleryImageController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Admin\HolidayController;
 use App\Http\Controllers\Admin\MatchRecordController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsletterController;
+use App\Http\Controllers\Admin\LiveBlogPostController;
 use App\Http\Controllers\Admin\PanchangController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QuickLinkController;
@@ -66,10 +68,14 @@ Route::middleware(['auth', 'role.web:ADMIN,EDITOR,AUTHOR'])->group(function () {
     Route::post('/articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
     Route::post('/articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
 
+    // Media can be listed and uploaded by all staff; deletion remains ADMIN-only.
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('media', [MediaController::class, 'store'])->name('media.store');
+
     // Categories & tags — ADMIN/EDITOR
     Route::middleware('role.web:ADMIN,EDITOR')->group(function () {
         Route::resource('categories', CategoryController::class)
-            ->except(['show'])
+            ->except(['show', 'destroy'])
             ->names('categories');
 
         Route::resource('tags', TagController::class)
@@ -80,50 +86,18 @@ Route::middleware(['auth', 'role.web:ADMIN,EDITOR,AUTHOR'])->group(function () {
             ->only(['index', 'update', 'destroy'])
             ->names('comments');
 
-        Route::resource('galleries', GalleryController::class)
-            ->except(['show'])
-            ->names('galleries');
-
-        // Gallery images (nested under galleries)
-        Route::resource('gallery-images', GalleryImageController::class)
-            ->except(['show'])
-            ->names('gallery-images');
-
-        Route::resource('reels', ReelController::class)
-            ->except(['show'])
-            ->names('reels');
-
         Route::resource('breaking-news', BreakingNewsController::class)
-            ->except(['show'])
+            ->except(['show', 'destroy'])
             ->parameters(['breaking-news' => 'breakingNews'])
             ->names('breaking-news');
 
         Route::resource('holidays', HolidayController::class)
-            ->except(['show'])
+            ->except(['show', 'destroy'])
             ->names('holidays');
 
         Route::resource('rashifal', RashifalController::class)
-            ->except(['show'])
+            ->except(['show', 'destroy'])
             ->names('rashifal');
-
-        Route::resource('quick-links', QuickLinkController::class)
-            ->except(['show'])
-            ->parameters(['quick-links' => 'quickLink'])
-            ->names('quick-links');
-
-        Route::resource('sports', SportsController::class)
-            ->except(['show'])
-            ->parameters(['sports' => 'sport'])
-            ->names('sports');
-
-        // Sports sub-resources
-        Route::resource('teams', TeamController::class)
-            ->except(['show'])
-            ->names('teams');
-
-        Route::resource('matches', MatchRecordController::class)
-            ->except(['show'])
-            ->names('matches');
 
         // Web Stories
         Route::resource('web-stories', WebStoryController::class)
@@ -145,23 +119,55 @@ Route::middleware(['auth', 'role.web:ADMIN,EDITOR,AUTHOR'])->group(function () {
         // Finance — forex + gold-silver
         Route::get('finance/forex', [FinanceController::class, 'forex'])->name('finance.forex');
         Route::post('finance/forex', [FinanceController::class, 'storeForex'])->name('finance.forex.store');
-        Route::delete('finance/forex/{forex}', [FinanceController::class, 'destroyForex'])->name('finance.forex.destroy');
 
         Route::get('finance/gold-silver', [FinanceController::class, 'goldSilver'])->name('finance.gold-silver');
         Route::post('finance/gold-silver', [FinanceController::class, 'storeGoldSilver'])->name('finance.gold-silver.store');
-        Route::delete('finance/gold-silver/{price}', [FinanceController::class, 'destroyGoldSilver'])->name('finance.gold-silver.destroy');
 
         // Analytics
         Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
-
-        // Media library
-        Route::get('media', [MediaController::class, 'index'])->name('media.index');
-        Route::post('media', [MediaController::class, 'store'])->name('media.store');
-        Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
     });
 
     // ADMIN only
     Route::middleware('role.web:ADMIN')->group(function () {
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::delete('breaking-news/{breakingNews}', [BreakingNewsController::class, 'destroy'])->name('breaking-news.destroy');
+        Route::delete('holidays/{holiday}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
+        Route::delete('rashifal/{rashifal}', [RashifalController::class, 'destroy'])->name('rashifal.destroy');
+
+        Route::resource('galleries', GalleryController::class)->except(['show'])->names('galleries');
+        Route::resource('gallery-images', GalleryImageController::class)->except(['show'])->names('gallery-images');
+        Route::resource('reels', ReelController::class)->except(['show'])->names('reels');
+        Route::resource('quick-links', QuickLinkController::class)
+            ->except(['show'])->parameters(['quick-links' => 'quickLink'])->names('quick-links');
+        Route::resource('sports', SportsController::class)
+            ->except(['show'])->parameters(['sports' => 'sport'])->names('sports');
+        Route::resource('teams', TeamController::class)->except(['show'])->names('teams');
+        Route::resource('matches', MatchRecordController::class)->except(['show'])->names('matches');
+
+        Route::delete('finance/forex/{forex}', [FinanceController::class, 'destroyForex'])->name('finance.forex.destroy');
+        Route::delete('finance/gold-silver/{price}', [FinanceController::class, 'destroyGoldSilver'])->name('finance.gold-silver.destroy');
+        Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+        foreach (['pages', 'menus', 'homepage-sections', 'live-blogs'] as $resource) {
+            Route::get($resource, [EditorialManagementController::class, 'index'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.index");
+            Route::get("{$resource}/create", [EditorialManagementController::class, 'create'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.create");
+            Route::post($resource, [EditorialManagementController::class, 'store'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.store");
+            Route::get("{$resource}/{item}/edit", [EditorialManagementController::class, 'edit'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.edit");
+            Route::put("{$resource}/{item}", [EditorialManagementController::class, 'update'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.update");
+            Route::delete("{$resource}/{item}", [EditorialManagementController::class, 'destroy'])
+                ->defaults('editorialResource', $resource)->name("{$resource}.destroy");
+        }
+
+        Route::post('live-blogs/{liveBlog}/posts', [LiveBlogPostController::class, 'store'])
+            ->name('live-blog-posts.store');
+        Route::delete('live-blogs/{liveBlog}/posts/{post}', [LiveBlogPostController::class, 'destroy'])
+            ->name('live-blog-posts.destroy');
+
         Route::resource('users', UserController::class)
             ->except(['show'])
             ->names('users');

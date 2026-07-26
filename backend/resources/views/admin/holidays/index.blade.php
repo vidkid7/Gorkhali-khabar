@@ -21,10 +21,12 @@
                         <td>{{ $holiday->type ?? '—' }}</td>
                         <td><span class="badge {{ $holiday->is_public_holiday ? 'badge-success' : 'badge-muted' }}">{{ $holiday->is_public_holiday ? 'YES' : 'NO' }}</span></td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.holidays.destroy', $holiday) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

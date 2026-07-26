@@ -22,6 +22,10 @@ class ArticleController extends Controller
         $query = Article::query()
             ->with(['category:id,name', 'author:id,name']);
 
+        if ($request->user()->role === 'AUTHOR') {
+            $query->where('author_id', $request->user()->id);
+        }
+
         if ($search = trim((string) $request->query('search', ''))) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -78,8 +82,10 @@ class ArticleController extends Controller
             ->with('status', 'लेख सिर्जना गरियो।');
     }
 
-    public function edit(Article $article): View
+    public function edit(Request $request, Article $article): View
     {
+        $this->authorizeArticleAccess($request, $article);
+
         $categories = Category::query()->orderBy('name')->get(['id', 'name']);
         $tags = Tag::query()->orderBy('name')->get(['id', 'name']);
         $selectedTags = $article->articleTags()->pluck('tag_id')->all();
@@ -94,8 +100,10 @@ class ArticleController extends Controller
 
     public function update(Request $request, AuditService $audit, Article $article): RedirectResponse
     {
+        $this->authorizeArticleAccess($request, $article);
+
         $data = $this->validateArticle($request, $article->id);
-        $data = $this->prepareForSave($data, $request);
+        $data = $this->prepareForSave($data, $request, false);
 
         DB::transaction(function () use ($data, $request, $article) {
             $old = $article->toArray();
@@ -119,6 +127,8 @@ class ArticleController extends Controller
 
     public function destroy(Request $request, AuditService $audit, Article $article): RedirectResponse
     {
+        abort_unless($request->user()->role === 'ADMIN', 403);
+
         $old = $article->toArray();
         DB::transaction(function () use ($article) {
             $article->articleTags()->delete();
@@ -132,6 +142,8 @@ class ArticleController extends Controller
 
     public function publish(Request $request, AuditService $audit, Article $article): RedirectResponse
     {
+        $this->authorizeArticleAccess($request, $article);
+
         $old = $article->only(['status', 'published_at']);
         $article->update([
             'status' => 'PUBLISHED',
@@ -144,6 +156,8 @@ class ArticleController extends Controller
 
     public function archive(Request $request, AuditService $audit, Article $article): RedirectResponse
     {
+        $this->authorizeArticleAccess($request, $article);
+
         $old = $article->only('status');
         $article->update(['status' => 'ARCHIVED']);
         $audit->record($request->user(), 'ARCHIVE', 'Article', $article->id, oldValue: $old, newValue: ['status' => 'ARCHIVED']);
@@ -170,15 +184,24 @@ class ArticleController extends Controller
         ]);
     }
 
-    private function prepareForSave(array $data, Request $request): array
+    private function prepareForSave(array $data, Request $request, bool $setAuthor = true): array
     {
         $data['is_featured'] = $request->boolean('is_featured');
         $data['slug'] = $data['slug'] ?? Str::slug($data['title']);
-        $data['author_id'] = $request->user()->id;
+        if ($setAuthor) {
+            $data['author_id'] = $request->user()->id;
+        }
         $data['word_count'] = str_word_count(strip_tags($data['content']));
         $data['reading_time'] = max(1, (int) ceil($data['word_count'] / 200));
 
         return $data;
+    }
+
+    private function authorizeArticleAccess(Request $request, Article $article): void
+    {
+        if ($request->user()->role === 'AUTHOR') {
+            abort_unless($article->author_id === $request->user()->id, 403);
+        }
     }
 
     private function syncTags(Article $article, array $tagIds): void

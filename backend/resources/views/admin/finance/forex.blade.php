@@ -55,10 +55,12 @@
                         <td>{{ number_format($rate->buy_rate, 4) }}</td>
                         <td>{{ number_format($rate->sell_rate, 4) }}</td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.finance.forex.destroy', $rate) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

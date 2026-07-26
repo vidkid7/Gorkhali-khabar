@@ -25,7 +25,7 @@ export default async function PrivacyPolicyPage() {
 
         <article className="document-prose prose max-w-none">
           {/* Nepali */}
-          <section className="mb-12">
+          <section className="language-ne mb-12">
             <h2 className="sr-only">गोपनीयता नीति</h2>
             <p className="text-sm text-muted mb-4">
               अन्तिम अपडेट: {new Date().getFullYear()}-०१-०१
@@ -76,7 +76,7 @@ export default async function PrivacyPolicyPage() {
           </section>
 
           {/* English */}
-          <section className="border-t border-border pt-8">
+          <section className="language-en border-t border-border pt-8">
             <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "var(--font-nepali-serif)" }}>Privacy Policy</h2>
             <p className="text-sm text-muted mb-4">
               Last updated: {new Date().getFullYear()}-01-01

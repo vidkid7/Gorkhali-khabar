@@ -12,6 +12,7 @@ use App\Models\PageView;
 use App\Models\Reel;
 use App\Models\Tag;
 use App\Models\User;
+use App\Support\DateGrouping;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -82,7 +83,7 @@ class DashboardController extends Controller
         // Daily views (last 14 days)
         $dailyViews = PageView::query()
             ->where('created_at', '>=', $last14days)
-            ->selectRaw("date_trunc('day', created_at) as day, count(*) as total")
+            ->selectRaw(DateGrouping::day().' as day, count(*) as total')
             ->groupBy('day')
             ->orderBy('day')
             ->get()
@@ -90,7 +91,7 @@ class DashboardController extends Controller
             ->all();
         $hourlyViews = PageView::query()
             ->where('created_at', '>=', $today)
-            ->selectRaw("extract(hour from created_at) as hour, count(*) as total")
+            ->selectRaw(DateGrouping::hour().' as hour, count(*) as total')
             ->groupBy('hour')
             ->orderBy('hour')
             ->get()
@@ -106,7 +107,7 @@ class DashboardController extends Controller
         // Last 7 days article publishes
         $publishesByDay = Article::query()
             ->where('created_at', '>=', $last7days)
-            ->selectRaw("date_trunc('day', created_at) as day, count(*) as total")
+            ->selectRaw(DateGrouping::day().' as day, count(*) as total')
             ->groupBy('day')
             ->orderBy('day')
             ->get()

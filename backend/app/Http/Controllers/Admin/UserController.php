@@ -68,7 +68,7 @@ class UserController extends Controller
         $data = $this->validateData($request, $user->id, true);
         $old = $user->only(['name', 'email', 'role', 'is_active', 'language']);
 
-        DB::transaction(function () use ($user, $data) {
+        DB::transaction(function () use ($user, $data, $old) {
             $update = [
                 'name' => $data['name'],
                 'email' => strtolower(trim($data['email'])),

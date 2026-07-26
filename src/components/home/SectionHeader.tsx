@@ -6,13 +6,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SectionHeaderProps {
   titleKey: string;
+  title?: string;
+  titleEn?: string | null;
   color: string;
   href?: string;
 }
 
-export function SectionHeader({ titleKey, color, href }: SectionHeaderProps) {
+export function SectionHeader({ titleKey, title, titleEn, color, href }: SectionHeaderProps) {
   const { t, language } = useLanguage();
-  const title = t(titleKey);
+  const displayTitle = title ? (language === "en" && titleEn ? titleEn : title) : t(titleKey);
   const viewAll = t("common.viewAll");
   const isNe = language === "ne";
 
@@ -51,7 +53,7 @@ export function SectionHeader({ titleKey, color, href }: SectionHeaderProps) {
             }}
           >
             <span className="relative inline-block">
-              {title}
+              {displayTitle}
               <span
                 aria-hidden="true"
                 className="absolute inset-x-0 -bottom-1.5 h-0.5"

@@ -89,7 +89,7 @@ function LoginForm() {
             </div>
           )}
           <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-nepali-serif)", color: "var(--foreground)" }}>
-            {isStaffLogin ? (language === "ne" ? "स्टाफ लगइन" : "Staff login") : t("auth.loginTitle")}
+            {isStaffLogin ? (language === "ne" ? "स्टाफ लगइन" : "Staff login") : t("common.readerLogin")}
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
             {isStaffLogin
@@ -156,7 +156,7 @@ function LoginForm() {
             disabled={loading}
             className="btn-primary w-full disabled:opacity-50"
           >
-            {loading ? t("common.loading") : t("common.login")}
+            {loading ? t("common.loading") : isStaffLogin ? t("common.login") : t("common.readerLogin")}
           </button>
         </form>
 
@@ -206,7 +206,7 @@ function LoginForm() {
         <p className="mt-6 text-center text-sm text-muted">
           {t("auth.noAccount")}{" "}
           <Link href="/auth/register" className="text-accent hover:underline font-medium">
-            {t("common.register")}
+            {t("common.readerRegister")}
           </Link>
         </p>
         )}

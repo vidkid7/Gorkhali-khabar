@@ -34,10 +34,12 @@
                         <td>{{ number_format(($file->size ?? 0) / 1024, 1) }} KB</td>
                         <td>{{ $file->uploader?->name ?? '—' }}</td>
                         <td>
+                            @if (auth()->user()->role === 'ADMIN')
                             <form action="{{ route('admin.media.destroy', $file) }}" method="POST" class="inline-form" onsubmit="return confirm('मेटाउने हो?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

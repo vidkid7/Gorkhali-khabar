@@ -4,9 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toNepaliDigits } from "@/contexts/LanguageContext";
+import { useEffect } from "react";
+import { laravelApi } from "@/lib/api/laravel";
 import { publicArticlePath } from "@/lib/public-articles";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { ArticleActions } from "@/components/articles/ArticleActions";
+import { AdSlot } from "@/components/ads/AdSlot";
+import {
+  shouldShowInArticleAd,
+  splitHtmlAtParagraph,
+} from "@/components/ads/ad-placement";
 
 interface ArticleContentProps {
   articleId: string;
@@ -47,8 +54,16 @@ export function ArticleContent({
 }: ArticleContentProps) {
   const { language, t } = useLanguage();
 
+  useEffect(() => {
+    void laravelApi.post(`/api/v1/articles/${encodeURIComponent(articleId)}/view`, undefined, { csrf: false }).catch(() => {});
+  }, [articleId]);
+
   const displayTitle = language === "en" && title_en ? title_en : title;
   const displayContent = language === "en" && content_en ? content_en : content;
+  const showArticleAd = shouldShowInArticleAd(word_count);
+  const { beforeAd, afterAd } = showArticleAd
+    ? splitHtmlAtParagraph(displayContent)
+    : { beforeAd: displayContent, afterAd: "" };
   const catName = language === "en" && category.name_en ? category.name_en : category.name;
   const views = language === "ne" ? toNepaliDigits(view_count) : view_count;
 
@@ -69,9 +84,9 @@ export function ArticleContent({
       : `${process.env.NEXT_PUBLIC_SITE_URL || ""}${publicArticlePath(slug)}`;
 
   return (
-    <article>
+    <article className="article-detail mx-auto max-w-4xl">
       {/* Breadcrumbs */}
-      <nav className="text-sm text-muted mb-4 flex items-center gap-1">
+      <nav className="mb-5 flex flex-wrap items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
         <Link href="/" className="hover:text-accent">
           {t("common.home")}
         </Link>
@@ -86,12 +101,12 @@ export function ArticleContent({
       </nav>
 
       {/* Title */}
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4" style={{ fontFamily: "var(--font-nepali-serif)" }}>
+      <h1 className="mb-5 max-w-4xl text-3xl font-black leading-[1.12] tracking-tight text-foreground sm:text-4xl lg:text-5xl" style={{ fontFamily: "var(--font-nepali-serif)" }}>
         {displayTitle}
       </h1>
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
+      <div className="mb-7 flex flex-wrap items-center gap-2.5 rounded-xl border border-border bg-surface-alt/50 px-3 py-3 text-xs text-muted sm:gap-4 sm:px-4">
         <span
           className="category-badge"
           style={{ "--category-color": category.color } as React.CSSProperties}
@@ -131,7 +146,7 @@ export function ArticleContent({
 
       {/* Featured image */}
       {featured_image && (
-        <div className="relative w-full h-64 md:h-96 mb-6 rounded-lg overflow-hidden">
+        <div className="relative mb-8 h-64 w-full overflow-hidden rounded-2xl border border-border bg-surface-alt shadow-sm md:h-[30rem]">
           <ImageWithFallback
             src={featured_image}
             alt={displayTitle}
@@ -154,10 +169,21 @@ export function ArticleContent({
       )}
 
       {/* Content */}
-      <div
-        className="prose-news mb-8"
-        dangerouslySetInnerHTML={{ __html: displayContent }}
-      />
+      <div className="mx-auto mb-10 max-w-3xl">
+        <div
+          className="prose-news"
+          dangerouslySetInnerHTML={{ __html: beforeAd }}
+        />
+        {showArticleAd && afterAd && (
+          <AdSlot position="IN_ARTICLE" className="my-8" compactLabel />
+        )}
+        {afterAd && (
+          <div
+            className="prose-news"
+            dangerouslySetInnerHTML={{ __html: afterAd }}
+          />
+        )}
+      </div>
 
       {/* Tags */}
       {tags.length > 0 && (

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\BreakingNews;
+use App\Models\Gallery;
 use App\Models\MatchRecord;
 use App\Models\Reel;
 use App\Support\ApiResponse;
@@ -17,6 +18,12 @@ class HomeController extends Controller
         'samachar' => 5,
         'feature' => 5,
         'cover-story' => 4,
+        'samaj' => 4,
+        'manoranjan' => 4,
+        'world' => 4,
+        'swasthya' => 4,
+        'shiksha' => 4,
+        'bichar' => 4,
         'prabidhi' => 5,
         'antarvaarta' => 5,
         'khelkud' => 5,
@@ -75,6 +82,15 @@ class HomeController extends Controller
             ->skip(5)
             ->limit(3)
             ->get();
+        $latestUpdates = $this->articles()
+            ->orderByDesc('published_at')
+            ->limit(8)
+            ->get();
+        $opinion = $this->articles()
+            ->whereHas('category', static fn (Builder $query): Builder => $query->where('slug', 'bichar'))
+            ->orderByDesc('published_at')
+            ->limit(6)
+            ->get();
 
         $provinceArticles = $this->articles()
             ->whereHas('category', static fn (Builder $query): Builder => $query->whereIn('slug', array_keys(self::PROVINCES)))
@@ -123,6 +139,12 @@ class HomeController extends Controller
             'matches' => $matches,
             'olderArticles' => $olderArticles,
             'editorPicks' => $editorPicks,
+            'latestUpdates' => $latestUpdates,
+            'opinion' => $opinion,
+            'mediaHighlights' => [
+                'reels' => Reel::query()->where('is_active', true)->orderByDesc('created_at')->limit(6)->get(),
+                'galleries' => Gallery::query()->where('is_active', true)->with('images')->orderByDesc('created_at')->limit(4)->get(),
+            ],
             'provinceGroups' => $provinceGroups,
         ]);
     }

@@ -1,12 +1,18 @@
 "use client";
 
-import { FormEvent, ReactNode, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Mail, MapPin, Phone, Rss, Send } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLaravelAuth } from "@/contexts/LaravelAuthContext";
 import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import { adminPath } from "@/lib/admin-path";
 import { BrandWordmark } from "@/components/layout/BrandWordmark";
+import {
+  getPublicNavItems,
+  type PublicNavItem,
+} from "@/components/layout/navigation-data";
+import { AdSlot } from "@/components/ads/AdSlot";
 
 const FOOTER_SECTIONS = {
   news: [
@@ -108,10 +114,12 @@ function FooterColumn({
   title,
   items,
   translate,
+  isNe,
 }: {
   title: string;
-  items: ReadonlyArray<{ key: string; href: string }>;
+  items: ReadonlyArray<Pick<PublicNavItem, "key" | "href" | "label" | "label_en">>;
   translate: (key: string) => string;
+  isNe: boolean;
 }) {
   return (
     <div className="min-w-0">
@@ -130,7 +138,13 @@ function FooterColumn({
               href={item.href}
               className="group inline-flex max-w-full items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <span className="truncate">{translate(`nav.${item.key}`)}</span>
+              <span className="truncate">
+                {item.label
+                  ? isNe
+                    ? item.label
+                    : item.label_en || item.label
+                  : translate(`nav.${item.key}`)}
+              </span>
               <ArrowUpRight
                 className="h-3.5 w-3.5 shrink-0 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                 aria-hidden="true"
@@ -196,12 +210,15 @@ function SocialButton({
 
 export function Footer() {
   const { language, t } = useLanguage();
+  const { data: session } = useLaravelAuth();
   const { config } = useSiteConfig();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [footerMenus, setFooterMenus] = useState<PublicNavItem[]>([]);
 
   const isNe = language === "ne";
+  const canManage = Boolean(session?.user?.role && ["ADMIN", "EDITOR", "AUTHOR"].includes(session.user.role));
   const siteName = isNe ? config.site_name.ne : config.site_name.en;
   const tagline = isNe ? config.site_tagline.ne : config.site_tagline.en;
   const address = isNe ? config.contact_address.ne : config.contact_address.en;
@@ -217,6 +234,27 @@ export function Footer() {
     Boolean(config.contact_email) ||
     Boolean(address);
   const hasSocial = SOCIAL_LINKS.some((link) => Boolean(config[link.key]));
+  const managedFooterGroups = footerMenus.length
+    ? Array.from({ length: 4 }, (_, groupIndex) =>
+        footerMenus.filter((_, itemIndex) => itemIndex % 4 === groupIndex),
+      )
+    : null;
+
+  useEffect(() => {
+    let active = true;
+
+    getPublicNavItems(undefined, "footer")
+      .then((items) => {
+        if (active && items.length) setFooterMenus(items);
+      })
+      .catch(() => {
+        // Keep the bundled links available if the API is temporarily unavailable.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSubscribe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -288,15 +326,21 @@ export function Footer() {
                 RSS
               </Link>
               <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
-              <Link
-                href={adminPath()}
-                className="text-xs font-bold uppercase tracking-wider text-gray-600 transition-colors hover:text-gray-900"
-              >
-                {isNe ? "एडमिन" : "Admin"}
-              </Link>
+              {canManage && (
+                <Link
+                  href={adminPath()}
+                  className="text-xs font-bold uppercase tracking-wider text-gray-600 transition-colors hover:text-gray-900"
+                >
+                  {isNe ? "एडमिन" : "Admin"}
+                </Link>
+              )}
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6">
+        <AdSlot position="FOOTER" className="mx-auto max-w-[728px]" compactLabel />
       </div>
 
       {/* ─── Newsletter ─── */}
@@ -479,23 +523,27 @@ export function Footer() {
             >
               <FooterColumn
                 title={sectionTitle("समाचार", "News")}
-                items={FOOTER_SECTIONS.news}
+                items={managedFooterGroups?.[0] ?? FOOTER_SECTIONS.news}
                 translate={t}
+                isNe={isNe}
               />
               <FooterColumn
                 title={sectionTitle("बिजनेस", "Business")}
-                items={FOOTER_SECTIONS.business}
+                items={managedFooterGroups?.[1] ?? FOOTER_SECTIONS.business}
                 translate={t}
+                isNe={isNe}
               />
               <FooterColumn
                 title={sectionTitle("जीवनशैली", "Lifestyle")}
-                items={FOOTER_SECTIONS.lifestyle}
+                items={managedFooterGroups?.[2] ?? FOOTER_SECTIONS.lifestyle}
                 translate={t}
+                isNe={isNe}
               />
               <FooterColumn
                 title={sectionTitle("विशेष", "Special")}
-                items={FOOTER_SECTIONS.special}
+                items={managedFooterGroups?.[3] ?? FOOTER_SECTIONS.special}
                 translate={t}
+                isNe={isNe}
               />
               <div className="min-w-0">
                 <h3 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-gray-900">
@@ -598,13 +646,20 @@ export function Footer() {
             >
               {t("footer.privacyPolicy")}
             </Link>
-            <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
-            <Link
-              href={adminPath()}
-              className="text-xs font-bold uppercase tracking-wider text-gray-600 transition-colors hover:text-gray-900"
-            >
-              {isNe ? "एडमिन प्यानल" : "Admin Panel"}
-            </Link>
+            {canManage && (
+              <>
+                <span className="h-3 w-px bg-gray-300" aria-hidden="true" />
+                <Link
+                  href={adminPath()}
+                  className="text-xs font-bold uppercase tracking-wider text-gray-600 transition-colors hover:text-gray-900"
+                >
+                  {isNe ? "एडमिन प्यानल" : "Admin Panel"}
+                </Link>
+              </>
+            )}
+            <span className="text-xs text-gray-500">
+              {isNe ? "AashaTech द्वारा व्यवस्थापन" : "Managed by AashaTech"}
+            </span>
           </div>
         </div>
       </div>

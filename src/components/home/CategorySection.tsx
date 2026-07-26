@@ -21,13 +21,15 @@ interface CategoryArticle {
 
 interface CategorySectionProps {
   sectionKey: string;
+  title?: string;
+  titleEn?: string | null;
   articles: CategoryArticle[];
   color: string;
   slug: string;
   layout?: "grid" | "featured" | "list";
 }
 
-export function CategorySection({ sectionKey, articles, color, slug, layout = "featured" }: CategorySectionProps) {
+export function CategorySection({ sectionKey, title, titleEn, articles, color, slug, layout = "featured" }: CategorySectionProps) {
   if (!articles.length) return null;
 
   const articleCard = (article: CategoryArticle, variant: "default" | "hero" | "horizontal") => (
@@ -53,7 +55,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
   if (layout === "list") {
     return (
       <section>
-        <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
+        <SectionHeader titleKey={sectionKey} title={title} titleEn={titleEn} color={color} href={`/categories/${slug}`} />
         <div className="divide-y divide-border border-b border-border">
           {articles.map((article) => (
             <div key={article.id} className="py-3 first:pt-0 last:pb-0">
@@ -69,7 +71,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
   if (layout === "grid") {
     return (
       <section>
-        <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
+        <SectionHeader titleKey={sectionKey} title={title} titleEn={titleEn} color={color} href={`/categories/${slug}`} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((article, index) => (
             <div key={article.id} className={index === 0 ? "sm:col-span-2" : ""}>
@@ -84,7 +86,7 @@ export function CategorySection({ sectionKey, articles, color, slug, layout = "f
   const [main, ...rest] = articles;
   return (
     <section>
-      <SectionHeader titleKey={sectionKey} color={color} href={`/categories/${slug}`} />
+      <SectionHeader titleKey={sectionKey} title={title} titleEn={titleEn} color={color} href={`/categories/${slug}`} />
       <div className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.75fr)]">
         {articleCard(main, "hero")}
         <div className="grid content-start gap-3">

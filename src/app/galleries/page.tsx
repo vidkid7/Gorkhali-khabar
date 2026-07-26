@@ -4,7 +4,7 @@ import { GalleryCard } from "@/components/gallery/GalleryCard";
 import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { EditorialEmptyState } from "@/components/ui/EditorialEmptyState";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { laravelApi } from "@/lib/api/laravel";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -22,20 +22,20 @@ export default async function GalleriesPage({ searchParams }: PageProps) {
   const page = Math.max(1, parseInt(typeof params.page === "string" ? params.page : "1"));
   const pageSize = 20;
 
-  const [galleries, total] = await Promise.all([
-    prisma.gallery.findMany({
-      where: { is_active: true },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      orderBy: { created_at: "desc" },
-      include: {
-        _count: { select: { images: true } },
-      },
-    }),
-    prisma.gallery.count({ where: { is_active: true } }),
-  ]);
-
-  const totalPages = Math.ceil(total / pageSize);
+  const response = await laravelApi.get<{
+    data: Array<{
+      id: string;
+      title: string;
+      slug: string;
+      cover_image?: string | null;
+      _count?: { images: number };
+    }>;
+    total: number;
+    totalPages: number;
+  }>(`/api/v1/galleries?page=${page}&pageSize=${pageSize}`);
+  const galleries = response.data;
+  const total = response.total;
+  const totalPages = response.totalPages;
 
   return (
     <>
@@ -51,7 +51,7 @@ export default async function GalleriesPage({ searchParams }: PageProps) {
                 slug={gallery.slug}
                 title={gallery.title}
                 coverImage={gallery.cover_image}
-                imageCount={gallery._count.images}
+                imageCount={gallery._count?.images ?? 0}
               />
             ))}
           </div>

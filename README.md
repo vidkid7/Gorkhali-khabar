@@ -100,8 +100,15 @@ All runtime config is in `.env` (see `.env.example`):
 | `REDIS_*` | — | Cache / sessions / queue |
 | `SESSION_DRIVER` | redis | Session storage |
 | `MAIL_*` | mailpit | Local mail catcher at <http://localhost:8025> |
+| `MEDIA_STORAGE_DRIVER` | `local` | Set to `cloudinary` for Cloudinary-backed image and video uploads |
+| `CLOUDINARY_*` | — | Cloud name, API key, API secret, and optional folder; keep real values out of source control |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:8080` | Public site URL (used by Next.js) |
 | `API_INTERNAL_URL` | `http://web` | Backend URL (used by Next.js) |
+
+For local development, keep `MEDIA_STORAGE_DRIVER=local`. For production media
+delivery, set `MEDIA_STORAGE_DRIVER=cloudinary` and provide all four
+`CLOUDINARY_*` values through the deployment environment. Existing local media
+is not migrated automatically.
 
 ## Deployment
 
