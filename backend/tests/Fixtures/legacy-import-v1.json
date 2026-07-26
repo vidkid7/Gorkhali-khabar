@@ -1,0 +1,36 @@
+{
+  "format": "gorkhali-legacy-export-v1",
+  "exported_at": "2026-07-26T00:00:00+00:00",
+  "tables": {
+    "users": [
+      {
+        "id": "fixture-user",
+        "name": "Sanitized Editor",
+        "email": "fixture-editor@example.test",
+        "password_hash": "$2b$12$sanitized-fixture-not-a-real-login-hash",
+        "role": "EDITOR",
+        "is_active": true,
+        "created_at": "2025-01-02T03:04:05+00:00",
+        "updated_at": "2025-01-03T03:04:05+00:00"
+      }
+    ],
+    "site_settings": [
+      {
+        "id": "fixture-site-name",
+        "key": "site_name",
+        "value": "Gorkhali Khabar",
+        "updated_at": "2025-01-03T03:04:05+00:00"
+      },
+      {
+        "id": "fixture-home-order",
+        "key": "homepage_section_order",
+        "value": [
+          "featured",
+          "latest",
+          "province"
+        ],
+        "updated_at": "2025-01-03T03:04:05+00:00"
+      }
+    ]
+  }
+}

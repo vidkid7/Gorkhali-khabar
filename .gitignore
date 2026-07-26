@@ -34,6 +34,8 @@ backend/storage/framework/views/*
 *.sqlite
 *.sqlite3
 cookies.txt
+legacy-export*.json
+private-migration-data/
 
 # Test and tooling output
 .phpunit.cache/

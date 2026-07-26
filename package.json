@@ -16,6 +16,7 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
+    "data:export": "node scripts/export-prisma-data.mjs",
     "postinstall": "prisma generate"
   },
   "engines": {
