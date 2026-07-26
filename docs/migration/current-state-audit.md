@@ -76,6 +76,112 @@ Status meanings: **implemented** = Laravel has the matching operation; **partial
 
 `backend/routes/api.php` contains all API registration. Read routes use `throttle:reads`; tracking uses `throttle:tracking`; writes add `auth:sanctum`, `active.session`, role middleware, and normally `throttle:writes`. Auth uses `throttle:auth`/`login`; newsletter and comments have dedicated throttles.
 
+### Complete Laravel API route inventory
+
+The following **99 verb/path registrations** are an explicit inventory of `backend/routes/api.php`. Middleware is listed exactly at the route-registration level; framework/global middleware is not repeated.
+
+```text
+GET /v1/status — inline ApiResponse closure — none
+GET /v1/articles — ArticleController@index — throttle:reads
+GET /v1/articles/slug/{slug} — ArticleController@showBySlug — throttle:reads
+GET /v1/articles/{id} — ArticleController@show — throttle:reads
+POST /v1/articles/{id}/view — ArticleController@recordView — throttle:tracking
+POST /v1/articles — ArticleController@store — auth:sanctum, active.session, role:AUTHOR,EDITOR,ADMIN, throttle:writes
+PUT /v1/articles/{id} — ArticleController@update — auth:sanctum, active.session, role:AUTHOR,EDITOR,ADMIN, throttle:writes
+DELETE /v1/articles/{id} — ArticleController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/categories — CategoryController@index — throttle:reads
+GET /v1/home — HomeController@index — throttle:reads
+GET /v1/tags — TagController@index — throttle:reads
+GET /v1/quick-links — QuickLinkController@index — throttle:reads
+GET /v1/search — SearchController@index — throttle:reads
+GET /v1/trending — TrendingController@index — throttle:reads
+GET /v1/settings — SettingController@index — throttle:reads
+GET /v1/rashifal — RashifalController@index — throttle:reads
+GET /v1/calendar/holidays — CalendarController@holidays — throttle:reads
+GET /v1/calendar/panchang — CalendarController@panchang — throttle:reads
+GET /v1/finance/exchange-rates — FinanceController@exchangeRates — throttle:reads
+GET /v1/finance/gold-silver — FinanceController@goldSilver — throttle:reads
+GET /v1/sports/tournaments — SportsController@tournaments — throttle:reads
+GET /v1/sports/matches — SportsController@matches — throttle:reads
+GET /v1/nepse — NepseController@index — throttle:reads
+POST /v1/sports/tournaments — SportsController@storeTournament — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/sports/matches — SportsController@storeMatch — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PUT /v1/sports/matches/{id} — SportsController@updateMatch — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/newsletter — NewsletterController@store — throttle:newsletter
+GET /v1/media — MediaController@index — auth:sanctum, active.session, role:ADMIN,EDITOR,AUTHOR
+POST /v1/media — MediaController@store — auth:sanctum, active.session, role:ADMIN,EDITOR,AUTHOR, throttle:writes
+PUT /v1/media/{id} — MediaController@update — auth:sanctum, active.session, role:ADMIN,EDITOR,AUTHOR, throttle:writes
+DELETE /v1/media/{id} — MediaController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/galleries — GalleryController@index — throttle:reads
+GET /v1/galleries/{id} — GalleryController@show — throttle:reads
+POST /v1/galleries — GalleryController@store — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PUT /v1/galleries/{id} — GalleryController@update — auth:sanctum, active.session, role:ADMIN, throttle:writes
+DELETE /v1/galleries/{id} — GalleryController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/reels — ReelController@index — throttle:reads
+GET /v1/reels/{id} — ReelController@show — throttle:reads
+POST /v1/reels — ReelController@store — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PUT /v1/reels/{id} — ReelController@update — auth:sanctum, active.session, role:ADMIN, throttle:writes
+DELETE /v1/reels/{id} — ReelController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/ads — AdvertisementController@index — throttle:reads
+GET /v1/ads/positions — AdvertisementController@positions — throttle:reads
+POST /v1/ads/positions — AdvertisementController@storePosition — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/ads/{id}/click — AdvertisementController@track(clicks) closure — throttle:tracking
+POST /v1/ads/{id}/impression — AdvertisementController@track(impressions) closure — throttle:tracking
+POST /v1/ads — AdvertisementController@store — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PUT /v1/ads/{id} — AdvertisementController@update — auth:sanctum, active.session, role:ADMIN, throttle:writes
+DELETE /v1/ads/{id} — AdvertisementController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/categories — CategoryController@store — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/categories — CategoryController@update — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/categories — CategoryController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/comments — CommentController@index — throttle:reads
+POST /v1/comments — CommentController@store — auth:sanctum, active.session, throttle:comments
+PATCH /v1/comments/{id} — CommentController@update — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+POST /v1/comments/{id}/vote — CommentVoteController@store — auth:sanctum, active.session, throttle:writes
+GET /v1/bookmarks — BookmarkController@index — auth:sanctum, active.session
+POST /v1/bookmarks — BookmarkController@store — auth:sanctum, active.session, throttle:writes
+DELETE /v1/bookmarks/{articleId} — BookmarkController@destroy — auth:sanctum, active.session, throttle:writes
+GET /v1/admin/rashifal — RashifalController@adminIndex — auth:sanctum, active.session, role:ADMIN,EDITOR
+POST /v1/admin/rashifal — RashifalController@store — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/admin/rashifal — RashifalController@update — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/rashifal — RashifalController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/admin/holidays — CalendarController@adminIndex — auth:sanctum, active.session, role:ADMIN,EDITOR
+POST /v1/admin/holidays — CalendarController@store — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/admin/holidays — CalendarController@update — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/holidays — CalendarController@destroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/admin/forex — FinanceController@forexIndex — auth:sanctum, active.session, role:ADMIN,EDITOR
+POST /v1/admin/forex — FinanceController@forexStore — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/admin/forex — FinanceController@forexUpdate — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/forex — FinanceController@forexDestroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/admin/gold-silver — FinanceController@metalsIndex — auth:sanctum, active.session, role:ADMIN,EDITOR
+POST /v1/admin/gold-silver — FinanceController@metalsStore — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/admin/gold-silver — FinanceController@metalsUpdate — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/gold-silver — FinanceController@metalsDestroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/admin/tags — AdminPrimitiveController@tagsStore — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PUT /v1/admin/tags — AdminPrimitiveController@tagsUpdate — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/tags — AdminPrimitiveController@tagsDestroy — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+GET /v1/admin/quick-links — AdminPrimitiveController@linksIndex — auth:sanctum, active.session, role:ADMIN,EDITOR
+POST /v1/admin/quick-links — AdminPrimitiveController@linksStore — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PATCH /v1/admin/quick-links/{id} — AdminPrimitiveController@linksUpdate — auth:sanctum, active.session, role:ADMIN, throttle:writes
+DELETE /v1/admin/quick-links/{id} — AdminPrimitiveController@linksDestroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+GET /v1/admin/settings — AdminPrimitiveController@settingsIndex — auth:sanctum, active.session, role:ADMIN
+PUT /v1/admin/settings — AdminPrimitiveController@settingsUpdate — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/admin/breaking-news — AdminPrimitiveController@breakingNewsStore — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+PATCH /v1/admin/breaking-news/{id} — AdminPrimitiveController@breakingNewsUpdate — auth:sanctum, active.session, role:ADMIN,EDITOR, throttle:writes
+DELETE /v1/admin/breaking-news/{id} — AdminPrimitiveController@breakingNewsDestroy — auth:sanctum, active.session, role:ADMIN, throttle:writes
+PATCH /v1/admin/users/{id}/role — AdminPrimitiveController@userRoleUpdate — auth:sanctum, active.session, role:ADMIN, throttle:writes
+POST /v1/auth/register — AuthController@register — throttle:auth
+POST /v1/auth/forgot-password — AuthController@forgotPassword — throttle:auth
+POST /v1/auth/reset-password — AuthController@resetPassword — throttle:auth
+POST /v1/auth/verify-email — AuthController@verifyEmail — throttle:auth
+GET /v1/auth/verify-email — AuthController@verifyEmail — throttle:auth
+POST /v1/auth/login — AuthController@login — throttle:login
+GET /v1/auth/session — AuthController@session — auth:sanctum, active.session
+POST /v1/auth/logout — AuthController@logout — auth:sanctum
+POST /v1/auth/send-verification — AuthController@sendVerification — auth:sanctum, active.session, throttle:auth
+GET /v1/auth/google/redirect — SocialAuthController@redirect — web
+GET /v1/auth/google/callback — SocialAuthController@callback — web
+```
+
 | route/controller family | models | migration / tests |
 |---|---|---|
 | Article, home, search, trending, category, tag | `Article`, `Category`, `Tag`, `ArticleTag`, `BreakingNews`, `PageView` | `2026_07_23_000000_create_compatible_news_schema.php`; `Content/*ApiTest.php`, `ArticleApiTest.php` |
