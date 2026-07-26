@@ -58,7 +58,7 @@ describe("apiGetOptionalArray", () => {
       ),
     );
 
-    await expect(apiGetOptionalArray("/api/v1/home-sections")).resolves.toEqual(
+    await expect(apiGetOptionalArray("/api/v1/homepage-sections")).resolves.toEqual(
       [],
     );
   });
@@ -74,7 +74,7 @@ describe("apiGetOptionalArray", () => {
       ),
     );
 
-    await expect(apiGetOptionalArray("/api/v1/home-sections")).resolves.toEqual(
+    await expect(apiGetOptionalArray("/api/v1/homepage-sections")).resolves.toEqual(
       [],
     );
   });
