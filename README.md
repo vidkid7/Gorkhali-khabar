@@ -3,7 +3,7 @@
 A full-featured Nepali news portal with:
 
 - **Public site** — Next.js 16 + Prisma (the user-facing site at <http://localhost:8080>)
-- **Admin panel** — Laravel 12 + PHP 8.4 + PostgreSQL (mounted at `/gorkhali-admin`, configurable)
+- **Admin panel and API** — Laravel 13 + PHP 8.3 + MySQL (mounted at `/gorkhali-admin`, configurable)
 
 ## Features
 
@@ -29,16 +29,16 @@ A full-featured Nepali news portal with:
 
 ```
 .
-├── backend/          # Laravel 12 admin panel (PHP 8.4, controllers, models, Blade views)
+├── backend/          # Laravel 13 backend (PHP 8.3, API, controllers, models, Blade views)
 ├── src/              # Next.js 16 public site (App Router, Prisma client)
 ├── prisma/           # Prisma schema + seed
 ├── public/           # Static assets (logos, icons, manifests)
 ├── tests/            # Vitest tests for the frontend
 ├── docker/
 │   ├── nginx/        # nginx config (routes /api, /gorkhali-admin, /storage to Laravel; everything else to Next.js)
-│   └── php/          # PHP-FPM 8.4 Dockerfile
+│   └── php/          # PHP-FPM 8.3 Dockerfile
 ├── scripts/          # Utility scripts
-├── compose.yaml      # Docker stack: frontend, backend, worker, scheduler, web (nginx), postgres, redis, mailpit
+├── compose.yaml      # Docker stack: frontend, backend, worker, scheduler, web (nginx), MySQL, Redis, Mailpit
 ├── Dockerfile.frontend
 ├── .env / .env.example
 ├── .gitignore
@@ -54,16 +54,14 @@ cp .env.example .env
 # Build and start the stack
 docker compose up -d --build
 
-# Wait for postgres healthcheck (~10s)
+# Wait for the MySQL healthcheck (~10s)
 # Run Laravel migrations + seed (first time only)
 docker compose exec backend php artisan migrate --force
 docker compose exec backend php artisan db:seed --force
-
-# Run Prisma setup for the Next.js site
-docker compose exec frontend npx prisma generate
-docker compose exec frontend npx prisma db push
-docker compose exec frontend npx prisma db seed
 ```
+
+The frontend container is not given database credentials or a database URL. Browser and
+server-side frontend data access must go through the Laravel API at `API_INTERNAL_URL`.
 
 Visit:
 - Public site: <http://localhost:8080/>
@@ -97,7 +95,8 @@ All runtime config is in `.env` (see `.env.example`):
 | `APP_NAME` | Gorkhali Khabar | Display name |
 | `APP_URL` | `http://localhost:8080` | Used for URL generation behind nginx |
 | `ADMIN_PATH` | `gorkhali-admin` | Laravel admin URL prefix |
-| `DB_*` | — | PostgreSQL credentials |
+| `MYSQL_*` | local development values | MySQL container database, user, password, and root password |
+| `DB_*` | derived from `MYSQL_*` by Compose | Laravel MySQL connection |
 | `REDIS_*` | — | Cache / sessions / queue |
 | `SESSION_DRIVER` | redis | Session storage |
 | `MAIL_*` | mailpit | Local mail catcher at <http://localhost:8025> |

@@ -5,18 +5,20 @@ x-backend-environment: &backend-environment
   APP_DEBUG: ${APP_DEBUG:-true}
   APP_URL: ${APP_URL:-http://localhost:8080}
   ADMIN_PATH: ${ADMIN_PATH:-gorkhali-admin}
-  DB_CONNECTION: pgsql
-  DB_HOST: postgres
-  DB_PORT: 5432
-  DB_DATABASE: ${POSTGRES_DB:-gorkhali}
-  DB_USERNAME: ${POSTGRES_USER:-gorkhali}
-  DB_PASSWORD: ${POSTGRES_PASSWORD:-gorkhali_dev}
+  DB_CONNECTION: mysql
+  DB_HOST: mysql
+  DB_PORT: 3306
+  DB_DATABASE: ${MYSQL_DATABASE:-gorkhali}
+  DB_USERNAME: ${MYSQL_USER:-gorkhali}
+  DB_PASSWORD: ${MYSQL_PASSWORD:-gorkhali_dev}
   REDIS_CLIENT: predis
   REDIS_HOST: redis
   REDIS_PORT: 6379
   SESSION_DRIVER: redis
   SESSION_COOKIE: ${SESSION_COOKIE:-gorkhali_session}
   CACHE_STORE: redis
+  CACHE_PREFIX: ${CACHE_PREFIX:-gorkhali-khabar-cache-}
+  REDIS_PREFIX: ${REDIS_PREFIX:-gorkhali-khabar-database-}
   QUEUE_CONNECTION: redis
   MAIL_MAILER: smtp
   MAIL_HOST: mailpit
@@ -34,7 +36,7 @@ x-backend-service: &backend-service
   volumes:
     - uploads:/var/www/html/storage/app/public
   depends_on:
-    postgres:
+    mysql:
       condition: service_healthy
     redis:
       condition: service_healthy
@@ -45,7 +47,6 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     environment:
-      DATABASE_URL: postgresql://gorkhali:gorkhali_dev@postgres:5432/gorkhali
       API_INTERNAL_URL: http://web
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:8080}
     depends_on:
@@ -98,16 +99,17 @@ services:
       timeout: 5s
       retries: 20
 
-  postgres:
-    image: postgres:16-alpine
+  mysql:
+    image: mysql:8.4
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-gorkhali}
-      POSTGRES_USER: ${POSTGRES_USER:-gorkhali}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gorkhali_dev}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-gorkhali}
+      MYSQL_USER: ${MYSQL_USER:-gorkhali}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-gorkhali_dev}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-gorkhali_root_dev}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -128,6 +130,6 @@ services:
       - "8025:8025"
 
 volumes:
-  postgres_data:
+  mysql_data:
   redis_data:
   uploads:
