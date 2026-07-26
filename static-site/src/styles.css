@@ -105,7 +105,8 @@ button, input { font: inherit; }
 .footer-grid { display: grid; grid-template-columns: 1fr auto; gap: 48px; padding-block: 48px; }
 .footer-grid img { width: 260px; background: #fff; padding: 8px; }
 .footer-grid nav { display: grid; gap: 12px; align-content: start; }
-.copyright { border-top: 1px solid rgb(255 255 255 / 14%); padding-block: 18px; color: #9fb1c3; }
+.copyright { border-top: 1px solid rgb(255 255 255 / 14%); padding-block: 18px; color: #9fb1c3; display: flex; justify-content: space-between; gap: 16px; }
+.copyright a { color: #fff; font-weight: 700; }
 
 @media (max-width: 760px) {
   .top-strip__inner span { display: none; }

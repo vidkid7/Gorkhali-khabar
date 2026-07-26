@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const nav = [
+  ["गृहपृष्ठ", "/"],
   ["समाचार", "/categories/samachar"],
   ["राजनीति", "/categories/rajniti"],
   ["अर्थ", "/finance"],
@@ -19,7 +20,7 @@ export function SiteHeader() {
       <div className="top-strip">
         <div className="container top-strip__inner">
           <span>नेपालको विश्वसनीय अनलाइन समाचार पोर्टल</span>
-          <a href="/gorkhali-admin">सम्पादकीय प्रवेश</a>
+          <a href="/about">हाम्रोबारे</a>
         </div>
       </div>
       <div className="container masthead">

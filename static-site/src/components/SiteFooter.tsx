@@ -14,7 +14,10 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="container copyright">
-        © {new Date().getFullYear()} गोर्खाली खबर
+        <span>© {new Date().getFullYear()} गोर्खाली खबर</span>
+        <a href="https://www.aashatech.com/" target="_blank" rel="noreferrer">
+          Managed by AashaTech
+        </a>
       </div>
     </footer>
   );
