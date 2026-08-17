@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ $article->exists ? route('admin.articles.update', $article) : route('admin.articles.store') }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ $article->exists ? route('admin.articles.update', $article) : route('admin.articles.store') }}">
         @csrf
         @if ($article->exists)
             @method('PUT')
@@ -53,9 +53,13 @@
                 </select>
             </div>
 
-            <div class="form-row">
-                <label>Featured Image URL</label>
-                <input type="text" name="featured_image" value="{{ old('featured_image', $article->featured_image) }}">
+            <div class="form-row image-upload-field">
+                <label for="featured_image">Featured Image</label>
+                @if ($article->featured_image)
+                    <img src="{{ $article->featured_image }}" alt="Current featured image" style="display:block;max-width:320px;max-height:180px;object-fit:cover;margin-bottom:8px;border-radius:6px;">
+                @endif
+                <input id="featured_image" type="file" name="featured_image" accept="image/jpeg,image/png,image/webp,image/avif">
+                <small class="image-upload-help">JPG, PNG, WEBP — max 5 MB</small>
             </div>
 
             <div class="form-row">

@@ -6,6 +6,8 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminPanelRegressionTest extends TestCase
@@ -63,6 +65,43 @@ class AdminPanelRegressionTest extends TestCase
             'author_id' => $owner->id,
             'title' => 'Updated title',
         ]);
+    }
+
+    public function test_admin_can_upload_a_featured_image_without_replacing_it_on_a_later_text_only_edit(): void
+    {
+        Storage::fake('public');
+        config()->set('filesystems.default', 'public');
+        $admin = $this->user('featured-image-admin', 'ADMIN');
+        $article = $this->article($admin);
+
+        $this->actingAs($admin)->put("/gorkhali-admin/articles/{$article->id}", [
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'content' => $article->content,
+            'category_id' => $article->category_id,
+            'status' => 'DRAFT',
+            'featured_image' => UploadedFile::fake()->image('featured.png', 1200, 675),
+        ])->assertRedirect("/gorkhali-admin/articles/{$article->id}/edit");
+
+        $uploadedUrl = Article::query()->findOrFail($article->id)->featured_image;
+        $this->assertNotNull($uploadedUrl);
+        $this->assertStringContainsString('/storage/articles/', $uploadedUrl);
+
+        $this->actingAs($admin)->put("/gorkhali-admin/articles/{$article->id}", [
+            'title' => 'Text-only update',
+            'slug' => $article->slug,
+            'content' => 'Updated content',
+            'category_id' => $article->category_id,
+            'status' => 'DRAFT',
+        ])->assertRedirect("/gorkhali-admin/articles/{$article->id}/edit");
+
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'featured_image' => $uploadedUrl,
+        ]);
+        Storage::disk('public')->assertExists(
+            str_replace('/storage/', '', (string) parse_url($uploadedUrl, PHP_URL_PATH))
+        );
     }
 
     public function test_admin_can_update_another_user_without_a_server_error(): void

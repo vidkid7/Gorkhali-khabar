@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\AuditService;
+use App\Services\MediaStorageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,10 +62,10 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function store(Request $request, AuditService $audit): RedirectResponse
+    public function store(Request $request, AuditService $audit, MediaStorageService $storage): RedirectResponse
     {
         $data = $this->validateArticle($request);
-        $data = $this->prepareForSave($data, $request);
+        $data = $this->prepareForSave($data, $request, $storage);
 
         $article = DB::transaction(function () use ($data, $request) {
             $article = Article::query()->create($data);
@@ -98,12 +99,12 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function update(Request $request, AuditService $audit, Article $article): RedirectResponse
+    public function update(Request $request, AuditService $audit, MediaStorageService $storage, Article $article): RedirectResponse
     {
         $this->authorizeArticleAccess($request, $article);
 
         $data = $this->validateArticle($request, $article->id);
-        $data = $this->prepareForSave($data, $request, false);
+        $data = $this->prepareForSave($data, $request, $storage, false);
 
         DB::transaction(function () use ($data, $request, $article) {
             $old = $article->toArray();
@@ -167,7 +168,7 @@ class ArticleController extends Controller
 
     private function validateArticle(Request $request, ?string $id = null): array
     {
-        return $request->validate([
+        $rules = [
             'title' => ['required', 'string', 'max:255'],
             'title_en' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:articles,slug'.($id ? ",{$id}" : '')],
@@ -175,17 +176,39 @@ class ArticleController extends Controller
             'excerpt_en' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
             'content_en' => ['nullable', 'string'],
-            'featured_image' => ['nullable', 'string', 'max:500'],
             'category_id' => ['required', 'string', 'exists:categories,id'],
             'status' => ['required', 'in:DRAFT,PENDING,PUBLISHED,ARCHIVED'],
             'is_featured' => ['nullable'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'exists:tags,id'],
-        ]);
+        ];
+
+        // Keep accepting an existing URL value for manual/API callers, but
+        // validate the admin form's multipart upload as a file. Laravel
+        // represents an uploaded file as UploadedFile, not a string.
+        $rules['featured_image'] = $request->hasFile('featured_image')
+            ? ['file', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120']
+            : ['nullable', 'string', 'max:500'];
+
+        return $request->validate($rules);
     }
 
-    private function prepareForSave(array $data, Request $request, bool $setAuthor = true): array
+    private function prepareForSave(
+        array $data,
+        Request $request,
+        MediaStorageService $storage,
+        bool $setAuthor = true
+    ): array
     {
+        if ($request->hasFile('featured_image')) {
+            $media = $storage->store($request->file('featured_image'), $request->user(), 'articles');
+            $data['featured_image'] = $media->url;
+        } elseif (! $setAuthor) {
+            // An edit with no replacement file must preserve the current
+            // image instead of writing an empty multipart value over it.
+            unset($data['featured_image']);
+        }
+
         $data['is_featured'] = $request->boolean('is_featured');
         $data['slug'] = $data['slug'] ?? Str::slug($data['title']);
         if ($setAuthor) {
